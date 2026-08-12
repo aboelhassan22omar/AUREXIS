@@ -1,0 +1,16 @@
+  "email": "omar@axion.com",
+  "password": "omar392006"
+
+  "email": "mohamed@example.com",
+  "password": "mo1442004"
+
+
+cd D:\AXION
+docker compose up -d
+docker compose ps
+docker compose logs -f
+docker compose stop
+docker compose start
+docker compose down
+
+

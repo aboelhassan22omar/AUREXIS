@@ -1,0 +1,188 @@
+"use client";
+
+import {
+  ArrowRight,
+  LockKeyhole,
+  Mail,
+  UserRound,
+} from "lucide-react";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
+
+import { registerUser } from "@/lib/auth";
+
+export default function RegisterForm() {
+  const router = useRouter();
+
+  const [fullName, setFullName] =
+    useState("");
+
+  const [email, setEmail] =
+    useState("");
+
+  const [password, setPassword] =
+    useState("");
+
+  const [error, setError] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    setError("");
+    setLoading(true);
+
+    try {
+      await registerUser({
+        full_name: fullName,
+        email,
+        password,
+      });
+
+      router.push("/dashboard");
+      router.refresh();
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Unable to create account"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <form
+      className="auth-form"
+      onSubmit={handleSubmit}
+    >
+      <div className="form-group">
+        <label>Full name</label>
+
+        <div style={{ position: "relative" }}>
+          <UserRound
+            size={17}
+            style={{
+              position: "absolute",
+              left: 15,
+              top: 17,
+              color: "#66616e",
+            }}
+          />
+
+          <input
+            className="form-input"
+            placeholder="Your name"
+            style={{ paddingLeft: 44 }}
+            value={fullName}
+            onChange={(event) =>
+              setFullName(event.target.value)
+            }
+            required
+          />
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>Email</label>
+
+        <div style={{ position: "relative" }}>
+          <Mail
+            size={17}
+            style={{
+              position: "absolute",
+              left: 15,
+              top: 17,
+              color: "#66616e",
+            }}
+          />
+
+          <input
+            type="email"
+            className="form-input"
+            placeholder="you@example.com"
+            style={{ paddingLeft: 44 }}
+            value={email}
+            onChange={(event) =>
+              setEmail(event.target.value)
+            }
+            required
+          />
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>Password</label>
+
+        <div style={{ position: "relative" }}>
+          <LockKeyhole
+            size={17}
+            style={{
+              position: "absolute",
+              left: 15,
+              top: 17,
+              color: "#66616e",
+            }}
+          />
+
+          <input
+            type="password"
+            className="form-input"
+            placeholder="Minimum 8 characters"
+            style={{ paddingLeft: 44 }}
+            value={password}
+            onChange={(event) =>
+              setPassword(event.target.value)
+            }
+            minLength={8}
+            required
+          />
+        </div>
+      </div>
+
+      {error && (
+        <p
+          style={{
+            marginBottom: 16,
+            color: "#ff7b8d",
+            fontSize: 13,
+          }}
+        >
+          {error}
+        </p>
+      )}
+
+      <button
+        type="submit"
+        className="primary-button"
+        style={{
+          width: "100%",
+          marginTop: 8,
+          opacity: loading ? 0.7 : 1,
+        }}
+        disabled={loading}
+      >
+        {loading
+          ? "Creating account..."
+          : "Create Account"}
+
+        {!loading && <ArrowRight size={17} />}
+      </button>
+
+      <div className="auth-footer">
+        Already have an account?{" "}
+        <Link href="/login">
+          Sign in
+        </Link>
+      </div>
+    </form>
+  );
+}

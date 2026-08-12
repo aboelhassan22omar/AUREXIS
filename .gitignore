@@ -1,0 +1,74 @@
+# ============================================
+# AXION - Git Ignore
+# ============================================
+
+# Environment / Secrets
+.env
+.env.*
+!.env.example
+
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+frontend/.env.local
+frontend/.env.*
+!frontend/.env.example
+
+# Python
+backend/.venv/
+backend/venv/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Certificates / Keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Database dumps / backups
+*.sql
+*.dump
+*.backup
+
+# Docker local overrides
+docker-compose.override.yml
+
+# Misc
+coverage/
+.cache/
