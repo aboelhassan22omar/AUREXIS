@@ -1,0 +1,191 @@
+name: AXION CD
+
+on:
+  workflow_dispatch:
+
+
+permissions:
+  contents: read
+
+
+concurrency:
+  group: axion-production
+  cancel-in-progress: false
+
+
+jobs:
+
+  deploy:
+    name: Deploy AXION Production
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AXION_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.AXION_SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+
+      - name: Prepare deployment directory
+        env:
+          SERVER_HOST: ${{ secrets.AXION_SERVER_HOST }}
+          SERVER_USER: ${{ secrets.AXION_SERVER_USER }}
+          SERVER_PORT: ${{ secrets.AXION_SERVER_PORT }}
+        run: |
+          ssh \
+            -p "$SERVER_PORT" \
+            "$SERVER_USER@$SERVER_HOST" \
+            "mkdir -p ~/axion"
+
+
+      - name: Upload AXION application
+        env:
+          SERVER_HOST: ${{ secrets.AXION_SERVER_HOST }}
+          SERVER_USER: ${{ secrets.AXION_SERVER_USER }}
+          SERVER_PORT: ${{ secrets.AXION_SERVER_PORT }}
+        run: |
+          rsync \
+            -az \
+            --delete \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '.env' \
+            --exclude '.env.*' \
+            --exclude 'backend/.env' \
+            --exclude 'backend/.venv' \
+            --exclude 'frontend/.env.local' \
+            --exclude 'frontend/node_modules' \
+            --exclude 'frontend/.next' \
+            --exclude 'backups' \
+            -e "ssh -p $SERVER_PORT" \
+            ./ \
+            "$SERVER_USER@$SERVER_HOST:~/axion/"
+
+
+      - name: Create production environment
+        env:
+          SERVER_HOST: ${{ secrets.AXION_SERVER_HOST }}
+          SERVER_USER: ${{ secrets.AXION_SERVER_USER }}
+          SERVER_PORT: ${{ secrets.AXION_SERVER_PORT }}
+
+          POSTGRES_DB: ${{ secrets.AXION_POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.AXION_POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.AXION_POSTGRES_PASSWORD }}
+
+          JWT_SECRET_KEY: ${{ secrets.AXION_JWT_SECRET_KEY }}
+          JWT_ALGORITHM: HS256
+
+          ACCESS_TOKEN_EXPIRE_MINUTES: 30
+          REFRESH_TOKEN_EXPIRE_DAYS: 7
+
+          FRONTEND_URL: ${{ secrets.AXION_FRONTEND_URL }}
+          ALLOWED_HOSTS: ${{ secrets.AXION_ALLOWED_HOSTS }}
+
+        run: |
+          ssh \
+            -p "$SERVER_PORT" \
+            "$SERVER_USER@$SERVER_HOST" \
+            "cat > ~/axion/.env.prod" <<EOF
+          POSTGRES_DB=$POSTGRES_DB
+          POSTGRES_USER=$POSTGRES_USER
+          POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+
+          JWT_SECRET_KEY=$JWT_SECRET_KEY
+          JWT_ALGORITHM=$JWT_ALGORITHM
+
+          ACCESS_TOKEN_EXPIRE_MINUTES=$ACCESS_TOKEN_EXPIRE_MINUTES
+          REFRESH_TOKEN_EXPIRE_DAYS=$REFRESH_TOKEN_EXPIRE_DAYS
+
+          FRONTEND_URL=$FRONTEND_URL
+          ALLOWED_HOSTS=$ALLOWED_HOSTS
+          EOF
+
+
+      - name: Build and deploy AXION
+        env:
+          SERVER_HOST: ${{ secrets.AXION_SERVER_HOST }}
+          SERVER_USER: ${{ secrets.AXION_SERVER_USER }}
+          SERVER_PORT: ${{ secrets.AXION_SERVER_PORT }}
+        run: |
+          ssh \
+            -p "$SERVER_PORT" \
+            "$SERVER_USER@$SERVER_HOST" \
+            '
+              set -e
+
+              cd ~/axion
+
+              docker compose \
+                --env-file .env.prod \
+                -f docker-compose.prod.yml \
+                up -d \
+                --build \
+                --remove-orphans
+            '
+
+
+      - name: Verify containers
+        env:
+          SERVER_HOST: ${{ secrets.AXION_SERVER_HOST }}
+          SERVER_USER: ${{ secrets.AXION_SERVER_USER }}
+          SERVER_PORT: ${{ secrets.AXION_SERVER_PORT }}
+        run: |
+          ssh \
+            -p "$SERVER_PORT" \
+            "$SERVER_USER@$SERVER_HOST" \
+            '
+              cd ~/axion
+
+              docker compose \
+                --env-file .env.prod \
+                -f docker-compose.prod.yml \
+                ps
+            '
+
+
+      - name: Production health check
+        env:
+          SERVER_HOST: ${{ secrets.AXION_SERVER_HOST }}
+          SERVER_USER: ${{ secrets.AXION_SERVER_USER }}
+          SERVER_PORT: ${{ secrets.AXION_SERVER_PORT }}
+        run: |
+          ssh \
+            -p "$SERVER_PORT" \
+            "$SERVER_USER@$SERVER_HOST" \
+            '
+              set -e
+
+              for attempt in 1 2 3 4 5 6 7 8 9 10
+              do
+                  if curl \
+                      --fail \
+                      --silent \
+                      --show-error \
+                      http://127.0.0.1/api/v1/health
+                  then
+                      echo
+                      echo "AXION production health check passed."
+                      exit 0
+                  fi
+
+                  echo "Waiting for AXION..."
+                  sleep 5
+              done
+
+              echo "AXION production health check failed."
+              exit 1
+            '
