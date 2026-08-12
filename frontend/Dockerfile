@@ -13,11 +13,12 @@ WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-ARG NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000/api/v1
+ARG NEXT_PUBLIC_API_BASE_URL=/api/v1
 
 ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
 
 COPY --from=dependencies /app/node_modules ./node_modules
+
 COPY . .
 
 RUN npm run build
@@ -35,7 +36,6 @@ ENV PORT=3000
 RUN addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
 
 COPY --from=builder \
     --chown=nextjs:nodejs \
@@ -44,6 +44,7 @@ COPY --from=builder \
 COPY --from=builder \
     --chown=nextjs:nodejs \
     /app/.next/static ./.next/static
+
 
 USER nextjs
 
