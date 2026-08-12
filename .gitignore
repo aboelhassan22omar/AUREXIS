@@ -34,6 +34,12 @@ frontend/.next/
 frontend/out/
 frontend/dist/
 
+# Backups
+backups/
+*.sql
+*.dump
+*.backup
+
 # Logs
 *.log
 npm-debug.log*
@@ -61,11 +67,6 @@ desktop.ini
 *.crt
 *.p12
 *.pfx
-
-# Database dumps / backups
-*.sql
-*.dump
-*.backup
 
 # Docker local overrides
 docker-compose.override.yml
