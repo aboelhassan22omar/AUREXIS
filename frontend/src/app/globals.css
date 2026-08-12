@@ -2494,3 +2494,563 @@ textarea.form-input {
     justify-self: start;
   }
 }
+/* =========================================
+   AXION HOME FINAL LAYOUT
+========================================= */
+
+.home-section-status {
+  margin-top: 55px;
+  color: #77737f;
+  font-size: 14px;
+}
+
+.home-section-error {
+  color: #ff7b8d;
+}
+
+
+/* =========================================
+   HOME SERVICES
+========================================= */
+
+.home-services-grid {
+  width: 100% !important;
+
+  margin-top: 58px !important;
+
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    ) !important;
+
+  gap: 18px !important;
+}
+
+
+.home-service-card {
+  position: relative !important;
+
+  width: 100% !important;
+  min-width: 0 !important;
+
+  min-height: 350px !important;
+
+  padding: 31px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  overflow: hidden !important;
+
+  border-radius: 30px !important;
+
+  background:
+    radial-gradient(
+      circle at 85% 10%,
+      rgba(108, 51, 255, 0.12),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.012)
+    ) !important;
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+
+.home-service-card:hover {
+  transform: translateY(-6px);
+
+  border-color:
+    rgba(
+      139,
+      92,
+      246,
+      0.34
+    );
+
+  box-shadow:
+    0 24px 70px
+    rgba(
+      0,
+      0,
+      0,
+      0.3
+    );
+}
+
+
+.home-service-glow {
+  position: absolute;
+
+  z-index: 0;
+
+  width: 320px;
+  height: 320px;
+
+  right: -120px;
+  top: -130px;
+
+  border-radius: 50%;
+
+  background: #6c33ff;
+
+  opacity: 0.1;
+
+  filter: blur(80px);
+
+  pointer-events: none;
+}
+
+
+.home-service-top {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content:
+    space-between;
+
+  gap: 20px;
+}
+
+
+.home-service-icon {
+  width: 62px;
+  height: 62px;
+
+  display: grid;
+
+  place-items: center;
+
+  flex-shrink: 0;
+
+  color: #b99aff;
+
+  background:
+    rgba(
+      108,
+      51,
+      255,
+      0.11
+    );
+
+  border:
+    1px solid
+    rgba(
+      139,
+      92,
+      246,
+      0.2
+    );
+
+  border-radius: 19px;
+}
+
+
+.home-service-number {
+  padding-top: 5px;
+
+  color:
+    rgba(
+      185,
+      154,
+      255,
+      0.35
+    );
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  letter-spacing:
+    0.12em;
+}
+
+
+.home-service-content {
+  position: relative;
+
+  z-index: 2;
+
+  margin-top: 50px;
+}
+
+
+.home-service-content h3 {
+  margin: 0;
+
+  font-size: 26px;
+
+  line-height: 1.15;
+
+  letter-spacing:
+    -0.04em;
+}
+
+
+.home-service-content p {
+  max-width: 500px;
+
+  margin-top: 13px;
+
+  color:
+    var(
+      --text-secondary
+    );
+
+  font-size: 14px;
+
+  line-height: 1.75;
+}
+
+
+.home-service-link {
+  position: relative;
+
+  z-index: 2;
+
+  width: fit-content;
+
+  margin-top: auto;
+
+  padding-top: 30px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color: #a98cff;
+
+  font-size: 12px;
+
+  font-weight: 650;
+
+  transition:
+    gap 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.home-service-link:hover {
+  gap: 12px;
+
+  color: #d1c0ff;
+}
+
+
+.home-services-action {
+  margin-top: 30px;
+
+  display: flex;
+
+  justify-content: center;
+}
+
+
+/* =========================================
+   HOME PROJECTS
+========================================= */
+
+.home-projects-grid {
+  width: 100% !important;
+
+  margin-top: 58px !important;
+
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    ) !important;
+
+  gap: 18px !important;
+}
+
+
+.home-project-card {
+  position: relative !important;
+
+  width: 100% !important;
+
+  min-width: 0 !important;
+
+  min-height: 465px !important;
+
+  padding: 30px !important;
+
+  display: flex !important;
+
+  flex-direction: column !important;
+
+  overflow: hidden !important;
+
+  border-radius: 30px !important;
+
+  background:
+    radial-gradient(
+      circle at 80% 15%,
+      rgba(108, 51, 255, 0.15),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.012)
+    ) !important;
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+
+.home-project-card:hover {
+  transform:
+    translateY(-6px);
+
+  border-color:
+    rgba(
+      139,
+      92,
+      246,
+      0.32
+    );
+
+  box-shadow:
+    0 24px 70px
+    rgba(
+      0,
+      0,
+      0,
+      0.3
+    );
+}
+
+
+.home-project-art {
+  width: 100% !important;
+
+  height: 220px !important;
+
+  display: grid !important;
+
+  place-items: center !important;
+
+  flex-shrink: 0;
+
+  color: #b99aff;
+
+  border-radius: 24px !important;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        139,
+        92,
+        246,
+        0.19
+      ),
+      rgba(
+        6,
+        6,
+        9,
+        0.22
+      )
+    );
+
+  border:
+    1px solid
+    rgba(
+      160,
+      121,
+      255,
+      0.2
+    );
+
+  box-shadow:
+    inset 0 0 70px
+    rgba(
+      108,
+      51,
+      255,
+      0.07
+    );
+}
+
+
+.home-project-info {
+  margin-top: 26px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  flex: 1;
+}
+
+
+.home-project-type {
+  color: #a786ff;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  text-transform:
+    uppercase;
+
+  letter-spacing:
+    0.15em;
+}
+
+
+.home-project-info h3 {
+  margin-top: 9px;
+
+  font-size: 25px;
+
+  line-height: 1.2;
+
+  letter-spacing:
+    -0.035em;
+}
+
+
+.home-project-info p {
+  margin-top: 12px;
+
+  color:
+    var(
+      --text-secondary
+    );
+
+  font-size: 13px;
+
+  line-height: 1.7;
+}
+
+
+.home-project-link {
+  width: fit-content;
+
+  margin-top: auto;
+
+  padding-top: 23px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color: #a98cff;
+
+  font-size: 12px;
+
+  font-weight: 650;
+
+  transition:
+    gap 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.home-project-link:hover {
+  gap: 12px;
+
+  color: #d1c0ff;
+}
+
+
+/* =========================================
+   HOME RESPONSIVE
+========================================= */
+
+@media (max-width: 850px) {
+
+  .home-services-grid,
+  .home-projects-grid {
+    grid-template-columns:
+      minmax(0, 1fr) !important;
+  }
+
+}
+
+
+@media (max-width: 650px) {
+
+  .home-services-grid,
+  .home-projects-grid {
+    margin-top: 42px !important;
+
+    gap: 14px !important;
+  }
+
+
+  .home-service-card {
+    min-height: 310px !important;
+
+    padding: 25px !important;
+
+    border-radius:
+      25px !important;
+  }
+
+
+  .home-service-icon {
+    width: 55px;
+
+    height: 55px;
+
+    border-radius: 17px;
+  }
+
+
+  .home-service-content {
+    margin-top: 40px;
+  }
+
+
+  .home-service-content h3 {
+    font-size: 22px;
+  }
+
+
+  .home-project-card {
+    min-height: auto !important;
+
+    padding: 23px !important;
+
+    border-radius:
+      25px !important;
+  }
+
+
+  .home-project-art {
+    height: 185px !important;
+  }
+
+
+  .home-project-info h3 {
+    font-size: 22px;
+  }
+
+}

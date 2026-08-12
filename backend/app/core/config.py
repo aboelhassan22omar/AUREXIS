@@ -1,6 +1,9 @@
 from functools import lru_cache
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import (
+    BaseSettings,
+    SettingsConfigDict,
+)
 
 
 class Settings(BaseSettings):
@@ -10,7 +13,12 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     API_V1_PREFIX: str = "/api/v1"
+
     FRONTEND_URL: str = "http://localhost:3000"
+
+    ALLOWED_HOSTS: str = (
+        "localhost,127.0.0.1"
+    )
 
     DATABASE_URL: str
 
@@ -26,6 +34,16 @@ class Settings(BaseSettings):
         case_sensitive=True,
         extra="ignore",
     )
+
+    @property
+    def allowed_hosts_list(
+        self,
+    ) -> list[str]:
+        return [
+            host.strip()
+            for host in self.ALLOWED_HOSTS.split(",")
+            if host.strip()
+        ]
 
 
 @lru_cache

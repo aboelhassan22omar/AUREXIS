@@ -4,12 +4,13 @@ import {
   Bot,
   BrainCircuit,
   Code2,
-  Cpu,
+  Database,
   ShieldCheck,
   Workflow,
 } from "lucide-react";
 
 import { motion } from "motion/react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { getServices } from "@/lib/services";
@@ -18,23 +19,13 @@ import type { Service } from "@/types/api";
 
 
 const iconMap = {
-  "artificial-intelligence": BrainCircuit,
-  cybersecurity: ShieldCheck,
-  "ai-chatbots": Bot,
-  "business-automation": Workflow,
-  "custom-software": Code2,
-  "ai-integration": Cpu,
+  "ai-solutions": BrainCircuit,
+  "ai-chatbot-development": Bot,
+  "web-application-development": Code2,
+  "business-process-automation": Workflow,
+  "cybersecurity-solutions": ShieldCheck,
+  "systems-integration": Database,
 };
-
-
-const layoutClasses = [
-  "service-large",
-  "service-small",
-  "service-half",
-  "service-half",
-  "service-small",
-  "service-large",
-];
 
 
 export default function Services() {
@@ -54,7 +45,9 @@ export default function Services() {
         const data =
           await getServices();
 
-        setServices(data);
+        setServices(
+          data.slice(0, 4)
+        );
       } catch (error) {
         setError(
           error instanceof Error
@@ -97,110 +90,132 @@ export default function Services() {
             artificial intelligence and cybersecurity
             to build complete digital solutions.
           </p>
+
         </div>
 
 
         {loading && (
-          <div
-            style={{
-              marginTop: 60,
-              color: "#77737f",
-              fontSize: 14,
-            }}
-          >
+          <p className="home-section-status">
             Loading AXION services...
-          </div>
+          </p>
         )}
 
 
         {error && (
-          <div
-            style={{
-              marginTop: 60,
-              color: "#ff7b8d",
-              fontSize: 14,
-            }}
-          >
+          <p className="home-section-status home-section-error">
             {error}
-          </div>
+          </p>
         )}
 
 
         {!loading &&
           !error && (
-            <div className="services-grid">
+            <>
+              <div className="home-services-grid">
 
-              {services.map(
-                (
-                  service,
-                  index
-                ) => {
-                  const Icon =
-                    iconMap[
-                      service.slug as keyof typeof iconMap
-                    ] ??
-                    BrainCircuit;
+                {services.map(
+                  (
+                    service,
+                    index
+                  ) => {
+                    const Icon =
+                      iconMap[
+                        service.slug as keyof typeof iconMap
+                      ] ??
+                      BrainCircuit;
 
-                  const layout =
-                    layoutClasses[
-                      index %
-                        layoutClasses.length
-                    ];
+                    return (
+                      <motion.article
+                        key={service.id}
+                        className="home-service-card glass-card"
+                        initial={{
+                          opacity: 0,
+                          y: 30,
+                        }}
+                        whileInView={{
+                          opacity: 1,
+                          y: 0,
+                        }}
+                        viewport={{
+                          once: true,
+                          amount: 0.15,
+                        }}
+                        transition={{
+                          duration: 0.5,
+                          delay:
+                            index * 0.06,
+                        }}
+                      >
 
-                  return (
-                    <motion.article
-                      key={
-                        service.id
-                      }
-                      className={`service-card glass-card ${layout}`}
-                      initial={{
-                        opacity: 0,
-                        y: 35,
-                      }}
-                      whileInView={{
-                        opacity: 1,
-                        y: 0,
-                      }}
-                      viewport={{
-                        once: true,
-                        amount: 0.2,
-                      }}
-                      transition={{
-                        duration: 0.55,
-                        delay:
-                          index *
-                          0.05,
-                      }}
-                    >
-                      <div className="card-light" />
+                        <div className="home-service-glow" />
 
-                      <div className="service-icon">
-                        <Icon
-                          size={25}
-                          strokeWidth={
-                            1.5
-                          }
-                        />
-                      </div>
 
-                      <h3>
-                        {
-                          service.name
-                        }
-                      </h3>
+                        <div className="home-service-top">
 
-                      <p>
-                        {
-                          service.short_description
-                        }
-                      </p>
-                    </motion.article>
-                  );
-                }
-              )}
+                          <div className="home-service-icon">
+                            <Icon
+                              size={28}
+                              strokeWidth={1.4}
+                            />
+                          </div>
 
-            </div>
+
+                          <span className="home-service-number">
+                            {String(
+                              index + 1
+                            ).padStart(
+                              2,
+                              "0"
+                            )}
+                          </span>
+
+                        </div>
+
+
+                        <div className="home-service-content">
+
+                          <h3>
+                            {service.name}
+                          </h3>
+
+                          <p>
+                            {
+                              service.short_description
+                            }
+                          </p>
+
+                        </div>
+
+
+                        <Link
+                          href={`/services/${service.slug}`}
+                          className="home-service-link"
+                        >
+                          Learn more
+                          <span>→</span>
+                        </Link>
+
+                      </motion.article>
+                    );
+                  }
+                )}
+
+              </div>
+
+
+              <div className="home-services-action">
+
+                <Link
+                  href="/services"
+                  className="secondary-button"
+                >
+                  View all services
+                </Link>
+
+              </div>
+            </>
           )}
+
       </div>
     </section>
   );

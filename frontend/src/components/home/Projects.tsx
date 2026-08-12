@@ -1,65 +1,52 @@
 "use client";
 
 import {
-  ArrowUpRight,
+  ArrowRight,
   Bot,
   BrainCircuit,
+  Code2,
   ShieldCheck,
   Workflow,
 } from "lucide-react";
 
+import { motion } from "motion/react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-import {
-  motion,
-} from "motion/react";
+import { getProjects } from "@/lib/projects";
 
-import {
-  useEffect,
-  useState,
-} from "react";
-
-import {
-  getProjects,
-} from "@/lib/projects";
-
-import type {
-  Project,
-} from "@/types/api";
+import type { Project } from "@/types/api";
 
 
 const iconMap = {
-  "Conversational AI": Bot,
-  Cybersecurity: ShieldCheck,
+  "Artificial Intelligence": Bot,
+  "Web Development": Code2,
   Automation: Workflow,
+  Cybersecurity: ShieldCheck,
   "Custom AI": BrainCircuit,
 };
 
 
 export default function Projects() {
-  const [
-    projects,
-    setProjects,
-  ] = useState<Project[]>([]);
+  const [projects, setProjects] =
+    useState<Project[]>([]);
 
-  const [
-    loading,
-    setLoading,
-  ] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
-  const [
-    error,
-    setError,
-  ] = useState("");
+  const [error, setError] =
+    useState("");
 
 
   useEffect(() => {
     async function loadProjects() {
       try {
         const data =
-          await getProjects(true);
+          await getProjects();
 
-        setProjects(data);
+        setProjects(
+          data.slice(0, 4)
+        );
       } catch (error) {
         setError(
           error instanceof Error
@@ -76,22 +63,25 @@ export default function Projects() {
 
 
   return (
-    <section className="axion-section">
+    <section
+      className="axion-section"
+      id="projects"
+    >
       <div className="axion-container">
 
         <div className="projects-heading-row">
 
           <div>
             <span className="section-label">
-              Selected capabilities
+              Selected projects
             </span>
 
             <h2 className="section-title">
-              Built for the
+              Built for
               <br />
 
               <span className="gradient-text">
-                real world.
+                real requirements.
               </span>
             </h2>
           </div>
@@ -101,10 +91,10 @@ export default function Projects() {
             href="/projects"
             className="secondary-button"
           >
-            View capabilities
+            View all projects
 
-            <ArrowUpRight
-              size={17}
+            <ArrowRight
+              size={16}
             />
           </Link>
 
@@ -112,24 +102,14 @@ export default function Projects() {
 
 
         {loading && (
-          <p
-            style={{
-              marginTop: 55,
-              color: "#77737f",
-            }}
-          >
+          <p className="home-section-status">
             Loading projects...
           </p>
         )}
 
 
         {error && (
-          <p
-            style={{
-              marginTop: 55,
-              color: "#ff7b8d",
-            }}
-          >
+          <p className="home-section-status home-section-error">
             {error}
           </p>
         )}
@@ -137,7 +117,7 @@ export default function Projects() {
 
         {!loading &&
           !error && (
-            <div className="projects-grid">
+            <div className="home-projects-grid">
 
               {projects.map(
                 (
@@ -152,13 +132,11 @@ export default function Projects() {
 
                   return (
                     <motion.article
-                      className="project-card glass-card"
-                      key={
-                        project.id
-                      }
+                      key={project.id}
+                      className="home-project-card glass-card"
                       initial={{
                         opacity: 0,
-                        y: 35,
+                        y: 30,
                       }}
                       whileInView={{
                         opacity: 1,
@@ -166,30 +144,33 @@ export default function Projects() {
                       }}
                       viewport={{
                         once: true,
+                        amount: 0.15,
                       }}
                       transition={{
+                        duration: 0.5,
                         delay:
-                          index *
-                          0.07,
+                          index * 0.06,
                       }}
                     >
-                      <div className="project-art">
+
+                      <div className="home-project-art">
+
                         <Icon
-                          size={72}
-                          strokeWidth={
-                            1
-                          }
+                          size={58}
+                          strokeWidth={1}
                         />
+
                       </div>
 
 
-                      <div className="project-info">
+                      <div className="home-project-info">
 
-                        <span className="project-type">
+                        <span className="home-project-type">
                           {
                             project.category
                           }
                         </span>
+
 
                         <h3>
                           {
@@ -197,13 +178,24 @@ export default function Projects() {
                           }
                         </h3>
 
+
                         <p>
                           {
                             project.short_description
                           }
                         </p>
 
+
+                        <Link
+                          href={`/projects/${project.slug}`}
+                          className="home-project-link"
+                        >
+                          View project
+                          <span>→</span>
+                        </Link>
+
                       </div>
+
                     </motion.article>
                   );
                 }

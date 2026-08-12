@@ -2,6 +2,8 @@
 
 import {
   ArrowRight,
+  Eye,
+  EyeOff,
   LockKeyhole,
   Mail,
   UserRound,
@@ -9,27 +11,50 @@ import {
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import {
+  FormEvent,
+  useState,
+} from "react";
 
-import { registerUser } from "@/lib/auth";
+import {
+  registerUser,
+} from "@/lib/auth";
+
 
 export default function RegisterForm() {
-  const router = useRouter();
+  const router =
+    useRouter();
 
-  const [fullName, setFullName] =
-    useState("");
+  const [
+    fullName,
+    setFullName,
+  ] = useState("");
 
-  const [email, setEmail] =
-    useState("");
+  const [
+    email,
+    setEmail,
+  ] = useState("");
 
-  const [password, setPassword] =
-    useState("");
+  const [
+    password,
+    setPassword,
+  ] = useState("");
 
-  const [error, setError] =
-    useState("");
+  const [
+    showPassword,
+    setShowPassword,
+  ] = useState(false);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [
+    error,
+    setError,
+  ] = useState("");
+
+  const [
+    loading,
+    setLoading,
+  ] = useState(false);
+
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
@@ -41,12 +66,17 @@ export default function RegisterForm() {
 
     try {
       await registerUser({
-        full_name: fullName,
+        full_name:
+          fullName,
+
         email,
         password,
       });
 
-      router.push("/dashboard");
+      router.push(
+        "/dashboard"
+      );
+
       router.refresh();
     } catch (error) {
       setError(
@@ -59,100 +89,252 @@ export default function RegisterForm() {
     }
   }
 
+
   return (
     <form
       className="auth-form"
-      onSubmit={handleSubmit}
+      onSubmit={
+        handleSubmit
+      }
     >
       <div className="form-group">
-        <label>Full name</label>
+        <label>
+          Full name
+        </label>
 
-        <div style={{ position: "relative" }}>
+
+        <div
+          style={{
+            position:
+              "relative",
+          }}
+        >
           <UserRound
             size={17}
             style={{
-              position: "absolute",
+              position:
+                "absolute",
+
               left: 15,
               top: 17,
-              color: "#66616e",
+
+              color:
+                "#66616e",
+
+              pointerEvents:
+                "none",
             }}
           />
+
 
           <input
             className="form-input"
             placeholder="Your name"
-            style={{ paddingLeft: 44 }}
-            value={fullName}
-            onChange={(event) =>
-              setFullName(event.target.value)
+            style={{
+              paddingLeft: 44,
+            }}
+            value={
+              fullName
             }
+            onChange={(
+              event
+            ) =>
+              setFullName(
+                event.target.value
+              )
+            }
+            autoComplete="name"
             required
           />
         </div>
       </div>
 
-      <div className="form-group">
-        <label>Email</label>
 
-        <div style={{ position: "relative" }}>
+      <div className="form-group">
+        <label>
+          Email
+        </label>
+
+
+        <div
+          style={{
+            position:
+              "relative",
+          }}
+        >
           <Mail
             size={17}
             style={{
-              position: "absolute",
+              position:
+                "absolute",
+
               left: 15,
               top: 17,
-              color: "#66616e",
+
+              color:
+                "#66616e",
+
+              pointerEvents:
+                "none",
             }}
           />
+
 
           <input
             type="email"
             className="form-input"
             placeholder="you@example.com"
-            style={{ paddingLeft: 44 }}
+            style={{
+              paddingLeft: 44,
+            }}
             value={email}
-            onChange={(event) =>
-              setEmail(event.target.value)
+            onChange={(
+              event
+            ) =>
+              setEmail(
+                event.target.value
+              )
             }
+            autoComplete="email"
             required
           />
         </div>
       </div>
 
-      <div className="form-group">
-        <label>Password</label>
 
-        <div style={{ position: "relative" }}>
+      <div className="form-group">
+        <label>
+          Password
+        </label>
+
+
+        <div
+          style={{
+            position:
+              "relative",
+          }}
+        >
           <LockKeyhole
             size={17}
             style={{
-              position: "absolute",
+              position:
+                "absolute",
+
               left: 15,
               top: 17,
-              color: "#66616e",
+
+              color:
+                "#66616e",
+
+              pointerEvents:
+                "none",
             }}
           />
 
+
           <input
-            type="password"
+            type={
+              showPassword
+                ? "text"
+                : "password"
+            }
             className="form-input"
             placeholder="Minimum 8 characters"
-            style={{ paddingLeft: 44 }}
-            value={password}
-            onChange={(event) =>
-              setPassword(event.target.value)
+            style={{
+              paddingLeft: 44,
+              paddingRight: 48,
+            }}
+            value={
+              password
             }
+            onChange={(
+              event
+            ) =>
+              setPassword(
+                event.target.value
+              )
+            }
+            autoComplete="new-password"
             minLength={8}
             required
           />
+
+
+          <button
+            type="button"
+            aria-label={
+              showPassword
+                ? "Hide password"
+                : "Show password"
+            }
+            title={
+              showPassword
+                ? "Hide password"
+                : "Show password"
+            }
+            onClick={() =>
+              setShowPassword(
+                (current) =>
+                  !current
+              )
+            }
+            style={{
+              position:
+                "absolute",
+
+              right: 12,
+              top: "50%",
+
+              transform:
+                "translateY(-50%)",
+
+              width: 32,
+              height: 32,
+
+              display:
+                "grid",
+
+              placeItems:
+                "center",
+
+              padding: 0,
+
+              border: "none",
+
+              borderRadius: 9,
+
+              background:
+                "transparent",
+
+              color:
+                "#77717f",
+
+              cursor:
+                "pointer",
+            }}
+          >
+            {showPassword ? (
+              <EyeOff
+                size={17}
+              />
+            ) : (
+              <Eye
+                size={17}
+              />
+            )}
+          </button>
         </div>
       </div>
+
 
       {error && (
         <p
           style={{
             marginBottom: 16,
-            color: "#ff7b8d",
+
+            color:
+              "#ff7b8d",
+
             fontSize: 13,
           }}
         >
@@ -160,25 +342,39 @@ export default function RegisterForm() {
         </p>
       )}
 
+
       <button
         type="submit"
         className="primary-button"
         style={{
           width: "100%",
           marginTop: 8,
-          opacity: loading ? 0.7 : 1,
+
+          opacity:
+            loading
+              ? 0.7
+              : 1,
         }}
-        disabled={loading}
+        disabled={
+          loading
+        }
       >
         {loading
           ? "Creating account..."
           : "Create Account"}
 
-        {!loading && <ArrowRight size={17} />}
+
+        {!loading && (
+          <ArrowRight
+            size={17}
+          />
+        )}
       </button>
+
 
       <div className="auth-footer">
         Already have an account?{" "}
+
         <Link href="/login">
           Sign in
         </Link>
