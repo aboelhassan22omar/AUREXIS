@@ -29,6 +29,7 @@ type RobotSceneProps = {
   pose: RobotPose;
   waveSignal: number;
   interactionActive: boolean;
+  openingChat: boolean;
   pointTarget: RobotPointTarget | null;
 };
 
@@ -38,8 +39,8 @@ type RobotMaterials = {
   face: THREE.MeshPhysicalMaterial;
   darkMetal: THREE.MeshPhysicalMaterial;
   navyDetail: THREE.MeshStandardMaterial;
-  eye: THREE.MeshStandardMaterial;
-  eyeGlow: THREE.MeshStandardMaterial;
+  eye: THREE.MeshBasicMaterial;
+  eyeGlow: THREE.MeshBasicMaterial;
   seam: THREE.MeshStandardMaterial;
   reflection: THREE.MeshBasicMaterial;
   antenna: THREE.MeshPhysicalMaterial;
@@ -52,13 +53,26 @@ const HEAD_PITCH_LIMIT = THREE.MathUtils.degToRad(19);
 const HEAD_TRACKING_DAMPING = 6.5;
 const IDLE_ACTION_MIN_DELAY = 8;
 const IDLE_ACTION_MAX_DELAY = 15;
-const RETURN_TO_IDLE_DURATION = 0.55;
+const RETURN_TO_REST_MAX_DURATION = 0.8;
+const ARM_REST_EPSILON = 0.002;
+const ARM_REST_POSE = Object.freeze({
+  shoulderAnchor: Object.freeze({
+    x: 1.14,
+    y: -1.32,
+    z: -0.12,
+  }),
+  leftShoulder: -0.08,
+  leftForearm: 0,
+  rightShoulder: 0.08,
+  rightForearm: 0,
+});
 
 type IdleAction =
   | "none"
   | "glance-left"
   | "glance-right"
   | "head-tilt"
+  | "nod"
   | "soft-wave";
 
 /*
@@ -114,10 +128,14 @@ function createRobotMaterials(): RobotMaterials {
     }),
     face: new THREE.MeshPhysicalMaterial({
       color: ROBOT_FACE.clone(),
-      metalness: 0.22,
-      roughness: 0.13,
-      clearcoat: 0.78,
-      clearcoatRoughness: 0.055,
+      metalness: 0,
+      roughness: 0.18,
+      clearcoat: 0.5,
+      clearcoatRoughness: 0.12,
+      envMapIntensity: 0.12,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1,
     }),
     darkMetal: new THREE.MeshPhysicalMaterial({
       color: ROBOT_NAVY.clone(),
@@ -127,23 +145,20 @@ function createRobotMaterials(): RobotMaterials {
       clearcoatRoughness: 0.19,
     }),
     navyDetail: makeNavyDetail(),
-    eye: new THREE.MeshStandardMaterial({
+    eye: new THREE.MeshBasicMaterial({
       color: ROBOT_WHITE.clone(),
-      emissive: ROBOT_WHITE.clone(),
-      emissiveIntensity: 1.25,
-      metalness: 0.02,
-      roughness: 0.2,
       toneMapped: false,
+      depthWrite: false,
+      depthTest: false,
       side: THREE.DoubleSide,
     }),
-    eyeGlow: new THREE.MeshStandardMaterial({
+    eyeGlow: new THREE.MeshBasicMaterial({
       color: ROBOT_WHITE.clone(),
-      emissive: ROBOT_WHITE.clone(),
-      emissiveIntensity: 0.28,
       transparent: true,
-      opacity: 0.11,
+      opacity: 0.13,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
+      depthTest: false,
       toneMapped: false,
       side: THREE.DoubleSide,
     }),
@@ -232,6 +247,7 @@ function Eye({
       <mesh
         scale={[1.12, 1.18, 1]}
         material={materials.eyeGlow}
+        renderOrder={10}
       >
         <shapeGeometry args={[shape, 30]} />
       </mesh>
@@ -240,6 +256,7 @@ function Eye({
         position={[0, 0, 0.012]}
         scale={[0.9, 0.88, 1]}
         material={materials.eye}
+        renderOrder={11}
       >
         <shapeGeometry args={[shape, 30]} />
       </mesh>
@@ -258,50 +275,17 @@ function FacePanel({
     () => createFaceShape(),
     []
   );
-
-  const grooves = useMemo(
-    () =>
-      Array.from({ length: 7 }, (_, index) => {
-        const y = 0.26 - index * 0.105;
-        const width = 1.72 - index * 0.035;
-        return { y, width };
-      }),
-    []
-  );
-
   return (
     <group>
       <mesh
-        position={[0, -0.04, 0.995]}
-        scale={[1.055, 1.055, 1]}
-        material={materials.shellSecondary}
-      >
-        <shapeGeometry args={[faceShape, 30]} />
-      </mesh>
-
-      <mesh
         position={[0, -0.04, 1.018]}
         material={materials.face}
+        renderOrder={2}
       >
         <shapeGeometry args={[faceShape, 30]} />
       </mesh>
 
-      {grooves.map(({ y, width }, index) => (
-        <RoundedBox
-          key={index}
-          args={[width, 0.018, 0.014]}
-          radius={0.008}
-          smoothness={4}
-          position={[
-            0,
-            y - 0.04,
-            1.032,
-          ]}
-          material={materials.seam}
-        />
-      ))}
-
-      <group ref={eyesRef}>
+      <group ref={eyesRef} renderOrder={3}>
         <Eye
           side={-1}
           materials={materials}
@@ -475,6 +459,7 @@ function Head({
         </mesh>
 
         <PanelSeams materials={materials} />
+
         <FacePanel
           materials={materials}
           eyesRef={eyesRef}
@@ -600,11 +585,26 @@ function Arm({
   shoulderRef?: RefObject<THREE.Group | null>;
   forearmRef?: RefObject<THREE.Group | null>;
 }) {
+  const restPose =
+    side === -1
+      ? {
+          shoulder: ARM_REST_POSE.leftShoulder,
+          forearm: ARM_REST_POSE.leftForearm,
+        }
+      : {
+          shoulder: ARM_REST_POSE.rightShoulder,
+          forearm: ARM_REST_POSE.rightForearm,
+        };
+
   return (
     <group
       ref={shoulderRef}
-      position={[side * 0.98, -1.32, 0.02]}
-      rotation={[0, 0, side * -0.18]}
+      position={[
+        side * ARM_REST_POSE.shoulderAnchor.x,
+        ARM_REST_POSE.shoulderAnchor.y,
+        ARM_REST_POSE.shoulderAnchor.z,
+      ]}
+      rotation={[0, 0, restPose.shoulder]}
     >
       {/* Navy shoulder pivot sits slightly inside the torso so the arm never looks detached. */}
       <mesh
@@ -637,6 +637,7 @@ function Arm({
       <group
         ref={forearmRef}
         position={[side * 0.07, -0.54, 0]}
+        rotation={[0, 0, restPose.forearm]}
       >
         {/* Thin navy wrist seam is the only colored break between the silver shells. */}
         <mesh
@@ -807,6 +808,7 @@ function RobotModel({
   pose,
   waveSignal,
   interactionActive,
+  openingChat,
   pointTarget,
 }: RobotSceneProps) {
   const { size, viewport } = useThree();
@@ -843,15 +845,17 @@ function RobotModel({
     useRef<THREE.ShaderMaterial | null>(null);
 
   const nextBlinkRef = useRef(2.7);
-  const blinkEndRef = useRef(0);
+  const blinkStartRef = useRef(-1);
   const manualWaveUntilRef = useRef(0);
+  const manualWaveStartRef = useRef(0);
   const manualWaveSideRef = useRef<-1 | 1>(-1);
   const animationStateRef =
     useRef<RobotAnimationState>("idle");
-  const returnToIdleUntilRef = useRef(0);
+  const returnToRestStartedRef = useRef(0);
   const idleActionRef =
     useRef<IdleAction>("none");
   const idleActionEndRef = useRef(0);
+  const idleActionStartRef = useRef(0);
   const nextIdleActionRef = useRef(
     IDLE_ACTION_MIN_DELAY +
       Math.random() *
@@ -866,6 +870,7 @@ function RobotModel({
 
   useEffect(
     () => () => {
+      if (eyesRef.current) eyesRef.current.scale.y = 1;
       Object.values(materials).forEach(
         (material) => material.dispose()
       );
@@ -971,9 +976,25 @@ function RobotModel({
 
     manualWaveSideRef.current =
       manualWaveSideRef.current === -1 ? 1 : -1;
+    manualWaveStartRef.current = performance.now();
     manualWaveUntilRef.current =
       performance.now() + 1800;
   }, [waveSignal]);
+
+  useEffect(() => {
+    if (!paused && !reducedMotion) {
+      return;
+    }
+
+    blinkStartRef.current = -1;
+    animationStateRef.current = 'idle';
+
+    if (eyesRef.current) eyesRef.current.scale.y = 1;
+    if (waveShoulderRef.current) waveShoulderRef.current.rotation.z = ARM_REST_POSE.leftShoulder;
+    if (waveForearmRef.current) waveForearmRef.current.rotation.z = ARM_REST_POSE.leftForearm;
+    if (rightShoulderRef.current) rightShoulderRef.current.rotation.z = ARM_REST_POSE.rightShoulder;
+    if (rightForearmRef.current) rightForearmRef.current.rotation.z = ARM_REST_POSE.rightForearm;
+  }, [paused, reducedMotion]);
 
   useFrame((state, delta) => {
     const root = rootRef.current;
@@ -1063,29 +1084,22 @@ function RobotModel({
 
     const manualWave =
       performance.now() < manualWaveUntilRef.current;
-    const automaticWave =
-      pose === "wave" && t % 10 < 2.35;
-    const stopPointing = pose === "point";
-    const explainMotion = pose === "explain";
     const pointerTracking =
       cursor.current.active &&
       !reducedMotion &&
       !paused;
     const messagePointing = pointTarget !== null;
 
-    const higherPriorityAction =
+    const blockingIdleAction =
       messagePointing ||
       manualWave ||
-      automaticWave ||
-      interactionActive ||
-      pointerTracking ||
-      stopPointing ||
-      explainMotion;
+      openingChat ||
+      interactionActive;
 
     if (
       !reducedMotion &&
       !paused &&
-      !higherPriorityAction
+      !blockingIdleAction
     ) {
       if (
         idleActionRef.current !== "none" &&
@@ -1104,7 +1118,7 @@ function RobotModel({
         idleActionRef.current === "none" &&
         t >= nextIdleActionRef.current
       ) {
-        const choice = Math.floor(Math.random() * 5);
+        const choice = Math.floor(Math.random() * 6);
 
         idleActionRef.current =
           choice === 0
@@ -1113,7 +1127,10 @@ function RobotModel({
               ? "glance-right"
               : choice === 2 || choice === 3
                 ? "head-tilt"
-                : "soft-wave";
+                : choice === 4
+                  ? "nod"
+                  : "soft-wave";
+        idleActionStartRef.current = t;
         idleActionEndRef.current =
           t +
           (idleActionRef.current === "soft-wave"
@@ -1125,7 +1142,7 @@ function RobotModel({
             Math.random() > 0.5 ? 1 : -1;
         }
       }
-    } else if (higherPriorityAction) {
+    } else if (blockingIdleAction) {
       idleActionRef.current = "none";
       nextIdleActionRef.current =
         Math.max(
@@ -1137,54 +1154,67 @@ function RobotModel({
     const idleAction = idleActionRef.current;
     const idleSoftWave =
       idleAction === "soft-wave" &&
-      !higherPriorityAction &&
+      !blockingIdleAction &&
       !reducedMotion &&
       !paused;
     const waving =
       !reducedMotion &&
       !paused &&
-      (manualWave || automaticWave || idleSoftWave);
+      (manualWave || idleSoftWave);
 
     let desiredAnimationState: RobotAnimationState = "idle";
 
     if (messagePointing) {
       desiredAnimationState = "showingMessage";
-    } else if (stopPointing) {
-      desiredAnimationState = "pointing";
+    } else if (openingChat) {
+      desiredAnimationState = "openingChat";
     } else if (waving) {
       desiredAnimationState = "waving";
     } else if (interactionActive) {
-      desiredAnimationState = "hovered";
+      desiredAnimationState = "listening";
     } else if (pointerTracking) {
       desiredAnimationState = "trackingPointer";
     }
 
     const previousAnimationState =
       animationStateRef.current;
+    const canInterruptReturn =
+      messagePointing || openingChat || manualWave;
+    const previousUsedArms =
+      previousAnimationState === "showingMessage" ||
+      previousAnimationState === "pointing" ||
+      previousAnimationState === "waving" ||
+      previousAnimationState === "welcoming" ||
+      previousAnimationState === "openingChat";
 
     if (
-      desiredAnimationState === "idle" &&
-      previousAnimationState !== "idle" &&
-      previousAnimationState !== "returningToIdle"
+      previousAnimationState === "returningToRest" &&
+      !canInterruptReturn
     ) {
-      animationStateRef.current = "returningToIdle";
-      returnToIdleUntilRef.current =
-        t + RETURN_TO_IDLE_DURATION;
+      animationStateRef.current = "returningToRest";
     } else if (
-      previousAnimationState === "returningToIdle" &&
-      t >= returnToIdleUntilRef.current
+      previousUsedArms &&
+      desiredAnimationState !== "showingMessage" &&
+      desiredAnimationState !== "waving" &&
+      desiredAnimationState !== "openingChat"
     ) {
-      animationStateRef.current = "idle";
-    } else if (desiredAnimationState !== "idle") {
+      animationStateRef.current = "returningToRest";
+      returnToRestStartedRef.current = t;
+    } else {
       animationStateRef.current = desiredAnimationState;
     }
+
+    const returningToRest =
+      animationStateRef.current === "returningToRest";
 
     let idleHeadYaw = 0;
     let idleHeadPitch = 0;
     let idleHeadRoll = 0;
 
     if (
-      !higherPriorityAction &&
+      !blockingIdleAction &&
+      !pointerTracking &&
+      !returningToRest &&
       !reducedMotion &&
       !paused
     ) {
@@ -1195,6 +1225,14 @@ function RobotModel({
       } else if (idleAction === "head-tilt") {
         idleHeadPitch = -0.055;
         idleHeadRoll = Math.sin(t * 1.4) * 0.045;
+      } else if (idleAction === "nod") {
+        const nodProgress = THREE.MathUtils.clamp(
+          (t - idleActionStartRef.current) /
+            Math.max(idleActionEndRef.current - idleActionStartRef.current, 0.001),
+          0,
+          1
+        );
+        idleHeadPitch = Math.sin(nodProgress * Math.PI * 2) * 0.085;
       }
     }
 
@@ -1211,6 +1249,9 @@ function RobotModel({
           -0.13,
           0.13
         );
+      } else if (openingChat) {
+        targetPitch = 0.12;
+        targetRoll = Math.sin(t * 9) * 0.018;
       } else if (pointerTracking || interactionActive) {
         targetYaw = THREE.MathUtils.clamp(
           cursor.current.x * HEAD_YAW_LIMIT,
@@ -1222,6 +1263,15 @@ function RobotModel({
           -HEAD_PITCH_LIMIT,
           HEAD_PITCH_LIMIT
         );
+
+        if (interactionActive) {
+          targetPitch += 0.035;
+          targetRoll = THREE.MathUtils.clamp(
+            -cursor.current.x * 0.055,
+            -0.055,
+            0.055
+          );
+        }
       }
 
       if (reducedMotion || paused) {
@@ -1284,17 +1334,27 @@ function RobotModel({
         !paused &&
         t >= nextBlinkRef.current
       ) {
-        blinkEndRef.current = t + 0.11;
+        blinkStartRef.current = t;
         nextBlinkRef.current =
-          t + 2.8 + Math.random() * 3.6;
+          t + 3.1 + Math.random() * 3.9;
       }
 
-      const blink =
-        !reducedMotion &&
-        !paused &&
-        t < blinkEndRef.current
-          ? 0.08
-          : 1;
+      const blinkElapsed = t - blinkStartRef.current;
+      const blinkActive =
+        !reducedMotion && !paused &&
+        blinkStartRef.current >= 0 && blinkElapsed < 0.18;
+      const blink = blinkActive
+        ? blinkElapsed < 0.065
+          ? THREE.MathUtils.lerp(1, 0.08, blinkElapsed / 0.065)
+          : blinkElapsed < 0.09
+            ? 0.08
+            : THREE.MathUtils.lerp(0.08, 1, (blinkElapsed - 0.09) / 0.09)
+        : 1;
+
+      if (!blinkActive) {
+        blinkStartRef.current = -1;
+        eyesRef.current.scale.y = 1;
+      }
       const eyeTrackX =
         pointerTracking || interactionActive
           ? THREE.MathUtils.clamp(
@@ -1312,12 +1372,9 @@ function RobotModel({
             )
           : 0;
 
-      eyesRef.current.scale.y = damp(
-        eyesRef.current.scale.y,
-        blink,
-        35,
-        delta
-      );
+      if (blinkActive) {
+        eyesRef.current.scale.y = blink;
+      }
       eyesRef.current.position.x = damp(
         eyesRef.current.position.x,
         reducedMotion || paused ? 0 : eyeTrackX,
@@ -1355,14 +1412,14 @@ function RobotModel({
     }
 
     const armIdleSway =
-      reducedMotion || paused
+      reducedMotion || paused || returningToRest
         ? 0
         : Math.sin(t * 0.92) * 0.012;
 
-    let leftShoulderTarget = 0.18 + armIdleSway;
-    let leftForearmTarget = armIdleSway * 0.45;
-    let rightShoulderTarget = -0.18 - armIdleSway;
-    let rightForearmTarget = -armIdleSway * 0.45;
+    let leftShoulderTarget = ARM_REST_POSE.leftShoulder - armIdleSway;
+    let leftForearmTarget = ARM_REST_POSE.leftForearm - armIdleSway * 0.45;
+    let rightShoulderTarget = ARM_REST_POSE.rightShoulder + armIdleSway;
+    let rightForearmTarget = ARM_REST_POSE.rightForearm + armIdleSway * 0.45;
 
     if (
       messagePointing &&
@@ -1379,11 +1436,15 @@ function RobotModel({
         ) * 0.33;
 
       if (pointTarget.side === "left") {
-        leftShoulderTarget = -pointAngle;
-        leftForearmTarget = -0.1;
+        leftShoulderTarget =
+          ARM_REST_POSE.leftShoulder - pointAngle;
+        leftForearmTarget =
+          ARM_REST_POSE.leftForearm - 0.1;
       } else {
-        rightShoulderTarget = pointAngle;
-        rightForearmTarget = 0.1;
+        rightShoulderTarget =
+          ARM_REST_POSE.rightShoulder + pointAngle;
+        rightForearmTarget =
+          ARM_REST_POSE.rightForearm + 0.1;
       }
     } else if (waving) {
       const waveSide = manualWave
@@ -1391,33 +1452,27 @@ function RobotModel({
         : idleSoftWave
           ? idleWaveSideRef.current
           : -1;
-      const shoulderWave =
-        1.43 + Math.sin(t * 2.8) * 0.07;
-      const forearmWave =
-        0.12 + Math.sin(t * 5.2) * 0.14;
+      const waveElapsed = manualWave
+        ? Math.max(0, (performance.now() - manualWaveStartRef.current) / 1000)
+        : Math.max(0, t - idleActionStartRef.current);
+      const waveOscillation = Math.sin(waveElapsed * Math.PI * 3.2);
+      const shoulderWaveOffset = 1.3 + waveOscillation * 0.08;
+      const forearmWaveOffset = 0.12 + waveOscillation * 0.28;
 
       if (waveSide === -1) {
-        leftShoulderTarget = -shoulderWave;
-        leftForearmTarget = -forearmWave;
+        leftShoulderTarget =
+          ARM_REST_POSE.leftShoulder - shoulderWaveOffset;
+        leftForearmTarget =
+          ARM_REST_POSE.leftForearm - forearmWaveOffset;
       } else {
-        rightShoulderTarget = shoulderWave;
-        rightForearmTarget = forearmWave;
+        rightShoulderTarget =
+          ARM_REST_POSE.rightShoulder + shoulderWaveOffset;
+        rightForearmTarget =
+          ARM_REST_POSE.rightForearm + forearmWaveOffset;
       }
-    } else if (
-      stopPointing &&
-      !reducedMotion &&
-      !paused
-    ) {
-      leftShoulderTarget = -0.9;
-      leftForearmTarget = -0.08;
-    } else if (
-      explainMotion &&
-      !reducedMotion &&
-      !paused
-    ) {
-      leftShoulderTarget =
-        -0.65 + Math.sin(t * 1.7) * 0.04;
-      leftForearmTarget = -0.06;
+    } else if (openingChat && !reducedMotion && !paused) {
+      leftShoulderTarget = ARM_REST_POSE.leftShoulder + 0.1;
+      rightShoulderTarget = ARM_REST_POSE.rightShoulder - 0.1;
     }
 
     if (
@@ -1454,6 +1509,32 @@ function RobotModel({
         6.8,
         delta
       );
+    }
+
+    if (
+      waveShoulderRef.current && waveForearmRef.current &&
+      rightShoulderRef.current && rightForearmRef.current &&
+      (returningToRest || reducedMotion || paused)
+    ) {
+      const jointsAtRest =
+        Math.abs(waveShoulderRef.current.rotation.z - ARM_REST_POSE.leftShoulder) < ARM_REST_EPSILON &&
+        Math.abs(waveForearmRef.current.rotation.z - ARM_REST_POSE.leftForearm) < ARM_REST_EPSILON &&
+        Math.abs(rightShoulderRef.current.rotation.z - ARM_REST_POSE.rightShoulder) < ARM_REST_EPSILON &&
+        Math.abs(rightForearmRef.current.rotation.z - ARM_REST_POSE.rightForearm) < ARM_REST_EPSILON;
+      const returnTimedOut =
+        t - returnToRestStartedRef.current >= RETURN_TO_REST_MAX_DURATION;
+
+      if (jointsAtRest || returnTimedOut || reducedMotion || paused) {
+        waveShoulderRef.current.rotation.z = ARM_REST_POSE.leftShoulder;
+        waveForearmRef.current.rotation.z = ARM_REST_POSE.leftForearm;
+        rightShoulderRef.current.rotation.z = ARM_REST_POSE.rightShoulder;
+        rightForearmRef.current.rotation.z = ARM_REST_POSE.rightForearm;
+        animationStateRef.current = interactionActive
+          ? 'listening'
+          : pointerTracking
+            ? 'trackingPointer'
+            : 'idle';
+      }
     }
   });
 

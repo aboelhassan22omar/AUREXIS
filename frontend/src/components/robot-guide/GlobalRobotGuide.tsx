@@ -960,6 +960,8 @@ function PersistentRobotGuide({
     useState(false);
   const [robotPressed, setRobotPressed] =
     useState(false);
+  const [openingChat, setOpeningChat] =
+    useState(false);
 
   const cursorRef =
     useRef<CursorDirection>({
@@ -992,6 +994,10 @@ function PersistentRobotGuide({
     useRef<number | null>(null);
   const initialReadyTimerRef =
     useRef<number | null>(null);
+  const chatNavigationTimerRef =
+    useRef<number | null>(null);
+  const welcomePlayedRef = useRef(false);
+  const messageGenerationRef = useRef(0);
   const initialPlacementDoneRef =
     useRef(false);
 
@@ -1064,6 +1070,8 @@ function PersistentRobotGuide({
 
   const clearMessageTimers =
     useCallback(() => {
+      messageGenerationRef.current += 1;
+
       if (messageTimerRef.current !== null) {
         window.clearTimeout(
           messageTimerRef.current
@@ -1150,6 +1158,8 @@ function PersistentRobotGuide({
         stop: RobotStop,
         force = false
       ) => {
+        const generation =
+          ++messageGenerationRef.current;
         const now = Date.now();
         const lastShown =
           lastShownRef.current.get(
@@ -1183,6 +1193,10 @@ function PersistentRobotGuide({
           now
         );
 
+        if (!reducedMotion && stop.pose === "wave") {
+          setWaveSignal((value) => value + 1);
+        }
+
         if (hideTimerRef.current !== null) {
           window.clearTimeout(
             hideTimerRef.current
@@ -1212,6 +1226,10 @@ function PersistentRobotGuide({
 
         pointLeadTimerRef.current =
           window.setTimeout(() => {
+            if (generation !== messageGenerationRef.current) {
+              return;
+            }
+
             showMessage(
               stop.message,
               side,
@@ -1968,6 +1986,21 @@ function PersistentRobotGuide({
   ]);
 
   useEffect(() => {
+    if (!ready || welcomePlayedRef.current) {
+      return;
+    }
+
+    welcomePlayedRef.current = true;
+
+    const loginGreetingPending =
+      window.sessionStorage.getItem(LOGIN_GREETING_PENDING_KEY) === "1";
+
+    if (!reducedMotion && !loginGreetingPending) {
+      setWaveSignal((value) => value + 1);
+    }
+  }, [ready, reducedMotion]);
+
+  useEffect(() => {
     if (!ready) {
       return;
     }
@@ -2084,6 +2117,10 @@ function PersistentRobotGuide({
           initialReadyTimerRef.current
         );
       }
+
+      if (chatNavigationTimerRef.current !== null) {
+        window.clearTimeout(chatNavigationTimerRef.current);
+      }
     };
   }, [clearMessageTimers]);
 
@@ -2109,10 +2146,27 @@ function PersistentRobotGuide({
 
   const handleRobotActivate =
     useCallback(() => {
+      if (openingChat) {
+        return;
+      }
+
+      clearMessageTimers();
+      hideBubble();
       setRobotHovered(false);
       setRobotPressed(false);
-      router.push("/chat");
-    }, [router]);
+      setOpeningChat(true);
+
+      if (reducedMotion) {
+        router.push("/chat");
+        return;
+      }
+
+      chatNavigationTimerRef.current =
+        window.setTimeout(() => {
+          router.push("/chat");
+          chatNavigationTimerRef.current = null;
+        }, 420);
+    }, [clearMessageTimers, hideBubble, openingChat, reducedMotion, router]);
 
   return (
     <div
@@ -2145,6 +2199,7 @@ function PersistentRobotGuide({
           waveSignal={waveSignal}
           breakpoint={viewport.breakpoint}
           interactionActive={interactionActive}
+          openingChat={openingChat}
           pointTarget={pointTarget}
         />
       </div>
@@ -2177,6 +2232,7 @@ function PersistentRobotGuide({
                 onHoverChange={setRobotHovered}
                 onPressChange={setRobotPressed}
                 hintSide={interactionHintSide}
+                disabled={openingChat}
               />
             </motion.div>
           </motion.div>

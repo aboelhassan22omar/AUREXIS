@@ -29,6 +29,7 @@ type RobotInteractionAreaProps = {
   onHoverChange: (hovered: boolean) => void;
   onPressChange: (pressed: boolean) => void;
   hintSide: RobotBubbleSide;
+  disabled?: boolean;
 };
 
 export default function RobotInteractionArea({
@@ -36,6 +37,7 @@ export default function RobotInteractionArea({
   onHoverChange,
   onPressChange,
   hintSide,
+  disabled = false,
 }: RobotInteractionAreaProps) {
   const pointerStartRef =
     useRef<PointerStart | null>(null);
@@ -217,6 +219,7 @@ export default function RobotInteractionArea({
   return (
     <button
       type="button"
+      disabled={disabled}
       className={styles.hitArea}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
@@ -230,7 +233,7 @@ export default function RobotInteractionArea({
       onKeyUp={handleKeyUp}
       aria-label="Open AUREXIS AI chat"
       title="Open AUREXIS AI chat"
-      tabIndex={0}
+      tabIndex={disabled ? -1 : 0}
       data-robot-hit-area="true"
       data-hint-side={hintSide}
     >

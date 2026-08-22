@@ -32,6 +32,9 @@ const initialThemeScript = `
 `;
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:8090'
+  ),
   title: {
     default:
       "AUREXIS | Intelligence. Software. Solutions.",
@@ -67,6 +70,21 @@ export const metadata: Metadata = {
       {
         url: "/brand/aurexis-mark.svg",
         type: "image/svg+xml",
+      },
+      {
+        url: "/brand/aurexis-icon-16.png",
+        sizes: "16x16",
+        type: "image/png",
+      },
+      {
+        url: "/brand/aurexis-icon-32.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+      {
+        url: "/brand/aurexis-icon-48.png",
+        sizes: "48x48",
+        type: "image/png",
       },
       {
         url: "/brand/aurexis-icon-192.png",

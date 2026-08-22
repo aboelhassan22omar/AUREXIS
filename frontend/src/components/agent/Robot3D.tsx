@@ -200,6 +200,9 @@ export default function Robot3D({
   const rightArmRef =
     useRef<THREE.Group>(null);
 
+  const nextBlinkRef = useRef(2.8);
+  const blinkStartRef = useRef(-1);
+
   const glowColor = useMemo(
     () => new THREE.Color("#f0d58f"),
     []
@@ -260,15 +263,28 @@ export default function Robot3D({
     }
 
     if (eyesRef.current) {
-      const blinkCycle = t % 5.4;
-      const targetScaleY =
-        blinkCycle > 5.18 ? 0.08 : 1;
+      if (t >= nextBlinkRef.current) {
+        blinkStartRef.current = t;
+        nextBlinkRef.current = t + 3.2 + Math.random() * 3.8;
+      }
+
+      const elapsed = t - blinkStartRef.current;
+      const active = blinkStartRef.current >= 0 && elapsed < 0.18;
+      const targetScaleY = active
+        ? elapsed < 0.065
+          ? THREE.MathUtils.lerp(1, 0.08, elapsed / 0.065)
+          : elapsed < 0.09
+            ? 0.08
+            : THREE.MathUtils.lerp(0.08, 1, (elapsed - 0.09) / 0.09)
+        : 1;
+
+      if (!active) blinkStartRef.current = -1;
 
       eyesRef.current.scale.y =
         THREE.MathUtils.damp(
           eyesRef.current.scale.y,
           targetScaleY,
-          26,
+          active ? 55 : 42,
           delta
         );
     }

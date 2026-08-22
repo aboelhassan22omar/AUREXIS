@@ -30,6 +30,7 @@ export type RobotCanvasProps = {
   waveSignal: number;
   breakpoint: RobotBreakpoint;
   interactionActive: boolean;
+  openingChat: boolean;
   pointTarget: RobotPointTarget | null;
 };
 

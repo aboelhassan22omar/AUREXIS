@@ -258,7 +258,7 @@ body:has(.mobile-menu) {
   margin-top: 18px;
   max-width: 100%;
   font-size: clamp(2.6rem, 12.6vw, 3.55rem);
-  line-height: 0.91;
+  line-height: 1;
   letter-spacing: -0.067em;
   text-wrap: balance;
 }

@@ -18,10 +18,15 @@ export type RobotPose =
 export type RobotAnimationState =
   | "idle"
   | "trackingPointer"
+  | "blinking"
   | "hovered"
+  | "listening"
+  | "welcoming"
   | "waving"
   | "pointing"
   | "showingMessage"
+  | "openingChat"
+  | "returningToRest"
   | "returningToIdle";
 
 export type RobotPointTarget = {

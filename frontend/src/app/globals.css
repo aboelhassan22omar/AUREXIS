@@ -407,13 +407,18 @@ button {
 .hero-title {
   margin-top: 27px;
   font-size: clamp(4rem, 7vw, 7rem);
-  line-height: 0.9;
+  line-height: 0.98;
   letter-spacing: -0.075em;
   font-weight: 720;
 }
 
 .hero-title-line {
   display: block;
+  padding-bottom: 0.09em;
+}
+
+.hero-title-line.gradient-text {
+  line-height: 1.08;
 }
 
 .hero-description {
@@ -2974,10 +2979,7 @@ textarea.form-input {
 
 .logo-mark {
   display: block;
-  width: auto;
-  height: auto;
   flex: 0 0 auto;
-  filter: drop-shadow(0 8px 22px var(--color-accent-soft));
 }
 
 .desktop-nav a.is-active,
