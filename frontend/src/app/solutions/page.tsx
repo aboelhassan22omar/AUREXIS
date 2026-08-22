@@ -11,7 +11,7 @@ import Navbar from "@/components/layout/Navbar";
 export const metadata: Metadata = {
   title: "Solutions",
   description:
-    "Explore how AXION combines artificial intelligence, cybersecurity, automation and software engineering to solve complex business problems.",
+    "Explore how Aurexis combines artificial intelligence, cybersecurity, automation and software engineering to solve complex business problems.",
 };
 
 
@@ -25,10 +25,10 @@ export default function SolutionsPage() {
           className="page-hero"
           style={{
             background:
-              "radial-gradient(circle at 50% 20%, rgba(108,51,255,.10), transparent 32%)",
+              "radial-gradient(circle at 50% 20%, var(--color-accent-soft), transparent 32%)",
           }}
         >
-          <div className="axion-container">
+          <div className="aurexis-container">
 
             <span className="section-label">
               Our Approach
@@ -46,7 +46,7 @@ export default function SolutionsPage() {
 
 
             <p>
-              AXION selects and engineers
+              Aurexis selects and engineers
               technology around the problem
               itself — combining AI,
               cybersecurity, automation and
@@ -62,7 +62,7 @@ export default function SolutionsPage() {
 
 
         <section
-          className="axion-container"
+          className="aurexis-container"
           style={{
             paddingTop: 20,
             paddingBottom: 20,
@@ -102,7 +102,7 @@ export default function SolutionsPage() {
               <p
                 style={{
                   marginTop: 10,
-                  color: "#817c89",
+                  color: "var(--color-text-muted)",
                   fontSize: 12,
                   lineHeight: 1.75,
                 }}
@@ -139,7 +139,7 @@ export default function SolutionsPage() {
               <p
                 style={{
                   marginTop: 10,
-                  color: "#817c89",
+                  color: "var(--color-text-muted)",
                   fontSize: 12,
                   lineHeight: 1.75,
                 }}
@@ -176,7 +176,7 @@ export default function SolutionsPage() {
               <p
                 style={{
                   marginTop: 10,
-                  color: "#817c89",
+                  color: "var(--color-text-muted)",
                   fontSize: 12,
                   lineHeight: 1.75,
                 }}

@@ -6,8 +6,8 @@ ENV PIP_NO_CACHE_DIR=1
 
 WORKDIR /app
 
-RUN addgroup --system axion \
-    && adduser --system --ingroup axion axion
+RUN addgroup --system aurexis \
+    && adduser --system --ingroup aurexis aurexis
 
 COPY requirements.txt .
 
@@ -18,9 +18,9 @@ COPY alembic.ini .
 COPY alembic ./alembic
 COPY app ./app
 
-RUN chown -R axion:axion /app
+RUN chown -R aurexis:aurexis /app
 
-USER axion
+USER aurexis
 
 EXPOSE 8000
 

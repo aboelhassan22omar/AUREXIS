@@ -26,7 +26,7 @@ export default function NotFound() {
             "140px 20px 80px",
 
           background:
-            "radial-gradient(circle at 50% 30%, rgba(108,51,255,.11), transparent 32%)",
+            "radial-gradient(circle at 50% 30%, var(--color-accent-soft), transparent 32%)",
         }}
       >
         <div
@@ -50,16 +50,16 @@ export default function NotFound() {
 
               borderRadius: 20,
 
-              color: "#b99aff",
+              color: "var(--color-accent)",
 
               background:
-                "rgba(108,51,255,.10)",
+                "var(--color-accent-soft)",
 
               border:
-                "1px solid rgba(139,92,246,.17)",
+                "1px solid var(--color-accent-soft)",
 
               boxShadow:
-                "0 20px 60px rgba(70,25,180,.12)",
+                "0 20px 60px var(--color-accent-soft)",
             }}
           >
             <SearchX
@@ -102,7 +102,7 @@ export default function NotFound() {
               margin:
                 "25px auto 0",
 
-              color: "#8b8692",
+              color: "var(--color-text-muted)",
 
               fontSize: 14,
 
@@ -146,7 +146,7 @@ export default function NotFound() {
             >
               <ArrowLeft size={16} />
 
-              Explore AXION
+              Explore AUREXIS
             </Link>
 
           </div>

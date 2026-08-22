@@ -69,7 +69,7 @@ export default function AdminOverview() {
   if (loading) {
     return (
       <p className="admin-loading">
-        Loading AXION administration...
+        Loading Aurexis administration...
       </p>
     );
   }
@@ -149,7 +149,7 @@ export default function AdminOverview() {
         </span>
 
         <h1>
-          AXION Control
+          AUREXIS Control
           <span className="gradient-text">
             {" "}Center.
           </span>

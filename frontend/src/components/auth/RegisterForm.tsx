@@ -119,7 +119,7 @@ export default function RegisterForm() {
               top: 17,
 
               color:
-                "#66616e",
+                "var(--color-text-muted)",
 
               pointerEvents:
                 "none",
@@ -172,7 +172,7 @@ export default function RegisterForm() {
               top: 17,
 
               color:
-                "#66616e",
+                "var(--color-text-muted)",
 
               pointerEvents:
                 "none",
@@ -224,7 +224,7 @@ export default function RegisterForm() {
               top: 17,
 
               color:
-                "#66616e",
+                "var(--color-text-muted)",
 
               pointerEvents:
                 "none",
@@ -307,7 +307,7 @@ export default function RegisterForm() {
                 "transparent",
 
               color:
-                "#77717f",
+                "var(--color-text-muted)",
 
               cursor:
                 "pointer",
@@ -333,7 +333,7 @@ export default function RegisterForm() {
             marginBottom: 16,
 
             color:
-              "#ff7b8d",
+              "var(--color-danger)",
 
             fontSize: 13,
           }}

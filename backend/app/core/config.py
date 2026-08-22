@@ -7,7 +7,7 @@ from pydantic_settings import (
 
 
 class Settings(BaseSettings):
-    APP_NAME: str = "AXION API"
+    APP_NAME: str = "AUREXIS API"
     APP_VERSION: str = "1.0.0"
 
     DEBUG: bool = False
@@ -27,6 +27,16 @@ class Settings(BaseSettings):
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
+    CHAT_API_KEY: str | None = None
+    CHAT_BASE_URL: str | None = None
+    CHAT_MODEL: str | None = None
+    CHAT_TIMEOUT_SECONDS: int = 75
+    CHAT_MAX_OUTPUT_TOKENS: int = 1200
+    CHAT_CONTEXT_MESSAGES: int = 20
+    CHAT_MAX_MESSAGE_CHARS: int = 8000
+    CHAT_RATE_LIMIT_PER_MINUTE: int = 20
+    CHAT_TEMPERATURE: float = 0.35
 
     model_config = SettingsConfigDict(
         env_file=".env",

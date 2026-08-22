@@ -1,0 +1,1622 @@
+/*
+  AUREXIS RESPONSIVE SYSTEM
+
+  Mobile-first layout tokens live here so the legacy desktop styling can
+  remain visually unchanged while every shared surface gets a predictable
+  responsive contract.  Components should prefer these variables instead of
+  adding one-off device-specific breakpoints.
+*/
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+
+  --page-gutter: 16px;
+  --section-space-y: 58px;
+  --section-space-tight: 42px;
+  --touch-target: 48px;
+  --mobile-card-radius: 20px;
+  --mobile-card-padding: 18px;
+  --header-height: calc(var(--nav-height) + var(--safe-top));
+}
+
+@media (min-width: 390px) {
+  :root {
+    --page-gutter: 18px;
+  }
+}
+
+@media (min-width: 700px) {
+  :root {
+    --page-gutter: 28px;
+    --section-space-y: 96px;
+    --section-space-tight: 64px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --page-gutter: 24px;
+    --section-space-y: 130px;
+    --section-space-tight: 80px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Foundation
+---------------------------------------------------------------------------- */
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+}
+
+html {
+  min-height: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+main,
+section,
+article,
+nav,
+header,
+footer,
+form,
+div {
+  min-width: 0;
+}
+
+img,
+picture,
+video,
+iframe {
+  max-width: 100%;
+}
+
+img,
+picture,
+video {
+  height: auto;
+}
+
+svg {
+  flex-shrink: 0;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  touch-action: manipulation;
+}
+
+section[id],
+[id][class*="section"] {
+  scroll-margin-top: calc(var(--header-height) + 16px);
+}
+
+.aurexis-container {
+  width: min(
+    calc(100% - (var(--page-gutter) * 2)),
+    var(--container)
+  );
+  margin-inline: auto;
+}
+
+.aurexis-section {
+  padding-block: var(--section-space-y);
+}
+
+.section-label {
+  font-size: clamp(0.63rem, 2.7vw, 0.75rem);
+  letter-spacing: clamp(0.12em, 0.7vw, 0.18em);
+}
+
+.section-title {
+  margin-top: 12px;
+  font-size: clamp(2.15rem, 11.2vw, 3.35rem);
+  line-height: 0.98;
+  letter-spacing: -0.052em;
+  text-wrap: balance;
+}
+
+.section-subtitle {
+  margin-top: 17px;
+  max-width: 60ch;
+  font-size: clamp(0.91rem, 3.8vw, 1rem);
+  line-height: 1.72;
+}
+
+.primary-button,
+.secondary-button {
+  min-height: var(--touch-target);
+  padding-inline: 20px;
+}
+
+.form-input,
+input,
+textarea,
+select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.form-input {
+  min-height: 52px;
+}
+
+/* --------------------------------------------------------------------------
+   Navigation
+---------------------------------------------------------------------------- */
+
+.site-header {
+  height: var(--header-height);
+  padding-top: var(--safe-top);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+
+.navbar-inner {
+  min-height: var(--nav-height);
+  gap: 14px;
+}
+
+.desktop-nav,
+.nav-actions {
+  display: none;
+}
+
+.mobile-nav-button {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--color-button-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.mobile-menu {
+  display: flex;
+  top: var(--header-height);
+  left: var(--safe-left);
+  right: var(--safe-right);
+  max-height: calc(100dvh - var(--header-height));
+  padding:
+    14px
+    var(--page-gutter)
+    max(18px, calc(var(--safe-bottom) + 12px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-menu a,
+.mobile-logout {
+  min-height: var(--touch-target);
+  padding: 12px 4px;
+  display: flex;
+  align-items: center;
+}
+
+.mobile-theme-row {
+  min-height: 52px;
+  padding: 2px 0 10px;
+}
+
+body:has(.mobile-menu) {
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Home hero
+---------------------------------------------------------------------------- */
+
+.hero {
+  min-height: auto;
+  padding:
+    calc(var(--header-height) + 32px)
+    0
+    38px;
+  align-items: stretch;
+}
+
+.hero-inner {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.hero-copy {
+  width: 100%;
+  max-width: 680px;
+  margin-inline: 0;
+  text-align: left;
+}
+
+.hero-badge {
+  padding: 7px 11px;
+  gap: 7px;
+  font-size: 0.68rem;
+}
+
+.hero-title {
+  margin-top: 18px;
+  max-width: 100%;
+  font-size: clamp(2.6rem, 12.6vw, 3.55rem);
+  line-height: 0.91;
+  letter-spacing: -0.067em;
+  text-wrap: balance;
+}
+
+.hero-description {
+  margin-top: 18px;
+  max-width: 58ch;
+  font-size: clamp(0.9rem, 3.7vw, 0.98rem);
+  line-height: 1.7;
+}
+
+.hero-actions {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.hero-actions a {
+  width: 100%;
+}
+
+.hero-trust {
+  margin-top: 22px;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.68rem;
+  line-height: 1.55;
+}
+
+.hero-trust-icons {
+  flex: 0 0 auto;
+}
+
+.hero-visual {
+  width: 100%;
+  min-height: clamp(278px, 84vw, 352px);
+  margin: 0;
+  transform: none;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.orbit-glow {
+  width: min(64vw, 270px);
+  height: min(64vw, 270px);
+  filter: blur(72px);
+}
+
+.orbit-one,
+.orbit-two,
+.orbit-three {
+  aspect-ratio: 1;
+  height: auto;
+}
+
+.orbit-one {
+  width: min(52vw, 224px);
+}
+
+.orbit-two {
+  width: min(66vw, 286px);
+}
+
+.orbit-three {
+  width: min(80vw, 346px);
+}
+
+.floating-card {
+  width: clamp(126px, 39vw, 158px);
+  padding: 9px 10px;
+  gap: 9px;
+  border-radius: 15px;
+  box-shadow: 0 14px 42px var(--color-shadow);
+}
+
+.floating-card-one {
+  top: 18px;
+  left: 2px;
+}
+
+.floating-card-two {
+  right: 2px;
+  bottom: 18px;
+}
+
+.floating-card-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+}
+
+.floating-card strong {
+  font-size: 0.69rem;
+}
+
+.floating-card span {
+  font-size: 0.59rem;
+  line-height: 1.35;
+}
+
+.hero-glow {
+  width: min(160vw, 620px);
+  height: min(125vw, 520px);
+  top: -180px;
+}
+
+.hero-grid {
+  background-size: 48px 48px;
+}
+
+/* --------------------------------------------------------------------------
+   Home sections and shared cards
+---------------------------------------------------------------------------- */
+
+.projects-heading-row {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.services-header {
+  max-width: 100%;
+}
+
+.solutions-layout {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 34px;
+}
+
+.solutions-sticky {
+  position: static;
+  top: auto;
+}
+
+.solutions-list {
+  gap: 11px;
+}
+
+.solution-item {
+  padding: var(--mobile-card-padding);
+  border-radius: var(--mobile-card-radius);
+}
+
+.solution-top {
+  gap: 12px;
+}
+
+.solution-item h3 {
+  font-size: 1.08rem;
+}
+
+.solution-item p {
+  font-size: 0.85rem;
+  line-height: 1.68;
+}
+
+.home-services-grid,
+.home-projects-grid,
+.services-grid,
+.projects-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+}
+
+.home-services-grid,
+.home-projects-grid {
+  margin-top: 34px !important;
+}
+
+.home-service-card {
+  min-height: 252px !important;
+  padding: 20px !important;
+  border-radius: var(--mobile-card-radius) !important;
+}
+
+.home-service-content {
+  margin-top: 30px;
+}
+
+.home-service-content h3,
+.home-project-info h3 {
+  font-size: 1.24rem;
+  line-height: 1.15;
+}
+
+.home-service-content p,
+.home-project-info p {
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.home-project-card {
+  min-height: auto !important;
+  padding: 20px !important;
+  border-radius: var(--mobile-card-radius) !important;
+}
+
+.home-project-art {
+  height: clamp(148px, 44vw, 182px) !important;
+}
+
+.about-card {
+  min-height: auto;
+  padding: 32px 18px;
+  border-radius: 26px;
+}
+
+.about-big-text {
+  margin-top: 20px;
+  font-size: clamp(2.35rem, 11.8vw, 3.75rem);
+  line-height: 0.96;
+}
+
+.about-description {
+  margin-top: 22px;
+  font-size: 0.94rem;
+  line-height: 1.72;
+}
+
+.about-orb {
+  width: min(125vw, 430px);
+  height: min(125vw, 430px);
+  right: -42%;
+  top: -28%;
+}
+
+.cta-card {
+  padding: 44px 18px;
+  border-radius: 26px;
+}
+
+.cta-card h2 {
+  font-size: clamp(2.35rem, 11.5vw, 3.8rem);
+  line-height: 0.96;
+}
+
+.cta-card p {
+  margin-top: 18px;
+  font-size: 0.91rem;
+}
+
+.cta-actions {
+  margin-top: 26px;
+}
+
+.cta-actions .primary-button,
+.cta-actions .secondary-button {
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Inner pages / forms / auth
+---------------------------------------------------------------------------- */
+
+.page-hero {
+  padding:
+    calc(var(--header-height) + 44px)
+    0
+    52px;
+  text-align: left;
+}
+
+.page-hero h1 {
+  margin-top: 12px;
+  max-width: 11ch;
+  font-size: clamp(2.75rem, 13.2vw, 4rem);
+  line-height: 0.94;
+  letter-spacing: -0.062em;
+  text-wrap: balance;
+}
+
+.page-hero p {
+  margin: 20px 0 0;
+  max-width: 60ch;
+  font-size: 0.93rem;
+  line-height: 1.72;
+}
+
+.inner-grid {
+  padding-bottom: var(--section-space-y);
+}
+
+.contact-grid,
+.auth-layout {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.form-card,
+.info-card {
+  padding: 20px;
+  border-radius: var(--mobile-card-radius);
+}
+
+.info-card h2 {
+  font-size: clamp(2rem, 9.5vw, 2.7rem) !important;
+  line-height: 1.02;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-size: 0.76rem;
+}
+
+.form-input,
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+textarea.form-input {
+  min-height: 132px;
+}
+
+.auth-shell {
+  min-height: 100dvh;
+  padding:
+    calc(var(--header-height) + 24px)
+    0
+    max(28px, calc(var(--safe-bottom) + 18px));
+  align-items: start;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 22px;
+  border-radius: 24px;
+}
+
+.auth-card h1 {
+  margin-top: 24px;
+  font-size: clamp(2rem, 9.5vw, 2.45rem);
+}
+
+.auth-form {
+  margin-top: 24px;
+}
+
+.auth-form .form-group button[type="button"] {
+  width: 42px !important;
+  height: 42px !important;
+  right: 5px !important;
+}
+
+/* --------------------------------------------------------------------------
+   Dashboard
+---------------------------------------------------------------------------- */
+
+.dashboard-shell {
+  min-height: 100dvh !important;
+  padding-top: 0 !important;
+}
+
+.dashboard-content {
+  padding-top: calc(var(--header-height) + 28px) !important;
+  padding-bottom: max(70px, calc(var(--safe-bottom) + 48px)) !important;
+}
+
+.dashboard-content > section:first-child {
+  align-items: stretch !important;
+  flex-direction: column;
+  gap: 18px !important;
+}
+
+.dashboard-content > section:first-child > button {
+  width: 100%;
+  min-height: var(--touch-target) !important;
+  justify-content: center;
+}
+
+.dashboard-heading h1 {
+  font-size: clamp(2.35rem, 11vw, 3.25rem);
+  line-height: 0.98;
+}
+
+.dashboard-heading p {
+  max-width: 55ch;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.dashboard-account-layout,
+.dashboard-profile-grid,
+.dashboard-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.dashboard-account-layout {
+  margin-top: 34px !important;
+  gap: 12px !important;
+}
+
+.dashboard-grid {
+  margin-top: 22px !important;
+  gap: 12px;
+}
+
+.dashboard-card {
+  min-height: 170px;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.dashboard-content .glass-card {
+  max-width: 100%;
+}
+
+.dashboard-content section.glass-card {
+  align-items: flex-start !important;
+  flex-direction: column;
+  padding: 20px !important;
+}
+
+/* --------------------------------------------------------------------------
+   Administrator responsive layout
+---------------------------------------------------------------------------- */
+
+.admin-layout,
+.admin-access-loading {
+  min-height: 100dvh;
+}
+
+.admin-layout {
+  display: block;
+}
+
+.admin-sidebar {
+  position: static;
+  width: 100%;
+  min-height: auto;
+  padding:
+    max(18px, var(--safe-top))
+    var(--page-gutter)
+    18px;
+  border-right: 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-navigation {
+  margin-top: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.admin-nav-item {
+  min-width: 0;
+  min-height: var(--touch-target);
+  padding-inline: 10px;
+  font-size: 0.76rem;
+}
+
+.admin-sidebar-bottom {
+  display: none;
+}
+
+.admin-main {
+  padding:
+    34px
+    var(--page-gutter)
+    max(48px, calc(var(--safe-bottom) + 30px));
+}
+
+.admin-page-heading h1 {
+  font-size: clamp(2.35rem, 11.5vw, 3.4rem);
+}
+
+.admin-page-heading p {
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.admin-stats,
+.admin-services-grid,
+.admin-projects-grid,
+.admin-overview-panels {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.admin-stats {
+  margin-top: 32px;
+  gap: 10px;
+}
+
+.admin-stat-card {
+  min-height: 150px;
+  padding: 19px;
+  border-radius: 20px;
+}
+
+.admin-management-header,
+.admin-lead-top {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.admin-primary-button,
+.admin-status-select {
+  width: 100%;
+  min-height: var(--touch-target);
+}
+
+.admin-lead-card,
+.admin-service-card,
+.admin-project-card,
+.admin-user-card,
+.admin-overview-panel {
+  max-width: 100%;
+  border-radius: 20px;
+}
+
+.admin-user-card {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.admin-user-actions {
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.admin-user-actions button {
+  min-height: 44px;
+}
+
+.admin-modal-backdrop {
+  padding:
+    max(10px, var(--safe-top))
+    max(10px, var(--safe-right))
+    max(10px, var(--safe-bottom))
+    max(10px, var(--safe-left));
+}
+
+.admin-modal {
+  width: min(100%, 680px);
+  max-height: calc(
+    100dvh -
+    max(20px, var(--safe-top)) -
+    max(20px, var(--safe-bottom))
+  );
+  padding: 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.admin-service-form,
+.admin-form-options {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.admin-form-full,
+.admin-toggle-row,
+.admin-form-actions {
+  grid-column: 1 !important;
+}
+
+.admin-form-actions {
+  align-items: stretch;
+  flex-direction: column-reverse;
+}
+
+.admin-form-actions button {
+  width: 100%;
+  min-height: var(--touch-target);
+}
+
+/* Footer layout is owned by Footer.tsx; shared safe-area sizing remains component-local. */
+
+/* --------------------------------------------------------------------------
+   Tablet enhancements
+---------------------------------------------------------------------------- */
+
+@media (min-width: 700px) {
+  .site-header {
+    padding-inline: max(var(--safe-left), 0px) max(var(--safe-right), 0px);
+  }
+
+  .hero {
+    padding:
+      calc(var(--header-height) + 60px)
+      0
+      72px;
+  }
+
+  .hero-copy {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: clamp(4rem, 10vw, 5.8rem);
+  }
+
+  .hero-description {
+    margin-inline: auto;
+  }
+
+  .hero-actions {
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero-actions a {
+    width: auto;
+  }
+
+  .hero-trust {
+    justify-content: center;
+  }
+
+  .hero-visual {
+    min-height: 500px;
+  }
+
+  .orbit-one {
+    width: 330px;
+  }
+
+  .orbit-two {
+    width: 410px;
+  }
+
+  .orbit-three {
+    width: 485px;
+  }
+
+  .floating-card {
+    width: 195px;
+    padding: 14px;
+  }
+
+  .floating-card-one {
+    top: 58px;
+    left: 4%;
+  }
+
+  .floating-card-two {
+    right: 4%;
+    bottom: 84px;
+  }
+
+  .home-services-grid,
+  .home-projects-grid,
+  .projects-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  }
+
+  .about-card {
+    padding: 52px 42px;
+  }
+
+  .cta-card {
+    padding: 72px 28px;
+  }
+
+  .page-hero {
+    padding:
+      calc(var(--header-height) + 60px)
+      0
+      70px;
+    text-align: center;
+  }
+
+  .page-hero h1 {
+    max-width: none;
+    margin-inline: auto;
+    font-size: clamp(3.8rem, 8.5vw, 5.8rem);
+  }
+
+  .page-hero p {
+    margin-inline: auto;
+  }
+
+  .form-card,
+  .info-card {
+    padding: 30px;
+  }
+
+  .auth-shell {
+    align-items: center;
+  }
+
+  .auth-card {
+    padding: 34px;
+  }
+
+  .dashboard-content > section:first-child {
+    align-items: flex-end !important;
+    flex-direction: row;
+  }
+
+  .dashboard-content > section:first-child > button {
+    width: auto;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .admin-navigation {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .admin-main {
+    padding: 44px 30px 64px;
+  }
+
+  .admin-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .admin-form-actions {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .admin-form-actions button {
+    width: auto;
+  }
+
+}
+
+/* --------------------------------------------------------------------------
+   Desktop restoration / enhancement
+---------------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .desktop-nav,
+  .nav-actions {
+    display: flex;
+  }
+
+  .mobile-nav-button,
+  .mobile-menu {
+    display: none;
+  }
+
+  .hero {
+    min-height: 100vh;
+    padding: 160px 0 80px;
+    align-items: center;
+  }
+
+  .hero-inner {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .hero-copy {
+    margin-inline: 0;
+    text-align: left;
+  }
+
+  .hero-title {
+    font-size: clamp(4rem, 7vw, 7rem);
+  }
+
+  .hero-description {
+    margin-inline: 0;
+  }
+
+  .hero-actions,
+  .hero-trust {
+    justify-content: flex-start;
+  }
+
+  .hero-visual {
+    min-height: 570px;
+  }
+
+  .orbit-one {
+    width: 390px;
+  }
+
+  .orbit-two {
+    width: 485px;
+  }
+
+  .orbit-three {
+    width: 565px;
+  }
+
+  .floating-card {
+    width: 210px;
+    padding: 16px;
+  }
+
+  .floating-card-one {
+    top: 75px;
+    left: -20px;
+  }
+
+  .floating-card-two {
+    right: -10px;
+    bottom: 110px;
+  }
+
+  .projects-heading-row {
+    align-items: flex-end;
+    flex-direction: row;
+  }
+
+  .solutions-layout {
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 80px;
+  }
+
+  .solutions-sticky {
+    position: sticky;
+    top: 130px;
+  }
+
+  .home-services-grid,
+  .home-projects-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .contact-grid,
+  .auth-layout {
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 35px;
+  }
+
+  .form-card,
+  .info-card {
+    padding: 35px;
+    border-radius: 30px;
+  }
+
+  .auth-shell {
+    min-height: 100vh;
+    padding: 125px 0 65px;
+  }
+
+  .auth-card {
+    width: min(100%, 480px);
+    padding: 37px;
+    border-radius: 30px;
+  }
+
+  .dashboard-shell {
+    min-height: 100vh !important;
+    padding-top: var(--nav-height) !important;
+  }
+
+  .dashboard-content {
+    padding: 60px 0 100px !important;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .admin-layout {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 255px minmax(0, 1fr);
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 255px;
+    min-height: 100vh;
+    padding: 27px 20px;
+    border-right: 1px solid var(--color-border);
+    border-bottom: 0;
+  }
+
+  .admin-navigation {
+    display: flex;
+    grid-template-columns: none;
+  }
+
+  .admin-sidebar-bottom {
+    display: block;
+  }
+
+  .admin-main {
+    grid-column: 2;
+    padding: 60px;
+  }
+
+  .admin-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+}
+
+/* --------------------------------------------------------------------------
+   Compact landscape phones / browser chrome constrained viewports
+---------------------------------------------------------------------------- */
+
+@media (max-height: 520px) and (orientation: landscape) and (max-width: 1023px) {
+  :root {
+    --nav-height: 60px;
+    --section-space-y: 52px;
+  }
+
+  .hero {
+    min-height: 100dvh;
+    padding:
+      calc(var(--header-height) + 18px)
+      0
+      24px;
+  }
+
+  .hero-inner {
+    grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.95fr);
+    gap: 20px;
+    align-items: center;
+  }
+
+  .hero-copy {
+    text-align: left;
+    margin-inline: 0;
+  }
+
+  .hero-title {
+    margin-top: 14px;
+    font-size: clamp(2.35rem, 7.5vw, 3.5rem);
+  }
+
+  .hero-description {
+    margin-top: 14px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .hero-actions {
+    margin-top: 16px;
+    justify-content: flex-start;
+  }
+
+  .hero-trust {
+    display: none;
+  }
+
+  .hero-visual {
+    min-height: min(76dvh, 330px);
+  }
+
+  .orbit-one {
+    width: min(36vw, 190px);
+  }
+
+  .orbit-two {
+    width: min(46vw, 240px);
+  }
+
+  .orbit-three {
+    width: min(55vw, 292px);
+  }
+
+  .floating-card {
+    width: 132px;
+    padding: 8px;
+  }
+
+  .floating-card-one {
+    top: 8px;
+  }
+
+  .floating-card-two {
+    bottom: 8px;
+  }
+
+  .page-hero {
+    padding:
+      calc(var(--header-height) + 24px)
+      0
+      34px;
+  }
+
+  .page-hero h1 {
+    font-size: clamp(2.45rem, 7.8vw, 3.65rem);
+  }
+
+  .auth-shell {
+    padding:
+      calc(var(--header-height) + 16px)
+      0
+      max(18px, var(--safe-bottom));
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Coarse pointers and reduced motion
+---------------------------------------------------------------------------- */
+
+@media (hover: none), (pointer: coarse) {
+  .primary-button:hover,
+  .secondary-button:hover,
+  .nav-cta:hover,
+  .home-service-card:hover,
+  .home-project-card:hover,
+  .services-page-card:hover,
+  .projects-page-card:hover {
+    transform: none !important;
+  }
+
+  .glass-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Inner listing/detail pages
+   The page-local styles are desktop-oriented, so these overrides normalize
+   them without changing their desktop presentation.
+---------------------------------------------------------------------------- */
+
+body.mobile-nav-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+@media (max-width: 1023px) {
+  .services-page-section,
+  .projects-page-section {
+    padding-bottom: var(--section-space-y) !important;
+  }
+
+  .services-page-grid,
+  .projects-page-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+  }
+
+  .services-page-card,
+  .projects-page-card {
+    min-height: auto !important;
+    padding: 24px !important;
+    border-radius: 24px !important;
+  }
+
+  .projects-page-art {
+    height: clamp(180px, 34vw, 220px) !important;
+  }
+
+  .detail-loading {
+    min-height: 100dvh !important;
+    padding-top: var(--header-height);
+  }
+
+  .detail-not-found {
+    min-height: 72dvh !important;
+    padding:
+      calc(var(--header-height) + 40px)
+      var(--page-gutter)
+      52px !important;
+  }
+
+  .detail-hero {
+    padding:
+      calc(var(--header-height) + 46px)
+      0
+      58px !important;
+  }
+
+  .detail-hero-grid,
+  .detail-explanation-grid,
+  .detail-usecase-section {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .detail-hero-grid {
+    gap: 34px !important;
+  }
+
+  .detail-title {
+    font-size: clamp(2.75rem, 8vw, 4.7rem) !important;
+  }
+
+  .detail-visual {
+    min-height: clamp(260px, 42vw, 330px) !important;
+    border-radius: 26px !important;
+  }
+
+  .detail-content {
+    padding:
+      52px
+      0
+      var(--section-space-y) !important;
+  }
+
+  .detail-info-card {
+    min-height: auto !important;
+    padding: 26px !important;
+    border-radius: 24px !important;
+  }
+
+  .detail-section-heading {
+    margin-top: 62px !important;
+  }
+
+  .detail-benefits-grid {
+    margin-top: 28px !important;
+  }
+
+  .detail-usecase-section {
+    margin-top: 58px !important;
+    padding: 30px !important;
+    gap: 30px !important;
+    border-radius: 24px !important;
+  }
+
+  .detail-cta {
+    margin-top: 58px !important;
+    padding: 30px !important;
+    border-radius: 24px !important;
+  }
+}
+
+@media (max-width: 699px) {
+  .services-page-grid,
+  .projects-page-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .services-page-card,
+  .projects-page-card {
+    padding: 20px !important;
+    border-radius: var(--mobile-card-radius) !important;
+  }
+
+  .services-page-card {
+    min-height: 258px !important;
+  }
+
+  .services-page-content {
+    margin-top: 28px !important;
+  }
+
+  .services-page-content h3,
+  .projects-page-info h3 {
+    font-size: 1.22rem !important;
+    line-height: 1.16;
+  }
+
+  .services-page-content p,
+  .projects-page-info p {
+    font-size: 0.82rem !important;
+    line-height: 1.68 !important;
+  }
+
+  .detail-card-button,
+  .project-card-button {
+    min-height: 44px;
+    padding-inline: 14px !important;
+  }
+
+  .projects-page-art {
+    height: clamp(150px, 48vw, 190px) !important;
+    border-radius: 18px !important;
+  }
+
+  .detail-back {
+    min-height: 44px;
+    margin-bottom: 20px !important;
+  }
+
+  .detail-title {
+    font-size: clamp(2.45rem, 12vw, 3.6rem) !important;
+    line-height: 0.96 !important;
+  }
+
+  .detail-intro {
+    margin-top: 20px !important;
+    font-size: 0.92rem !important;
+    line-height: 1.68 !important;
+  }
+
+  .detail-actions {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 24px !important;
+  }
+
+  .detail-actions .primary-button,
+  .detail-actions .secondary-button {
+    width: 100%;
+  }
+
+  .detail-visual {
+    min-height: 240px !important;
+  }
+
+  .detail-main-icon {
+    width: 104px !important;
+    height: 104px !important;
+    border-radius: 28px !important;
+  }
+
+  .detail-orb {
+    width: 210px !important;
+    height: 210px !important;
+  }
+
+  .detail-content {
+    padding-top: 42px !important;
+  }
+
+  .detail-info-card {
+    padding: 20px !important;
+  }
+
+  .detail-info-card > span {
+    margin-top: 26px !important;
+  }
+
+  .detail-info-card h2 {
+    font-size: 1.35rem !important;
+  }
+
+  .detail-info-card p {
+    font-size: 0.86rem !important;
+    line-height: 1.72 !important;
+  }
+
+  .detail-section-heading h2 {
+    font-size: clamp(2.15rem, 10.8vw, 3.15rem) !important;
+  }
+
+  .detail-benefits-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .detail-benefit {
+    min-height: 60px !important;
+    padding: 15px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .detail-usecase-section {
+    padding: 22px !important;
+    gap: 24px !important;
+  }
+
+  .detail-usecase-section h2 {
+    font-size: clamp(1.9rem, 9vw, 2.6rem) !important;
+  }
+
+  .detail-usecase {
+    padding: 14px !important;
+    gap: 12px !important;
+  }
+
+  .detail-usecase strong {
+    font-size: 0.8rem !important;
+  }
+
+  .detail-cta {
+    align-items: stretch !important;
+    padding: 22px !important;
+  }
+
+  .detail-cta .primary-button {
+    width: 100%;
+  }
+
+  .about-values-grid,
+  .solutions-principles-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 349px) {
+  :root {
+    --page-gutter: 14px;
+    --mobile-card-padding: 16px;
+    --section-space-y: 52px;
+  }
+
+  .hero-title {
+    font-size: clamp(2.45rem, 13vw, 3.05rem);
+  }
+
+  .hero-visual {
+    min-height: 270px;
+  }
+
+  .floating-card {
+    width: 124px;
+    padding: 8px 9px;
+  }
+
+  .floating-card strong {
+    font-size: 0.64rem;
+  }
+
+  .floating-card span {
+    font-size: 0.55rem;
+  }
+
+  .page-hero h1 {
+    font-size: clamp(2.4rem, 13.2vw, 3.05rem);
+  }
+
+  .form-card,
+  .info-card,
+  .auth-card,
+  .dashboard-card {
+    padding: 17px;
+  }
+}
+
+/* AUREXIS brand lockup: symbol-only in compact navigation. */
+@media (max-width: 699px) {
+  .site-header .logo-word {
+    display: none;
+  }
+
+  .site-header .logo {
+    gap: 0;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1180px) {
+  .site-header .logo-word {
+    font-size: 13px;
+    letter-spacing: 0.16em;
+  }
+
+  .desktop-nav {
+    gap: 18px;
+  }
+
+  .nav-actions {
+    gap: 10px;
+  }
+
+  .nav-signin,
+  .nav-cta {
+    padding-inline: 12px;
+  }
+}

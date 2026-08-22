@@ -7,383 +7,337 @@ import {
 
 import Link from "next/link";
 
+import Logo from "@/components/ui/Logo";
 
 const navigation = [
-  {
-    label: "Services",
-    href: "/services",
-  },
-  {
-    label: "Solutions",
-    href: "/solutions",
-  },
-  {
-    label: "Projects",
-    href: "/projects",
-  },
-  {
-    label: "About",
-    href: "/about",
-  },
-  {
-    label: "Contact",
-    href: "/contact",
-  },
+  { label: "Services", href: "/services" },
+  { label: "Solutions", href: "/solutions" },
+  { label: "Projects", href: "/projects" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
-
 
 const capabilities = [
-  "Artificial Intelligence",
-  "Cybersecurity",
-  "Business Automation",
+  "AI Agents",
+  "Chatbots",
+  "SIS for Schools",
+  "AI Security",
+  "Smart Surveillance",
   "Custom Software",
-  "AI Integration",
 ];
 
-
 export default function Footer() {
-  const currentYear =
-    new Date().getFullYear();
-
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer
-      style={{
-        position: "relative",
-        overflow: "hidden",
-
-        borderTop:
-          "1px solid rgba(255,255,255,.055)",
-
-        background:
-          "radial-gradient(circle at 20% 10%, rgba(108,51,255,.07), transparent 28%)",
-      }}
-    >
-      <div
-        className="axion-container"
-        style={{
-          paddingTop: 70,
-          paddingBottom: 28,
-        }}
-      >
-        <div className="axion-footer-grid">
-
-          <div>
-            <Link
-              href="/"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 11,
-
-                color: "#f5f2fa",
-                textDecoration: "none",
-              }}
-            >
-              <div
-                style={{
-                  width: 35,
-                  height: 35,
-
-                  display: "grid",
-                  placeItems: "center",
-
-                  borderRadius: 10,
-
-                  background:
-                    "linear-gradient(135deg, #6c33ff, #a56cff)",
-
-                  boxShadow:
-                    "0 10px 30px rgba(108,51,255,.22)",
-
-                  fontSize: 15,
-                  fontWeight: 800,
-                }}
-              >
-                A
-              </div>
-
-
-              <span
-                style={{
-                  fontSize: 16,
-                  fontWeight: 700,
-                  letterSpacing: ".17em",
-                }}
-              >
-                AXION
-              </span>
+    <footer className="site-footer">
+      <div className="aurexis-container footer-shell">
+        <div className="aurexis-footer-grid">
+          <div className="footer-brand">
+            <Link href="/" className="footer-logo-link" aria-label="AUREXIS home">
+              <Logo size={36} />
             </Link>
 
-
-            <p
-              style={{
-                maxWidth: 340,
-
-                marginTop: 20,
-
-                color: "#77717e",
-
-                fontSize: 12,
-                lineHeight: 1.8,
-              }}
-            >
-              Intelligent systems,
-              cybersecurity, automation and
-              software engineered around
-              real-world business problems.
+            <p className="footer-description">
+              Intelligent systems, cybersecurity, automation and software
+              engineered around real-world business problems.
             </p>
 
-
-            <Link
-              href="/contact"
-              style={{
-                marginTop: 23,
-
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 7,
-
-                color: "#a98cff",
-
-                fontSize: 11,
-                fontWeight: 600,
-
-                textDecoration: "none",
-              }}
-            >
+            <Link href="/contact" className="footer-project-link">
               Start a project
-
               <ArrowUpRight size={15} />
             </Link>
           </div>
 
-
-          <div>
-            <span className="footer-heading">
-              Explore
-            </span>
-
-
+          <div className="footer-group footer-explore">
+            <span className="footer-heading">Explore</span>
             <div className="footer-links">
-              {navigation.map(
-                (item) => (
-                  <Link
-                    href={item.href}
-                    key={item.href}
-                  >
-                    {item.label}
-                  </Link>
-                )
-              )}
+              {navigation.map((item) => (
+                <Link href={item.href} key={item.href}>
+                  {item.label}
+                </Link>
+              ))}
             </div>
           </div>
 
-
-          <div>
-            <span className="footer-heading">
-              Capabilities
-            </span>
-
-
+          <div className="footer-group footer-capabilities-group">
+            <span className="footer-heading">Capabilities</span>
             <div className="footer-capabilities">
-              {capabilities.map(
-                (item) => (
-                  <span key={item}>
-                    {item}
-                  </span>
-                )
-              )}
+              {capabilities.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
             </div>
           </div>
 
-
-          <div>
-            <span className="footer-heading">
-              Connect
-            </span>
-
-
+          <div className="footer-group footer-connect-group">
+            <span className="footer-heading">Connect</span>
             <div className="footer-connect">
-
               <Link href="/contact">
                 <Mail size={14} />
-                Contact AXION
+                Contact Aurexis
               </Link>
-
 
               <Link href="/">
                 <Globe2 size={14} />
                 Website
               </Link>
 
-
               <Link href="/projects">
                 <Code2 size={14} />
                 Projects
               </Link>
-
             </div>
           </div>
-
         </div>
 
-
         <div className="footer-bottom">
+          <p>© {currentYear} AUREXIS. All rights reserved.</p>
 
-          <p>
-            © {currentYear} AXION.
-            All rights reserved.
-          </p>
-
-
-          <div>
-            <span>
-              AI
-            </span>
-
-            <span>
-              Security
-            </span>
-
-            <span>
-              Automation
-            </span>
-
-            <span>
-              Software
-            </span>
+          <div className="footer-bottom-tags" aria-label="AUREXIS capabilities">
+            <span>Intelligence</span>
+            <span>Software</span>
+            <span>Solutions</span>
           </div>
-
         </div>
       </div>
 
-
       <style>{`
-        .axion-footer-grid {
+        .site-footer {
+          position: relative;
+          overflow: hidden;
+          border-top: 1px solid var(--color-border);
+          background:
+            radial-gradient(
+              circle at 16% 0%,
+              var(--color-accent-soft),
+              transparent 30%
+            ),
+            var(--color-background-secondary);
+        }
+
+        .footer-shell {
+          padding-top: 42px;
+          padding-bottom: max(18px, calc(env(safe-area-inset-bottom, 0px) + 12px));
+        }
+
+        .aurexis-footer-grid {
           display: grid;
-          grid-template-columns:
-            minmax(250px, 1.5fr)
-            minmax(120px, .65fr)
-            minmax(160px, .85fr)
-            minmax(150px, .7fr);
-          gap: 55px;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-areas:
+            "brand brand"
+            "explore connect"
+            "capabilities capabilities";
+          gap: 28px 18px;
+        }
+
+        .footer-brand {
+          grid-area: brand;
+          max-width: 390px;
+        }
+
+        .footer-explore {
+          grid-area: explore;
+        }
+
+        .footer-capabilities-group {
+          grid-area: capabilities;
+        }
+
+        .footer-connect-group {
+          grid-area: connect;
+        }
+
+        .footer-logo-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          color: var(--color-text-primary);
+          text-decoration: none;
+        }
+
+        .footer-description {
+          max-width: 36ch;
+          margin: 15px 0 0;
+          color: var(--color-text-muted);
+          font-size: 11.5px;
+          line-height: 1.7;
+        }
+
+        .footer-project-link {
+          min-height: 42px;
+          margin-top: 14px;
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          color: var(--color-accent);
+          font-size: 11px;
+          font-weight: 650;
+          text-decoration: none;
         }
 
         .footer-heading {
           display: block;
-          margin-bottom: 20px;
-
-          color: #a98cff;
-
+          margin-bottom: 12px;
+          color: var(--color-accent);
           font-size: 9px;
-          font-weight: 700;
-
-          letter-spacing: .14em;
+          font-weight: 750;
+          letter-spacing: 0.14em;
           text-transform: uppercase;
         }
 
         .footer-links,
-        .footer-capabilities,
         .footer-connect {
           display: flex;
           flex-direction: column;
           align-items: flex-start;
-
-          gap: 12px;
+          gap: 3px;
         }
 
         .footer-links a,
         .footer-connect a {
+          min-height: 36px;
           display: inline-flex;
           align-items: center;
-
           gap: 7px;
-
-          color: #817b88;
-
+          color: var(--color-text-muted);
           font-size: 11px;
-
+          line-height: 1.25;
           text-decoration: none;
-
           transition:
-            color .2s ease,
-            transform .2s ease;
+            color 180ms var(--theme-ease),
+            transform 180ms var(--theme-ease);
         }
 
         .footer-links a:hover,
         .footer-connect a:hover {
-          color: #c4aaff;
+          color: var(--color-accent);
+          transform: translateX(2px);
+        }
 
-          transform:
-            translateX(2px);
+        .footer-capabilities {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 7px;
         }
 
         .footer-capabilities span {
-          color: #6f6975;
-
-          font-size: 11px;
-          line-height: 1.5;
+          min-height: 30px;
+          padding: 7px 9px;
+          display: inline-flex;
+          align-items: center;
+          border: 1px solid var(--color-border);
+          border-radius: 999px;
+          color: var(--color-text-muted);
+          background: var(--color-surface);
+          font-size: 10px;
+          line-height: 1;
         }
 
         .footer-bottom {
-          margin-top: 65px;
-          padding-top: 23px;
-
+          margin-top: 28px;
+          padding-top: 16px;
           display: flex;
-          align-items: center;
-          justify-content: space-between;
-
-          gap: 20px;
-
-          border-top:
-            1px solid rgba(255,255,255,.05);
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+          border-top: 1px solid var(--color-border);
         }
 
         .footer-bottom p {
           margin: 0;
-
-          color: #55505b;
-
-          font-size: 10px;
+          color: var(--color-text-muted);
+          font-size: 9.5px;
+          line-height: 1.5;
         }
 
-        .footer-bottom > div {
+        .footer-bottom-tags {
           display: flex;
           flex-wrap: wrap;
-
-          gap: 17px;
+          gap: 7px 13px;
         }
 
-        .footer-bottom span {
-          color: #55505b;
-
-          font-size: 9px;
-
-          letter-spacing: .05em;
+        .footer-bottom-tags span {
+          color: var(--color-text-muted);
+          font-size: 8.5px;
+          letter-spacing: 0.05em;
         }
 
-        @media (max-width: 950px) {
-          .axion-footer-grid {
-            grid-template-columns:
-              repeat(2, minmax(0, 1fr));
-
-            gap: 45px;
+        @media (min-width: 700px) {
+          .footer-shell {
+            padding-top: 54px;
+            padding-bottom: 24px;
           }
-        }
 
-        @media (max-width: 600px) {
-          .axion-footer-grid {
-            grid-template-columns: 1fr;
-
-            gap: 38px;
+          .aurexis-footer-grid {
+            grid-template-columns: minmax(240px, 1.25fr) repeat(2, minmax(150px, 0.75fr));
+            grid-template-areas:
+              "brand explore connect"
+              "brand capabilities capabilities";
+            gap: 36px 38px;
           }
 
           .footer-bottom {
-            margin-top: 45px;
+            margin-top: 40px;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+          }
+        }
 
-            align-items: flex-start;
+        @media (min-width: 1024px) {
+          .footer-shell {
+            padding-top: 66px;
+            padding-bottom: 28px;
+          }
+
+          .aurexis-footer-grid {
+            grid-template-columns:
+              minmax(250px, 1.5fr)
+              minmax(120px, 0.65fr)
+              minmax(190px, 0.9fr)
+              minmax(150px, 0.7fr);
+            grid-template-areas: "brand explore capabilities connect";
+            gap: 54px;
+          }
+
+          .footer-description {
+            margin-top: 19px;
+            font-size: 12px;
+          }
+
+          .footer-project-link {
+            margin-top: 18px;
+          }
+
+          .footer-heading {
+            margin-bottom: 18px;
+          }
+
+          .footer-links,
+          .footer-connect {
+            gap: 7px;
+          }
+
+          .footer-capabilities {
+            display: flex;
             flex-direction: column;
+            align-items: flex-start;
+            gap: 9px;
+          }
+
+          .footer-capabilities span {
+            min-height: 0;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            font-size: 11px;
+            line-height: 1.5;
+          }
+
+          .footer-bottom {
+            margin-top: 58px;
+            padding-top: 21px;
           }
         }
       `}</style>

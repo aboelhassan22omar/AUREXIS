@@ -8,14 +8,14 @@ export default function LoginPage() {
       <Navbar />
 
       <main className="auth-shell">
-        <div className="axion-container">
+        <div className="aurexis-container">
           <div className="auth-card glass-card" style={{ margin: "auto" }}>
             <Logo size={42} />
 
             <h1>Welcome back.</h1>
 
             <p>
-              Sign in to access your AXION workspace.
+              Sign in to access your Aurexis workspace.
             </p>
 
             <LoginForm />

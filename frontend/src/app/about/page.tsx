@@ -11,7 +11,7 @@ import Navbar from "@/components/layout/Navbar";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Learn about AXION, a technology company engineering AI, cybersecurity, automation and custom software solutions.",
+    "Learn about AUREXIS, a technology company engineering AI, cybersecurity, automation and custom software solutions.",
 };
 
 
@@ -25,13 +25,13 @@ export default function AboutPage() {
           className="page-hero"
           style={{
             background:
-              "radial-gradient(circle at 55% 20%, rgba(108,51,255,.10), transparent 32%)",
+              "radial-gradient(circle at 55% 20%, var(--color-accent-soft), transparent 32%)",
           }}
         >
-          <div className="axion-container">
+          <div className="aurexis-container">
 
             <span className="section-label">
-              About AXION
+              About AUREXIS
             </span>
 
 
@@ -46,7 +46,7 @@ export default function AboutPage() {
 
 
             <p>
-              AXION is a technology company
+              AUREXIS is a technology company
               focused on artificial intelligence,
               cybersecurity, automation and
               software engineering — building
@@ -61,7 +61,7 @@ export default function AboutPage() {
 
 
         <section
-          className="axion-container"
+          className="aurexis-container"
           style={{
             paddingTop: 20,
             paddingBottom: 40,
@@ -74,7 +74,7 @@ export default function AboutPage() {
                 "clamp(28px,5vw,55px)",
               borderRadius: 30,
               background:
-                "radial-gradient(circle at 85% 30%, rgba(108,51,255,.10), transparent 34%)",
+                "radial-gradient(circle at 85% 30%, var(--color-accent-soft), transparent 34%)",
             }}
           >
 
@@ -106,14 +106,14 @@ export default function AboutPage() {
               style={{
                 marginTop: 24,
                 maxWidth: 760,
-                color: "#8e8996",
+                color: "var(--color-text-muted)",
                 fontSize: 14,
                 lineHeight: 1.85,
               }}
             >
               We do not build technology
               simply because it is new.
-              AXION combines the right tools,
+              Aurexis combines the right tools,
               architecture and intelligence
               to make organizations faster,
               smarter, safer and more capable.
@@ -136,14 +136,14 @@ export default function AboutPage() {
                   padding: 20,
                   borderRadius: 17,
                   background:
-                    "rgba(255,255,255,.02)",
+                    "var(--color-border)",
                   border:
-                    "1px solid rgba(255,255,255,.055)",
+                    "1px solid var(--color-border)",
                 }}
               >
                 <span
                   style={{
-                    color: "#a985ff",
+                    color: "var(--color-accent)",
                     fontSize: 10,
                     textTransform: "uppercase",
                     letterSpacing: ".1em",
@@ -155,7 +155,7 @@ export default function AboutPage() {
                 <p
                   style={{
                     marginTop: 9,
-                    color: "#918b98",
+                    color: "var(--color-text-muted)",
                     fontSize: 12,
                     lineHeight: 1.7,
                   }}
@@ -171,14 +171,14 @@ export default function AboutPage() {
                   padding: 20,
                   borderRadius: 17,
                   background:
-                    "rgba(255,255,255,.02)",
+                    "var(--color-border)",
                   border:
-                    "1px solid rgba(255,255,255,.055)",
+                    "1px solid var(--color-border)",
                 }}
               >
                 <span
                   style={{
-                    color: "#a985ff",
+                    color: "var(--color-accent)",
                     fontSize: 10,
                     textTransform: "uppercase",
                     letterSpacing: ".1em",
@@ -190,7 +190,7 @@ export default function AboutPage() {
                 <p
                   style={{
                     marginTop: 9,
-                    color: "#918b98",
+                    color: "var(--color-text-muted)",
                     fontSize: 12,
                     lineHeight: 1.7,
                   }}
@@ -207,14 +207,14 @@ export default function AboutPage() {
                   padding: 20,
                   borderRadius: 17,
                   background:
-                    "rgba(255,255,255,.02)",
+                    "var(--color-border)",
                   border:
-                    "1px solid rgba(255,255,255,.055)",
+                    "1px solid var(--color-border)",
                 }}
               >
                 <span
                   style={{
-                    color: "#a985ff",
+                    color: "var(--color-accent)",
                     fontSize: 10,
                     textTransform: "uppercase",
                     letterSpacing: ".1em",
@@ -226,7 +226,7 @@ export default function AboutPage() {
                 <p
                   style={{
                     marginTop: 9,
-                    color: "#918b98",
+                    color: "var(--color-text-muted)",
                     fontSize: 12,
                     lineHeight: 1.7,
                   }}

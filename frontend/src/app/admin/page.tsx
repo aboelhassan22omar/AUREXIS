@@ -56,7 +56,7 @@ export default function AdminPage() {
   if (loading) {
     return (
       <main className="admin-access-loading">
-        Loading AXION...
+        Loading AUREXIS...
       </main>
     );
   }

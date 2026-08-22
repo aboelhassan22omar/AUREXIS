@@ -73,7 +73,7 @@ export default function ContactPage() {
       );
 
       setSuccess(
-        "Your inquiry was sent successfully. AXION will contact you soon."
+        "Your inquiry was sent successfully. AUREXIS will contact you soon."
       );
 
       setName("");
@@ -98,9 +98,9 @@ export default function ContactPage() {
 
       <main>
         <section className="page-hero">
-          <div className="axion-container">
+          <div className="aurexis-container">
             <span className="section-label">
-              Contact AXION
+              Contact Aurexis
             </span>
 
             <h1>
@@ -121,7 +121,7 @@ export default function ContactPage() {
         </section>
 
 
-        <section className="axion-container inner-grid">
+        <section className="aurexis-container inner-grid">
 
           <div className="contact-grid">
 
@@ -151,7 +151,7 @@ export default function ContactPage() {
                 Whether it&apos;s an AI assistant,
                 security platform, automation system
                 or completely new software product,
-                AXION can engineer the solution.
+                Aurexis can engineer the solution.
               </p>
 
 
@@ -180,7 +180,7 @@ export default function ContactPage() {
                         gap: 13,
 
                         color:
-                          "#aaa6b2",
+                          "var(--color-text-secondary)",
 
                         fontSize:
                           14,
@@ -272,7 +272,7 @@ export default function ContactPage() {
 
                 <textarea
                   className="form-input"
-                  placeholder="What would you like AXION to build?"
+                  placeholder="What would you like AUREXIS to build?"
                   value={message}
                   onChange={(event) =>
                     setMessage(
@@ -292,7 +292,7 @@ export default function ContactPage() {
                       16,
 
                     color:
-                      "#ff7b8d",
+                      "var(--color-danger)",
 
                     fontSize:
                       13,
@@ -310,7 +310,7 @@ export default function ContactPage() {
                       16,
 
                     color:
-                      "#70e29c",
+                      "var(--color-success)",
 
                     fontSize:
                       13,
@@ -359,7 +359,7 @@ export default function ContactPage() {
                   }}
                 />
 
-                Your request is sent securely to AXION.
+                Your request is sent securely to AUREXIS.
               </p>
             </form>
           </div>

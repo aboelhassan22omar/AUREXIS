@@ -10,12 +10,18 @@ import {
 } from "lucide-react";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import {
+  usePathname,
+  useRouter,
+} from "next/navigation";
+import {
+  useEffect,
+  useState,
+} from "react";
 
+import ThemeToggle from "@/components/theme/ThemeToggle";
 import Logo from "@/components/ui/Logo";
 import { useAuth } from "@/hooks/useAuth";
-
 
 const navigation = [
   {
@@ -40,9 +46,21 @@ const navigation = [
   },
 ];
 
+function isActivePath(
+  pathname: string,
+  href: string
+) {
+  return (
+    pathname === href ||
+    pathname.startsWith(
+      `${href}/`
+    )
+  );
+}
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
 
   const [open, setOpen] =
     useState(false);
@@ -54,6 +72,59 @@ export default function Navbar() {
     logout,
   } = useAuth();
 
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const body = document.body;
+
+    body.classList.toggle(
+      "mobile-nav-open",
+      open
+    );
+
+    const handleKeyDown = (
+      event: KeyboardEvent
+    ) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+
+    const desktopQuery =
+      window.matchMedia(
+        "(min-width: 1024px)"
+      );
+    const handleDesktopChange = () => {
+      if (desktopQuery.matches) {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener(
+      "keydown",
+      handleKeyDown
+    );
+    desktopQuery.addEventListener(
+      "change",
+      handleDesktopChange
+    );
+
+    return () => {
+      body.classList.remove(
+        "mobile-nav-open"
+      );
+      window.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
+      desktopQuery.removeEventListener(
+        "change",
+        handleDesktopChange
+      );
+    };
+  }, [open]);
 
   async function handleLogout() {
     await logout();
@@ -64,12 +135,10 @@ export default function Navbar() {
     router.refresh();
   }
 
-
   return (
     <>
       <header className="site-header">
-        <div className="axion-container navbar-inner">
-
+        <div className="aurexis-container navbar-inner">
           <Link
             href="/"
             onClick={() =>
@@ -79,22 +148,42 @@ export default function Navbar() {
             <Logo />
           </Link>
 
-
-          <nav className="desktop-nav">
+          <nav
+            className="desktop-nav"
+            aria-label="Primary navigation"
+          >
             {navigation.map(
-              (item) => (
-                <Link
-                  href={item.href}
-                  key={item.name}
-                >
-                  {item.name}
-                </Link>
-              )
+              (item) => {
+                const active =
+                  isActivePath(
+                    pathname,
+                    item.href
+                  );
+
+                return (
+                  <Link
+                    href={item.href}
+                    key={item.name}
+                    className={
+                      active
+                        ? "is-active"
+                        : undefined
+                    }
+                    aria-current={
+                      active
+                        ? "page"
+                        : undefined
+                    }
+                  >
+                    {item.name}
+                  </Link>
+                );
+              }
             )}
           </nav>
 
-
           <div className="nav-actions">
+            <ThemeToggle />
 
             {!loading &&
               !authenticated && (
@@ -115,23 +204,13 @@ export default function Navbar() {
                 </>
               )}
 
-
             {!loading &&
               authenticated &&
               user && (
                 <>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      color: "#bdb9c6",
-                      fontSize: 12,
-                    }}
-                  >
+                  <div className="nav-user-summary">
                     <UserRound
                       size={15}
-                      color="#a985ff"
                     />
 
                     <span>
@@ -139,70 +218,41 @@ export default function Navbar() {
                     </span>
                   </div>
 
-
                   <Link
                     href="/dashboard"
-                    className="nav-signin"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                    }}
+                    className="nav-signin nav-inline-action"
                   >
                     <LayoutDashboard
                       size={15}
                     />
-
                     Dashboard
                   </Link>
-
 
                   {user.is_admin && (
                     <Link
                       href="/admin"
-                      className="nav-signin"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 6,
-                        color: "#b99aff",
-                      }}
+                      className="nav-signin nav-inline-action nav-admin-link"
                     >
                       <ShieldCheck
                         size={15}
                       />
-
                       Admin
                     </Link>
                   )}
 
-
                   <button
                     type="button"
-                    onClick={
-                      handleLogout
-                    }
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      color: "#c8c3cf",
-                      background:
-                        "transparent",
-                      cursor: "pointer",
-                      fontSize: 13,
-                    }}
+                    onClick={handleLogout}
+                    className="nav-logout"
                   >
                     <LogOut
                       size={15}
                     />
-
                     Logout
                   </button>
                 </>
               )}
           </div>
-
 
           <button
             type="button"
@@ -214,6 +264,8 @@ export default function Navbar() {
               )
             }
             aria-label="Toggle navigation"
+            aria-expanded={open}
+            aria-controls="aurexis-mobile-navigation"
           >
             {open ? (
               <X size={25} />
@@ -224,24 +276,48 @@ export default function Navbar() {
         </div>
       </header>
 
-
       {open && (
-        <div className="mobile-menu">
+        <nav
+          id="aurexis-mobile-navigation"
+          className="mobile-menu"
+          aria-label="Mobile navigation"
+        >
+          <div className="mobile-theme-row">
+            <span>Appearance</span>
+            <ThemeToggle />
+          </div>
 
           {navigation.map(
-            (item) => (
-              <Link
-                href={item.href}
-                key={item.name}
-                onClick={() =>
-                  setOpen(false)
-                }
-              >
-                {item.name}
-              </Link>
-            )
-          )}
+            (item) => {
+              const active =
+                isActivePath(
+                  pathname,
+                  item.href
+                );
 
+              return (
+                <Link
+                  href={item.href}
+                  key={item.name}
+                  onClick={() =>
+                    setOpen(false)
+                  }
+                  className={
+                    active
+                      ? "is-active"
+                      : undefined
+                  }
+                  aria-current={
+                    active
+                      ? "page"
+                      : undefined
+                  }
+                >
+                  {item.name}
+                </Link>
+              );
+            }
+          )}
 
           {!loading &&
             !authenticated && (
@@ -266,25 +342,14 @@ export default function Navbar() {
               </>
             )}
 
-
           {!loading &&
             authenticated &&
             user && (
               <>
-                <div
-                  style={{
-                    padding:
-                      "15px 3px",
-                    color:
-                      "#a985ff",
-                    fontSize:
-                      13,
-                  }}
-                >
+                <div className="mobile-user-summary">
                   Signed in as{" "}
                   {user.full_name}
                 </div>
-
 
                 <Link
                   href="/dashboard"
@@ -295,48 +360,28 @@ export default function Navbar() {
                   Dashboard
                 </Link>
 
-
                 {user.is_admin && (
                   <Link
                     href="/admin"
                     onClick={() =>
                       setOpen(false)
                     }
-                    style={{
-                      color:
-                        "#b99aff",
-                    }}
+                    className="mobile-admin-link"
                   >
                     Admin
                   </Link>
                 )}
 
-
                 <button
                   type="button"
-                  onClick={
-                    handleLogout
-                  }
-                  style={{
-                    padding:
-                      "15px 3px",
-                    textAlign:
-                      "left",
-                    color:
-                      "#d2d0d7",
-                    background:
-                      "transparent",
-                    cursor:
-                      "pointer",
-                    borderBottom:
-                      "1px solid rgba(255,255,255,0.05)",
-                  }}
+                  onClick={handleLogout}
+                  className="mobile-logout"
                 >
                   Logout
                 </button>
               </>
             )}
-        </div>
+        </nav>
       )}
     </>
   );

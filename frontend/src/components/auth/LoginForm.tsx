@@ -20,6 +20,49 @@ import {
 } from "@/lib/auth";
 
 
+function getSafeNextPath(): string {
+  const fallback = "/dashboard";
+
+  if (typeof window === "undefined") {
+    return fallback;
+  }
+
+  const next = new URLSearchParams(
+    window.location.search
+  ).get("next");
+
+  if (
+    !next ||
+    !next.startsWith("/") ||
+    next.startsWith("//")
+  ) {
+    return fallback;
+  }
+
+  try {
+    const url = new URL(
+      next,
+      window.location.origin
+    );
+
+    if (
+      url.origin !==
+      window.location.origin
+    ) {
+      return fallback;
+    }
+
+    return (
+      url.pathname +
+      url.search +
+      url.hash
+    );
+  } catch {
+    return fallback;
+  }
+}
+
+
 export default function LoginForm() {
   const router =
     useRouter();
@@ -64,8 +107,21 @@ export default function LoginForm() {
         password,
       });
 
+      try {
+        window.sessionStorage.setItem(
+          "aurexis-robot-login-greeting-pending",
+          "1"
+        );
+
+        window.sessionStorage.removeItem(
+          "aurexis-robot-login-greeting-shown"
+        );
+      } catch {
+        // The guide greeting is optional if sessionStorage is unavailable.
+      }
+
       router.push(
-        "/dashboard"
+        getSafeNextPath()
       );
 
       router.refresh();
@@ -110,7 +166,7 @@ export default function LoginForm() {
               top: 17,
 
               color:
-                "#66616e",
+                "var(--color-text-muted)",
 
               pointerEvents:
                 "none",
@@ -162,7 +218,7 @@ export default function LoginForm() {
               top: 17,
 
               color:
-                "#66616e",
+                "var(--color-text-muted)",
 
               pointerEvents:
                 "none",
@@ -242,7 +298,7 @@ export default function LoginForm() {
                 "transparent",
 
               color:
-                "#77717f",
+                "var(--color-text-muted)",
 
               cursor:
                 "pointer",
@@ -268,7 +324,7 @@ export default function LoginForm() {
             marginBottom: 16,
 
             color:
-              "#ff7b8d",
+              "var(--color-danger)",
 
             fontSize: 13,
           }}

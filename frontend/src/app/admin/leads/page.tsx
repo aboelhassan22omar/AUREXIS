@@ -181,7 +181,7 @@ export default function AdminLeadsPage() {
   ) {
     return (
       <main className="admin-access-loading">
-        Loading AXION leads...
+        Loading Aurexis leads...
       </main>
     );
   }

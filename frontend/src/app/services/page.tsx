@@ -72,10 +72,10 @@ export default function ServicesPage() {
       <main>
 
         <section className="page-hero">
-          <div className="axion-container">
+          <div className="aurexis-container">
 
             <span className="section-label">
-              AXION Services
+              AUREXIS Services
             </span>
 
             <h1>
@@ -90,7 +90,7 @@ export default function ServicesPage() {
             <p>
               From artificial intelligence and
               automation to cybersecurity and
-              complete software systems, AXION
+              complete software systems, Aurexis
               builds practical technology around
               real business requirements.
             </p>
@@ -99,7 +99,7 @@ export default function ServicesPage() {
         </section>
 
 
-        <section className="axion-container services-page-section">
+        <section className="aurexis-container services-page-section">
 
           {loading && (
             <p className="detail-status">
@@ -187,12 +187,12 @@ export default function ServicesPage() {
         }
 
         .detail-status {
-          color: #77737f;
+          color: var(--color-text-muted);
           font-size: 14px;
         }
 
         .detail-error {
-          color: #ff7b8d;
+          color: var(--color-danger);
         }
 
         .services-page-grid {
@@ -224,11 +224,11 @@ export default function ServicesPage() {
           transform: translateY(-6px);
 
           border-color:
-            rgba(139, 92, 246, 0.32);
+            var(--color-accent-medium);
 
           box-shadow:
             0 20px 60px
-            rgba(0, 0, 0, 0.22);
+            var(--color-overlay);
         }
 
         .services-page-icon {
@@ -245,14 +245,14 @@ export default function ServicesPage() {
 
           border-radius: 18px;
 
-          color: #b497ff;
+          color: var(--color-accent);
 
           background:
-            rgba(108, 51, 255, 0.1);
+            var(--color-accent-soft);
 
           border:
             1px solid
-            rgba(139, 92, 246, 0.18);
+            var(--color-accent-soft);
         }
 
         .services-page-content {
@@ -274,7 +274,7 @@ export default function ServicesPage() {
         .services-page-content p {
           margin-top: 14px;
 
-          color: var(--text-secondary);
+          color: var(--color-text-secondary);
 
           font-size: 13px;
           line-height: 1.75;
@@ -295,14 +295,14 @@ export default function ServicesPage() {
 
           border-radius: 12px;
 
-          color: #c3afff;
+          color: var(--color-accent);
 
           background:
-            rgba(108, 51, 255, 0.08);
+            var(--color-accent-soft);
 
           border:
             1px solid
-            rgba(139, 92, 246, 0.18);
+            var(--color-accent-soft);
 
           font-size: 11px;
           font-weight: 650;
@@ -321,10 +321,10 @@ export default function ServicesPage() {
             translateY(-2px);
 
           background:
-            rgba(108, 51, 255, 0.14);
+            var(--color-accent-soft);
 
           border-color:
-            rgba(139, 92, 246, 0.32);
+            var(--color-accent-medium);
         }
 
         @media (max-width: 1000px) {

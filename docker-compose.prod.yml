@@ -2,7 +2,7 @@ services:
 
   postgres:
     image: postgres:18
-    container_name: axion-prod-postgres
+    container_name: aurexis-prod-postgres
 
     restart: unless-stopped
 
@@ -12,7 +12,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
     volumes:
-      - axion_prod_postgres_data:/var/lib/postgresql
+      - aurexis_prod_postgres_data:/var/lib/postgresql
 
     healthcheck:
       test:
@@ -26,7 +26,7 @@ services:
       start_period: 20s
 
     networks:
-      - axion-prod-network
+      - aurexis-prod-network
 
 
   backend:
@@ -34,13 +34,13 @@ services:
       context: ./backend
       dockerfile: Dockerfile
 
-    image: axion-backend:prod
-    container_name: axion-prod-backend
+    image: aurexis-backend:prod
+    container_name: aurexis-prod-backend
 
     restart: unless-stopped
 
     environment:
-      APP_NAME: AXION API
+      APP_NAME: AUREXIS API
       APP_VERSION: 1.0.0
 
       DEBUG: "false"
@@ -56,6 +56,16 @@ services:
 
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
       REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS}
+
+      CHAT_API_KEY: ${CHAT_API_KEY:-}
+      CHAT_BASE_URL: ${CHAT_BASE_URL:-}
+      CHAT_MODEL: ${CHAT_MODEL:-}
+      CHAT_TIMEOUT_SECONDS: ${CHAT_TIMEOUT_SECONDS:-75}
+      CHAT_MAX_OUTPUT_TOKENS: ${CHAT_MAX_OUTPUT_TOKENS:-1200}
+      CHAT_CONTEXT_MESSAGES: ${CHAT_CONTEXT_MESSAGES:-20}
+      CHAT_MAX_MESSAGE_CHARS: ${CHAT_MAX_MESSAGE_CHARS:-8000}
+      CHAT_RATE_LIMIT_PER_MINUTE: ${CHAT_RATE_LIMIT_PER_MINUTE:-20}
+      CHAT_TEMPERATURE: ${CHAT_TEMPERATURE:-0.35}
 
     command:
       - sh
@@ -88,7 +98,7 @@ services:
       start_period: 30s
 
     networks:
-      - axion-prod-network
+      - aurexis-prod-network
 
 
   frontend:
@@ -99,8 +109,8 @@ services:
       args:
         NEXT_PUBLIC_API_BASE_URL: /api/v1
 
-    image: axion-frontend:prod
-    container_name: axion-prod-frontend
+    image: aurexis-frontend:prod
+    container_name: aurexis-prod-frontend
 
     restart: unless-stopped
 
@@ -128,12 +138,12 @@ services:
       start_period: 30s
 
     networks:
-      - axion-prod-network
+      - aurexis-prod-network
 
 
   nginx:
     image: nginx:1.27-alpine
-    container_name: axion-prod-nginx
+    container_name: aurexis-prod-nginx
 
     restart: unless-stopped
 
@@ -162,15 +172,15 @@ services:
       start_period: 15s
 
     networks:
-      - axion-prod-network
+      - aurexis-prod-network
 
 
 volumes:
-  axion_prod_postgres_data:
-    name: axion-prod-postgres-data
+  aurexis_prod_postgres_data:
+    name: aurexis-prod-postgres-data
 
 
 networks:
-  axion-prod-network:
-    name: axion-prod-network
+  aurexis-prod-network:
+    name: aurexis-prod-network
     driver: bridge

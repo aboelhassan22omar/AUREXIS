@@ -8,9 +8,9 @@ import type {
 } from "@/types/auth";
 
 
-const ACCESS_TOKEN_KEY = "axion_access_token";
-const REFRESH_TOKEN_KEY = "axion_refresh_token";
-const USER_KEY = "axion_user";
+const ACCESS_TOKEN_KEY = "aurexis_access_token";
+const REFRESH_TOKEN_KEY = "aurexis_refresh_token";
+const USER_KEY = "aurexis_user";
 
 
 type RefreshResponse = {

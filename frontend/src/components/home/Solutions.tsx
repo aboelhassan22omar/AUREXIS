@@ -31,8 +31,8 @@ const solutions = [
 
 export default function Solutions() {
   return (
-    <section className="axion-section">
-      <div className="axion-container solutions-layout">
+    <section className="aurexis-section">
+      <div className="aurexis-container solutions-layout">
         <div className="solutions-sticky">
           <span className="section-label">How we think</span>
 

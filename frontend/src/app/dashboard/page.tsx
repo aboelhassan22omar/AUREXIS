@@ -25,6 +25,7 @@ import {
 } from "react";
 
 import Navbar from "@/components/layout/Navbar";
+import Logo from "@/components/ui/Logo";
 
 import {
   useAuth,
@@ -80,7 +81,7 @@ export default function DashboardPage() {
             placeItems: "center",
 
             background:
-              "radial-gradient(circle at 50% 15%, rgba(108,51,255,.09), transparent 35%)",
+              "radial-gradient(circle at 50% 15%, var(--color-accent-soft), transparent 35%)",
           }}
         >
           <div
@@ -92,9 +93,11 @@ export default function DashboardPage() {
 
               gap: 15,
 
-              color: "#8e8997",
+              color: "var(--color-text-muted)",
             }}
           >
+            <Logo size={44} />
+
             <LoaderCircle
               size={30}
               className="dashboard-loader"
@@ -105,7 +108,7 @@ export default function DashboardPage() {
                 fontSize: 13,
               }}
             >
-              Loading AXION...
+              Loading AUREXIS...
             </span>
           </div>
 
@@ -113,13 +116,13 @@ export default function DashboardPage() {
           <style jsx>{`
             .dashboard-loader {
               animation:
-                axion-spin
+                aurexis-spin
                 0.8s
                 linear
                 infinite;
             }
 
-            @keyframes axion-spin {
+            @keyframes aurexis-spin {
               to {
                 transform:
                   rotate(360deg);
@@ -169,12 +172,12 @@ export default function DashboardPage() {
           minHeight: "100vh",
 
           background:
-            "radial-gradient(circle at 50% 5%, rgba(108,51,255,.08), transparent 32%)",
+            "radial-gradient(circle at 50% 5%, var(--color-accent-soft), transparent 32%)",
         }}
       >
 
         <div
-          className="axion-container dashboard-content"
+          className="aurexis-container dashboard-content"
           style={{
             paddingTop: 120,
             paddingBottom: 100,
@@ -204,7 +207,7 @@ export default function DashboardPage() {
             >
 
               <span className="section-label">
-                AXION Workspace
+                AUREXIS Workspace
               </span>
 
 
@@ -219,7 +222,7 @@ export default function DashboardPage() {
 
 
               <p>
-                Your AXION account,
+                Your AUREXIS account,
                 services and project
                 requests in one secure
                 workspace.
@@ -246,18 +249,18 @@ export default function DashboardPage() {
 
                   background:
                     user.is_active
-                      ? "rgba(70, 190, 120, 0.07)"
-                      : "rgba(255, 80, 100, 0.07)",
+                      ? "var(--color-success-soft)"
+                      : "var(--color-danger-soft)",
 
                   border:
                     user.is_active
-                      ? "1px solid rgba(112,226,156,.16)"
-                      : "1px solid rgba(255,90,110,.16)",
+                      ? "1px solid var(--color-success-soft)"
+                      : "1px solid var(--color-danger-soft)",
 
                   color:
                     user.is_active
-                      ? "#70e29c"
-                      : "#ff8190",
+                      ? "var(--color-success)"
+                      : "var(--color-danger)",
 
                   fontSize: 11,
                 }}
@@ -272,13 +275,13 @@ export default function DashboardPage() {
 
                     background:
                       user.is_active
-                        ? "#70e29c"
-                        : "#ff8190",
+                        ? "var(--color-success)"
+                        : "var(--color-danger)",
 
                     boxShadow:
                       user.is_active
-                        ? "0 0 12px rgba(112,226,156,.7)"
-                        : "0 0 12px rgba(255,129,144,.7)",
+                        ? "0 0 12px var(--color-success-soft)"
+                        : "0 0 12px var(--color-danger-soft)",
                   }}
                 />
 
@@ -313,13 +316,13 @@ export default function DashboardPage() {
                   12,
 
                 color:
-                  "#c6c1cc",
+                  "var(--color-text-secondary)",
 
                 background:
-                  "rgba(255,255,255,.025)",
+                  "var(--color-border)",
 
                 border:
-                  "1px solid rgba(255,255,255,.07)",
+                  "1px solid var(--color-border)",
 
                 cursor:
                   "pointer",
@@ -410,13 +413,13 @@ export default function DashboardPage() {
                         18,
 
                       color:
-                        "#c8b3ff",
+                        "var(--color-accent)",
 
                       background:
-                        "linear-gradient(135deg, rgba(108,51,255,.18), rgba(153,95,255,.08))",
+                        "linear-gradient(135deg, var(--color-accent-soft), var(--color-accent-soft))",
 
                       border:
-                        "1px solid rgba(139,92,246,.18)",
+                        "1px solid var(--color-accent-soft)",
                     }}
                   >
                     <UserRound
@@ -430,7 +433,7 @@ export default function DashboardPage() {
                     <span
                       style={{
                         color:
-                          "#696471",
+                          "var(--color-text-muted)",
 
                         fontSize:
                           10,
@@ -470,7 +473,7 @@ export default function DashboardPage() {
                           4,
 
                         color:
-                          "#817c89",
+                          "var(--color-text-muted)",
 
                         fontSize:
                           12,
@@ -502,18 +505,18 @@ export default function DashboardPage() {
 
                     color:
                       user.is_admin
-                        ? "#c5afff"
-                        : "#9c97a3",
+                        ? "var(--color-accent)"
+                        : "var(--color-text-secondary)",
 
                     background:
                       user.is_admin
-                        ? "rgba(108,51,255,.08)"
-                        : "rgba(255,255,255,.025)",
+                        ? "var(--color-accent-soft)"
+                        : "var(--color-border)",
 
                     border:
                       user.is_admin
-                        ? "1px solid rgba(139,92,246,.15)"
-                        : "1px solid rgba(255,255,255,.05)",
+                        ? "1px solid var(--color-accent-soft)"
+                        : "1px solid var(--color-border)",
 
                     fontSize:
                       10,
@@ -565,10 +568,10 @@ export default function DashboardPage() {
                       15,
 
                     background:
-                      "rgba(255,255,255,.02)",
+                      "var(--color-border)",
 
                     border:
-                      "1px solid rgba(255,255,255,.05)",
+                      "1px solid var(--color-border)",
                   }}
                 >
                   <span
@@ -577,7 +580,7 @@ export default function DashboardPage() {
                         "block",
 
                       color:
-                        "#65606d",
+                        "var(--color-text-muted)",
 
                       fontSize:
                         9,
@@ -617,10 +620,10 @@ export default function DashboardPage() {
                       15,
 
                     background:
-                      "rgba(255,255,255,.02)",
+                      "var(--color-border)",
 
                     border:
-                      "1px solid rgba(255,255,255,.05)",
+                      "1px solid var(--color-border)",
                   }}
                 >
                   <span
@@ -629,7 +632,7 @@ export default function DashboardPage() {
                         "block",
 
                       color:
-                        "#65606d",
+                        "var(--color-text-muted)",
 
                       fontSize:
                         9,
@@ -654,8 +657,8 @@ export default function DashboardPage() {
 
                       color:
                         user.is_active
-                          ? "#70e29c"
-                          : "#ff8190",
+                          ? "var(--color-success)"
+                          : "var(--color-danger)",
 
                       fontSize:
                         14,
@@ -676,10 +679,10 @@ export default function DashboardPage() {
                       15,
 
                     background:
-                      "rgba(255,255,255,.02)",
+                      "var(--color-border)",
 
                     border:
-                      "1px solid rgba(255,255,255,.05)",
+                      "1px solid var(--color-border)",
                   }}
                 >
                   <span
@@ -688,7 +691,7 @@ export default function DashboardPage() {
                         "block",
 
                       color:
-                        "#65606d",
+                        "var(--color-text-muted)",
 
                       fontSize:
                         9,
@@ -765,10 +768,10 @@ export default function DashboardPage() {
                       13,
 
                     color:
-                      "#a986ff",
+                      "var(--color-accent)",
 
                     background:
-                      "rgba(108,51,255,.09)",
+                      "var(--color-accent-soft)",
                   }}
                 >
                   <CalendarDays
@@ -786,7 +789,7 @@ export default function DashboardPage() {
                       25,
 
                     color:
-                      "#66616e",
+                      "var(--color-text-muted)",
 
                     fontSize:
                       10,
@@ -826,13 +829,13 @@ export default function DashboardPage() {
               <span
                 style={{
                   color:
-                    "#5e5965",
+                    "var(--color-text-muted)",
 
                   fontSize:
                     10,
                 }}
               >
-                AXION Account #{user.id}
+                AUREXIS Account #{user.id}
               </span>
 
             </article>
@@ -869,7 +872,7 @@ export default function DashboardPage() {
               Continue with{" "}
 
               <span className="gradient-text">
-                AXION.
+                AUREXIS.
               </span>
             </h2>
 
@@ -901,7 +904,7 @@ export default function DashboardPage() {
                 </h3>
 
                 <p>
-                  Explore AXION AI,
+                  Explore AUREXIS AI,
                   cybersecurity,
                   automation and
                   software services.
@@ -921,7 +924,7 @@ export default function DashboardPage() {
                     gap: 6,
 
                     color:
-                      "#a98cff",
+                      "var(--color-accent)",
 
                     fontSize:
                       11,
@@ -957,7 +960,7 @@ export default function DashboardPage() {
                 </h3>
 
                 <p>
-                  See AXION systems,
+                  See Aurexis systems,
                   platforms and
                   intelligent solutions.
                 </p>
@@ -976,7 +979,7 @@ export default function DashboardPage() {
                     gap: 6,
 
                     color:
-                      "#a98cff",
+                      "var(--color-accent)",
 
                     fontSize:
                       11,
@@ -1012,7 +1015,7 @@ export default function DashboardPage() {
                 </h3>
 
                 <p>
-                  Tell AXION what
+                  Tell Aurexis what
                   you want to build
                   and start a new
                   conversation.
@@ -1032,7 +1035,7 @@ export default function DashboardPage() {
                     gap: 6,
 
                     color:
-                      "#a98cff",
+                      "var(--color-accent)",
 
                     fontSize:
                       11,
@@ -1064,11 +1067,11 @@ export default function DashboardPage() {
                 </div>
 
                 <h3>
-                  Contact AXION
+                  Contact Aurexis
                 </h3>
 
                 <p>
-                  Contact the AXION
+                  Contact the Aurexis
                   team about your
                   account, project
                   or new idea.
@@ -1088,7 +1091,7 @@ export default function DashboardPage() {
                     gap: 6,
 
                     color:
-                      "#a98cff",
+                      "var(--color-accent)",
 
                     fontSize:
                       11,
@@ -1113,7 +1116,7 @@ export default function DashboardPage() {
                       "block",
 
                     border:
-                      "1px solid rgba(139,92,246,.14)",
+                      "1px solid var(--color-accent-soft)",
                   }}
                 >
 
@@ -1130,7 +1133,7 @@ export default function DashboardPage() {
                   <p>
                     Manage users,
                     leads, services,
-                    projects and AXION
+                    projects and Aurexis
                     platform content.
                   </p>
 
@@ -1148,7 +1151,7 @@ export default function DashboardPage() {
                       gap: 6,
 
                       color:
-                        "#b99aff",
+                        "var(--color-accent)",
 
                       fontSize:
                         11,
@@ -1225,10 +1228,10 @@ export default function DashboardPage() {
                     14,
 
                   color:
-                    "#a985ff",
+                    "var(--color-accent)",
 
                   background:
-                    "rgba(108,51,255,.09)",
+                    "var(--color-accent-soft)",
                 }}
               >
                 <ShieldCheck
@@ -1245,7 +1248,7 @@ export default function DashboardPage() {
                       15,
                   }}
                 >
-                  Secure AXION Workspace
+                  Secure AUREXIS Workspace
                 </h3>
 
                 <p
@@ -1254,7 +1257,7 @@ export default function DashboardPage() {
                       5,
 
                     color:
-                      "#77727f",
+                      "var(--color-text-muted)",
 
                     fontSize:
                       11,
@@ -1264,7 +1267,7 @@ export default function DashboardPage() {
                   }}
                 >
                   Your session is authenticated
-                  and connected to your AXION
+                  and connected to your Aurexis
                   account.
                 </p>
 
@@ -1284,7 +1287,7 @@ export default function DashboardPage() {
                 gap: 7,
 
                 color:
-                  "#70e29c",
+                  "var(--color-success)",
 
                 fontSize:
                   10,
@@ -1305,10 +1308,10 @@ export default function DashboardPage() {
                     "50%",
 
                   background:
-                    "#70e29c",
+                    "var(--color-success)",
 
                   boxShadow:
-                    "0 0 10px rgba(112,226,156,.7)",
+                    "0 0 10px var(--color-success-soft)",
                 }}
               />
 

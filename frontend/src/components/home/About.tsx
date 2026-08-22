@@ -4,8 +4,8 @@ import { motion } from "motion/react";
 
 export default function About() {
   return (
-    <section className="axion-section">
-      <div className="axion-container">
+    <section className="aurexis-section">
+      <div className="aurexis-container">
         <motion.div
           className="about-card glass-card"
           initial={{ opacity: 0, y: 35 }}
@@ -15,7 +15,7 @@ export default function About() {
           <div className="about-orb" />
 
           <div className="about-content">
-            <span className="section-label">Why AXION</span>
+            <span className="section-label">Why AUREXIS</span>
 
             <h2 className="about-big-text">
               We don&apos;t sell AI.
@@ -24,7 +24,7 @@ export default function About() {
             </h2>
 
             <p className="about-description">
-              Technology matters only when it solves something. AXION exists to
+              Technology matters only when it solves something. Aurexis exists to
               transform ambitious ideas and difficult problems into intelligent,
               secure and usable products.
             </p>

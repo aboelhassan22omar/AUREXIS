@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
 
   output: "standalone",
 
+  transpilePackages: [
+    "three",
+  ],
+
   images: {
     formats: [
       "image/avif",

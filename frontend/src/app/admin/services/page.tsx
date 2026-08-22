@@ -379,7 +379,7 @@ export default function AdminServicesPage() {
   ) {
     return (
       <main className="admin-access-loading">
-        Loading AXION services...
+        Loading Aurexis services...
       </main>
     );
   }
@@ -414,7 +414,7 @@ export default function AdminServicesPage() {
 
           <p>
             Control the services
-            displayed across the AXION
+            displayed across the Aurexis
             website.
           </p>
 

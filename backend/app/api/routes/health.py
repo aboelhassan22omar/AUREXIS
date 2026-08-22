@@ -29,7 +29,7 @@ def health_check(
 
     return {
         "status": "healthy",
-        "service": "AXION API",
+        "service": "AUREXIS API",
         "database": "connected",
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }

@@ -1,0 +1,350 @@
+.assistant {
+  position: fixed;
+
+  z-index: 900;
+
+  right: 12px;
+  bottom: 5px;
+
+  width: 112px;
+  height: 150px;
+
+  pointer-events: none;
+
+  isolation: isolate;
+}
+
+
+.robotGlow {
+  position: absolute;
+
+  z-index: 0;
+
+  left: 50%;
+  bottom: 2px;
+
+  width: 95px;
+  height: 65px;
+
+  transform:
+    translateX(-50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        197,
+        154,
+        85,
+        0.12
+      ),
+      rgba(
+        108,
+        51,
+        255,
+        0.045
+      ) 45%,
+      transparent 72%
+    );
+
+  filter:
+    blur(16px);
+
+  pointer-events: none;
+}
+
+
+.canvas {
+  position: absolute;
+
+  z-index: 2;
+
+  inset: 0;
+}
+
+
+.canvas canvas {
+  display: block;
+
+  width: 100% !important;
+  height: 100% !important;
+}
+
+
+/* =========================================
+   SPEECH BUBBLE
+========================================= */
+
+.bubble {
+  position: absolute;
+
+  z-index: 10;
+
+  right: 94px;
+  top: 0;
+
+  width: 220px;
+
+  padding:
+    12px
+    13px;
+
+  border:
+    1px solid
+    rgba(
+      160,
+      125,
+      235,
+      0.28
+    );
+
+  border-radius:
+    16px
+    16px
+    5px
+    16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        12,
+        10,
+        18,
+        0.96
+      ),
+      rgba(
+        7,
+        7,
+        11,
+        0.96
+      )
+    );
+
+  backdrop-filter:
+    blur(20px);
+
+  box-shadow:
+    0 14px 38px
+      rgba(
+        0,
+        0,
+        0,
+        0.34
+      ),
+    0 0 22px
+      rgba(
+        108,
+        51,
+        255,
+        0.055
+      );
+
+  opacity: 0;
+
+  visibility: hidden;
+
+  transform:
+    translateY(5px)
+    scale(0.98);
+
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease,
+    visibility 0.28s ease;
+
+  pointer-events: none;
+}
+
+
+.bubbleVisible {
+  opacity: 1;
+
+  visibility: visible;
+
+  transform:
+    translateY(0)
+    scale(1);
+}
+
+
+.bubble::after {
+  content: "";
+
+  position: absolute;
+
+  right: -7px;
+  bottom: 17px;
+
+  width: 13px;
+  height: 13px;
+
+  background:
+    #09080e;
+
+  border-right:
+    1px solid
+    rgba(
+      160,
+      125,
+      235,
+      0.24
+    );
+
+  border-top:
+    1px solid
+    rgba(
+      160,
+      125,
+      235,
+      0.24
+    );
+
+  transform:
+    rotate(45deg);
+}
+
+
+.bubbleHeader {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  margin-bottom: 5px;
+}
+
+
+.onlineDot {
+  width: 5px;
+  height: 5px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background:
+    #69e39d;
+
+  box-shadow:
+    0 0 7px
+      rgba(
+        105,
+        227,
+        157,
+        0.65
+      );
+}
+
+
+.bubbleName {
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.64
+    );
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.bubbleText {
+  margin: 0;
+
+  color:
+    #f4f2f7;
+
+  font-size: 10px;
+
+  line-height: 1.55;
+
+  font-weight: 450;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (
+  max-width: 900px
+) {
+  .assistant {
+    right: 7px;
+    bottom: 4px;
+
+    width: 100px;
+    height: 134px;
+  }
+
+
+  .bubble {
+    right: 82px;
+
+    width: 205px;
+
+    padding:
+      10px
+      11px;
+  }
+
+
+  .bubbleText {
+    font-size: 9px;
+  }
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (
+  max-width: 600px
+) {
+  .assistant {
+    right: 2px;
+    bottom: 2px;
+
+    width: 82px;
+    height: 110px;
+  }
+
+
+  .bubble {
+    position: fixed;
+
+    left: 12px;
+    right: 12px;
+
+    top: auto;
+    bottom: 92px;
+
+    width: auto;
+
+    padding:
+      10px
+      11px;
+
+    border-radius:
+      14px;
+  }
+
+
+  .bubble::after {
+    display: none;
+  }
+}

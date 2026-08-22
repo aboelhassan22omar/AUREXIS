@@ -3,7 +3,6 @@
 import {
   ArrowRight,
   Bot,
-  BrainCircuit,
   Cpu,
   ShieldCheck,
   Sparkles,
@@ -18,7 +17,7 @@ export default function Hero() {
       <div className="hero-grid" />
       <div className="hero-glow" />
 
-      <div className="axion-container hero-inner">
+      <div className="aurexis-container hero-inner">
         <div className="hero-copy">
           <motion.div
             className="hero-badge"
@@ -50,7 +49,7 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.2 }}
           >
             From intelligent chatbots to AI-powered cybersecurity and custom
-            software, AXION engineers technology designed to solve real
+            software, Aurexis engineers technology designed to solve real
             problems and create measurable impact.
           </motion.p>
 
@@ -90,7 +89,7 @@ export default function Hero() {
               </span>
             </div>
 
-            AI · Cybersecurity · Automation · Software
+            AI Agents · Chatbots · Security · Smart Systems
           </motion.div>
         </div>
 
@@ -136,22 +135,6 @@ export default function Hero() {
             }}
           >
             <span className="orbit-node node-one" />
-          </motion.div>
-
-          <motion.div
-            className="axion-core"
-            animate={{
-              y: [0, -10, 0],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <div className="axion-core-inner">
-              <BrainCircuit size={57} strokeWidth={1.3} />
-            </div>
           </motion.div>
 
           <motion.div

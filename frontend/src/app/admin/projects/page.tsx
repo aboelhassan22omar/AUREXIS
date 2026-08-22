@@ -439,7 +439,7 @@ export default function AdminProjectsPage() {
   ) {
     return (
       <main className="admin-access-loading">
-        Loading AXION projects...
+        Loading Aurexis projects...
       </main>
     );
   }
@@ -475,7 +475,7 @@ export default function AdminProjectsPage() {
           <p>
             Control the projects and
             capabilities displayed across
-            the AXION website.
+            the Aurexis website.
           </p>
 
         </div>

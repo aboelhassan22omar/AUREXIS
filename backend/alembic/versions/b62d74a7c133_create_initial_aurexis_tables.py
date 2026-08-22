@@ -1,4 +1,4 @@
-"""create initial axion tables
+"""create initial platform tables
 
 Revision ID: b62d74a7c133
 Revises: 

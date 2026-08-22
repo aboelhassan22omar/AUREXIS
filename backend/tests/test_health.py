@@ -17,6 +17,6 @@ def test_health_endpoint():
 
     assert data["status"] == "healthy"
 
-    assert data["service"] == "AXION API"
+    assert data["service"] == "AUREXIS API"
 
     assert "timestamp" in data

@@ -3,51 +3,88 @@ import type {
   Viewport,
 } from "next";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./theme.css";
 import "./globals.css";
+import "./responsive.css";
 
+import GlobalRobotGuide from "@/components/robot-guide/GlobalRobotGuide";
+import ThemeProvider from "@/components/theme/ThemeProvider";
+
+const initialThemeScript = `
+(function () {
+  try {
+    var saved = localStorage.getItem("aurexis-theme");
+    var theme =
+      saved === "light" || saved === "dark"
+        ? saved
+        : window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+  } catch (error) {
+    document.documentElement.dataset.theme = "dark";
+    document.documentElement.style.colorScheme = "dark";
+  }
+})();
+`;
 
 export const metadata: Metadata = {
   title: {
     default:
-      "AXION | Intelligent Solutions. Real Impact.",
-
+      "AUREXIS | Intelligence. Software. Solutions.",
     template:
-      "%s | AXION",
+      "%s | AUREXIS",
   },
-
   description:
-    "AXION engineers artificial intelligence, cybersecurity, automation and custom software solutions for modern businesses.",
-
+    "Aurexis engineers AI agents, chatbots, intelligent software, AI security, smart surveillance and technology solutions built around real-world needs.",
   applicationName:
-    "AXION",
-
+    "AUREXIS",
   keywords: [
-    "AXION",
-    "Artificial Intelligence",
-    "AI Solutions",
-    "AI Development",
+    "AUREXIS",
+    "AI Agents",
     "AI Chatbots",
-    "Cybersecurity",
+    "SIS for Schools",
+    "AI Security",
+    "Smart Surveillance",
+    "Artificial Intelligence",
     "Automation",
-    "Business Automation",
     "Software Development",
-    "Custom Software",
-    "AI Integration",
+    "Technology Solutions",
   ],
-
   category:
     "technology",
-
   creator:
-    "AXION",
-
+    "AUREXIS",
   publisher:
-    "AXION",
-
+    "AUREXIS",
+  manifest:
+    "/manifest.webmanifest",
+  icons: {
+    icon: [
+      {
+        url: "/brand/aurexis-mark.svg",
+        type: "image/svg+xml",
+      },
+      {
+        url: "/brand/aurexis-icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+    ],
+    apple: [
+      {
+        url: "/apple-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
+  },
   robots: {
     index: true,
     follow: true,
-
     googleBot: {
       index: true,
       follow: true,
@@ -56,56 +93,96 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
-
   openGraph: {
     type: "website",
-
     siteName:
-      "AXION",
-
+      "AUREXIS",
     title:
-      "AXION | Intelligent Solutions. Real Impact.",
-
+      "AUREXIS | Intelligence. Software. Solutions.",
     description:
-      "Artificial intelligence, cybersecurity, automation and custom software engineered around real business problems.",
+      "AI agents, intelligent software, AI security, smart surveillance and technology solutions engineered for real-world impact.",
+    images: [
+      {
+        url: "/brand/aurexis-og.png",
+        width: 1200,
+        height: 630,
+        alt: "AUREXIS — Intelligence, Software, Solutions",
+      },
+    ],
   },
-
   twitter: {
     card:
       "summary_large_image",
-
     title:
-      "AXION | Intelligent Solutions. Real Impact.",
-
+      "AUREXIS | Intelligence. Software. Solutions.",
     description:
-      "Artificial intelligence, cybersecurity, automation and custom software engineered around real business problems.",
+      "AI agents, intelligent software, AI security, smart surveillance and technology solutions.",
+    images: [
+      "/brand/aurexis-og.png",
+    ],
   },
 };
-
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-
-  colorScheme: "dark",
-
-  themeColor: "#050507",
+  viewportFit: "cover",
+  colorScheme: "light dark",
+  themeColor: [
+    {
+      media: "(prefers-color-scheme: light)",
+      color: "#f6f8fc",
+    },
+    {
+      media: "(prefers-color-scheme: dark)",
+      color: "#020617",
+    },
+  ],
 };
 
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "AUREXIS",
+  description:
+    "Intelligence, software and technology solutions including AI agents, chatbots, AI security and smart surveillance.",
+  logo: "/brand/aurexis-mark.svg",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children:
-    React.ReactNode;
+  children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      data-theme="light"
+      suppressHydrationWarning
+    >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              initialThemeScript,
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(
+              organizationSchema
+            ),
+          }}
+        />
+      </head>
 
       <body suppressHydrationWarning>
-        {children}
+        <ThemeProvider>
+          {children}
+          <GlobalRobotGuide />
+        </ThemeProvider>
       </body>
-
     </html>
   );
 }

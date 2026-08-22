@@ -8,14 +8,14 @@ export default function RegisterPage() {
       <Navbar />
 
       <main className="auth-shell">
-        <div className="axion-container">
+        <div className="aurexis-container">
           <div className="auth-card glass-card" style={{ margin: "auto" }}>
             <Logo size={42} />
 
-            <h1>Join AXION.</h1>
+            <h1>Join AUREXIS.</h1>
 
             <p>
-              Create your workspace to manage projects and AXION services.
+              Create your workspace to manage projects and Aurexis services.
             </p>
 
             <RegisterForm />

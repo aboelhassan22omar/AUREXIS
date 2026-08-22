@@ -72,10 +72,10 @@ export default function ProjectsPage() {
 
         <section className="page-hero">
 
-          <div className="axion-container">
+          <div className="aurexis-container">
 
             <span className="section-label">
-              AXION Projects
+              AUREXIS Projects
             </span>
 
 
@@ -102,7 +102,7 @@ export default function ProjectsPage() {
         </section>
 
 
-        <section className="axion-container projects-page-section">
+        <section className="aurexis-container projects-page-section">
 
           {loading && (
             <p className="detail-status">
@@ -205,14 +205,14 @@ export default function ProjectsPage() {
 
 
         .detail-status {
-          color: #77737f;
+          color: var(--color-text-muted);
 
           font-size: 14px;
         }
 
 
         .detail-error {
-          color: #ff7b8d;
+          color: var(--color-danger);
         }
 
 
@@ -249,28 +249,13 @@ export default function ProjectsPage() {
           background:
             radial-gradient(
               circle at 78% 15%,
-              rgba(
-                108,
-                51,
-                255,
-                0.17
-              ),
+              var(--color-accent-soft),
               transparent 36%
             ),
             linear-gradient(
               145deg,
-              rgba(
-                255,
-                255,
-                255,
-                0.045
-              ),
-              rgba(
-                255,
-                255,
-                255,
-                0.015
-              )
+              var(--color-border),
+              var(--color-border)
             );
 
           transition:
@@ -285,21 +270,11 @@ export default function ProjectsPage() {
             translateY(-6px);
 
           border-color:
-            rgba(
-              139,
-              92,
-              246,
-              0.32
-            );
+            var(--color-accent-medium);
 
           box-shadow:
             0 22px 65px
-            rgba(
-              0,
-              0,
-              0,
-              0.24
-            );
+            var(--color-overlay);
         }
 
 
@@ -316,42 +291,22 @@ export default function ProjectsPage() {
 
           border-radius: 24px;
 
-          color: #b99aff;
+          color: var(--color-accent);
 
           background:
             linear-gradient(
               145deg,
-              rgba(
-                139,
-                92,
-                246,
-                0.2
-              ),
-              rgba(
-                6,
-                6,
-                9,
-                0.2
-              )
+              var(--color-accent-soft),
+              var(--color-overlay)
             );
 
           border:
             1px solid
-            rgba(
-              160,
-              121,
-              255,
-              0.2
-            );
+            var(--color-accent-soft);
 
           box-shadow:
             inset 0 0 70px
-            rgba(
-              108,
-              51,
-              255,
-              0.07
-            );
+            var(--color-accent-soft);
         }
 
 
@@ -369,7 +324,7 @@ export default function ProjectsPage() {
 
 
         .projects-page-category {
-          color: #a786ff;
+          color: var(--color-accent);
 
           font-size: 10px;
 
@@ -399,7 +354,7 @@ export default function ProjectsPage() {
 
           color:
             var(
-              --text-secondary
+              --color-text-secondary
             );
 
           font-size: 13px;
@@ -425,24 +380,14 @@ export default function ProjectsPage() {
 
           border-radius: 12px;
 
-          color: #c3afff;
+          color: var(--color-accent);
 
           background:
-            rgba(
-              108,
-              51,
-              255,
-              0.08
-            );
+            var(--color-accent-soft);
 
           border:
             1px solid
-            rgba(
-              139,
-              92,
-              246,
-              0.18
-            );
+            var(--color-accent-soft);
 
           font-size: 11px;
 
@@ -473,23 +418,13 @@ export default function ProjectsPage() {
           transform:
             translateY(-2px);
 
-          color: #d4c4ff;
+          color: var(--color-accent);
 
           background:
-            rgba(
-              108,
-              51,
-              255,
-              0.14
-            );
+            var(--color-accent-soft);
 
           border-color:
-            rgba(
-              139,
-              92,
-              246,
-              0.32
-            );
+            var(--color-accent-medium);
         }
 
 

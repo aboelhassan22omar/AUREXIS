@@ -1,5 +1,5 @@
 # ============================================
-# AXION - Git Ignore
+# AUREXIS - Git Ignore
 # ============================================
 
 # Environment / Secrets
@@ -74,3 +74,9 @@ docker-compose.override.yml
 # Misc
 coverage/
 .cache/
+# TypeScript build cache
+*.tsbuildinfo
+
+# Local working notes
+AUREXIS-CLEANUP.txt
+README.txt

@@ -20,7 +20,7 @@ def create_application() -> FastAPI:
         title=settings.APP_NAME,
         version=settings.APP_VERSION,
         description=(
-            "Backend API for AXION AI, software, automation "
+            "Backend API for AUREXIS AI, software, automation "
             "and cybersecurity platform."
         ),
 
@@ -76,6 +76,7 @@ def create_application() -> FastAPI:
             "Authorization",
             "Content-Type",
             "Accept",
+            "X-AUREXIS-Guest-Session",
         ],
     )
 

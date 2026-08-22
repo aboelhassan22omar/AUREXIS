@@ -1,9 +1,9 @@
-name: AXION CD
+name: AUREXIS CD
 
 on:
   workflow_run:
     workflows:
-      - AXION CI
+      - AUREXIS CI
     types:
       - completed
 
@@ -17,8 +17,8 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/axion-backend
-  FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/axion-frontend
+  BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/aurexis-backend
+  FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/aurexis-frontend
 
 
 jobs:
@@ -73,7 +73,7 @@ jobs:
             ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
 
           labels: |
-            org.opencontainers.image.title=AXION Backend
+            org.opencontainers.image.title=AUREXIS Backend
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
 
@@ -93,7 +93,7 @@ jobs:
             ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
 
           labels: |
-            org.opencontainers.image.title=AXION Frontend
+            org.opencontainers.image.title=AUREXIS Frontend
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
 
@@ -101,7 +101,7 @@ jobs:
       - name: Delivery summary
         shell: bash
         run: |
-          echo "AXION delivery completed."
+          echo "AUREXIS delivery completed."
           echo ""
           echo "Backend:"
           echo "${BACKEND_IMAGE}:latest"

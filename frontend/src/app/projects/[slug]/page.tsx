@@ -282,7 +282,7 @@ export default function ProjectDetailsPage() {
 
         <section className="detail-hero">
 
-          <div className="axion-container detail-hero-grid">
+          <div className="aurexis-container detail-hero-grid">
 
             <div>
 
@@ -357,7 +357,7 @@ export default function ProjectDetailsPage() {
         </section>
 
 
-        <section className="axion-container detail-content">
+        <section className="aurexis-container detail-content">
 
           <div className="detail-explanation-grid">
 
@@ -451,7 +451,6 @@ export default function ProjectDetailsPage() {
 
               <Target
                 size={24}
-                color="#a985ff"
               />
 
               <span className="section-label usecase-label">
@@ -505,7 +504,6 @@ export default function ProjectDetailsPage() {
 
               <FolderKanban
                 size={24}
-                color="#a985ff"
               />
 
               <h2>
@@ -513,7 +511,7 @@ export default function ProjectDetailsPage() {
               </h2>
 
               <p>
-                AXION can design, engineer
+                Aurexis can design, engineer
                 and deploy a solution around
                 your own requirements.
               </p>
@@ -563,7 +561,7 @@ function ProjectDetailStyles() {
 
         gap: 10px;
 
-        color: #817c89;
+        color: var(--color-text-muted);
       }
 
       .detail-spinner {
@@ -613,7 +611,7 @@ function ProjectDetailStyles() {
         margin-top: 18px;
         margin-bottom: 30px;
 
-        color: #817c89;
+        color: var(--color-text-muted);
 
         line-height: 1.7;
       }
@@ -625,12 +623,7 @@ function ProjectDetailStyles() {
         background:
           radial-gradient(
             circle at 68% 30%,
-            rgba(
-              108,
-              51,
-              255,
-              .12
-            ),
+            var(--color-accent-soft),
             transparent 32%
           );
       }
@@ -659,26 +652,16 @@ function ProjectDetailStyles() {
 
         gap: 8px;
 
-        color: #aaa4b1;
+        color: var(--color-text-secondary);
 
         border-radius: 12px;
 
         background:
-          rgba(
-            255,
-            255,
-            255,
-            .025
-          );
+          var(--color-border);
 
         border:
           1px solid
-          rgba(
-            255,
-            255,
-            255,
-            .07
-          );
+          var(--color-border);
 
         font-size: 11px;
       }
@@ -710,7 +693,7 @@ function ProjectDetailStyles() {
 
         margin-top: 24px;
 
-        color: #9c96a3;
+        color: var(--color-text-secondary);
 
         font-size:
           clamp(
@@ -754,12 +737,7 @@ function ProjectDetailStyles() {
         border-radius: 50%;
 
         background:
-          rgba(
-            108,
-            51,
-            255,
-            .17
-          );
+          var(--color-accent-soft);
 
         filter: blur(75px);
       }
@@ -776,42 +754,22 @@ function ProjectDetailStyles() {
 
         border-radius: 35px;
 
-        color: #bda4ff;
+        color: var(--color-accent);
 
         background:
           linear-gradient(
             135deg,
-            rgba(
-              108,
-              51,
-              255,
-              .22
-            ),
-            rgba(
-              153,
-              95,
-              255,
-              .06
-            )
+            var(--color-accent-medium),
+            var(--color-accent-soft)
           );
 
         border:
           1px solid
-          rgba(
-            139,
-            92,
-            246,
-            .25
-          );
+          var(--color-accent-medium);
 
         box-shadow:
           0 24px 70px
-          rgba(
-            74,
-            30,
-            190,
-            .18
-          );
+          var(--color-accent-soft);
       }
 
       .detail-content {
@@ -848,15 +806,10 @@ function ProjectDetailStyles() {
 
         border-radius: 15px;
 
-        color: #ae8aff;
+        color: var(--color-accent);
 
         background:
-          rgba(
-            108,
-            51,
-            255,
-            .1
-          );
+          var(--color-accent-soft);
       }
 
       .detail-info-card > span {
@@ -864,7 +817,7 @@ function ProjectDetailStyles() {
 
         margin-top: 38px;
 
-        color: #8e6fe7;
+        color: var(--color-accent);
 
         font-size: 10px;
 
@@ -889,7 +842,7 @@ function ProjectDetailStyles() {
       .detail-info-card p {
         margin-top: 15px;
 
-        color: #99939f;
+        color: var(--color-text-muted);
 
         font-size: 14px;
 
@@ -942,7 +895,7 @@ function ProjectDetailStyles() {
 
         border-radius: 16px;
 
-        color: #aaa5b0;
+        color: var(--color-text-secondary);
 
         font-size: 13px;
       }
@@ -950,7 +903,7 @@ function ProjectDetailStyles() {
       .detail-benefit svg {
         flex-shrink: 0;
 
-        color: #916deb;
+        color: var(--color-accent);
       }
 
       .detail-usecase-section {
@@ -1013,25 +966,15 @@ function ProjectDetailStyles() {
         border-radius: 15px;
 
         background:
-          rgba(
-            255,
-            255,
-            255,
-            .025
-          );
+          var(--color-border);
 
         border:
           1px solid
-          rgba(
-            255,
-            255,
-            255,
-            .05
-          );
+          var(--color-border);
       }
 
       .detail-usecase span {
-        color: #825be2;
+        color: var(--color-accent);
 
         font-size: 10px;
 
@@ -1039,7 +982,7 @@ function ProjectDetailStyles() {
       }
 
       .detail-usecase strong {
-        color: #bbb6c1;
+        color: var(--color-text-secondary);
 
         font-size: 13px;
 
@@ -1073,12 +1016,7 @@ function ProjectDetailStyles() {
         background:
           radial-gradient(
             circle at 80% 50%,
-            rgba(
-              108,
-              51,
-              255,
-              .1
-            ),
+            var(--color-accent-soft),
             transparent 35%
           );
       }
@@ -1102,7 +1040,7 @@ function ProjectDetailStyles() {
 
         margin-top: 9px;
 
-        color: #817c89;
+        color: var(--color-text-muted);
 
         line-height: 1.7;
       }

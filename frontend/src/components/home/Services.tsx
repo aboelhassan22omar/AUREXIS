@@ -65,10 +65,10 @@ export default function Services() {
 
   return (
     <section
-      className="axion-section"
+      className="aurexis-section"
       id="services"
     >
-      <div className="axion-container">
+      <div className="aurexis-container">
 
         <div className="services-header">
 
@@ -86,7 +86,7 @@ export default function Services() {
           </h2>
 
           <p className="section-subtitle">
-            AXION combines software engineering,
+            Aurexis combines software engineering,
             artificial intelligence and cybersecurity
             to build complete digital solutions.
           </p>
@@ -96,7 +96,7 @@ export default function Services() {
 
         {loading && (
           <p className="home-section-status">
-            Loading AXION services...
+            Loading Aurexis services...
           </p>
         )}
 

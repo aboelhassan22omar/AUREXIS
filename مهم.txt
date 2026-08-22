@@ -1,4 +1,4 @@
-cd D:\AXION
+cd D:\AUREXIS
 docker compose up -d
 docker compose ps
 docker compose logs -f
@@ -19,3 +19,6 @@ Pooler host
 ep-falling-union-b10f6h3f-pooler.c-5.eu-central-1.aws.neon.tech
 
 postgresql://neondb_owner:npg_hygPebRGw5D3@ep-falling-union-b10f6h3f.c-5.eu-central-1.aws.neon.tech/neondb?sslmode=require
+
+
+cloudflared tunnel --protocol http2 --http-host-header localhost --url http://localhost:8088

@@ -1,10 +1,10 @@
 param(
-    [string]$OutputDirectory = "D:\AXION\backups"
+    [string]$OutputDirectory = "D:\AUREXIS\backups"
 )
 
 $ErrorActionPreference = "Stop"
 
-$ProjectRoot = "D:\AXION"
+$ProjectRoot = "D:\AUREXIS"
 $ComposeFile = Join-Path $ProjectRoot "docker-compose.yml"
 
 if (-not (Test-Path $OutputDirectory)) {
@@ -17,11 +17,11 @@ if (-not (Test-Path $OutputDirectory)) {
 $Timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $BackupFile = Join-Path `
     $OutputDirectory `
-    "axion_$Timestamp.sql"
+    "aurexis_$Timestamp.sql"
 
 Write-Host ""
 Write-Host "========================================"
-Write-Host "AXION PostgreSQL Backup"
+Write-Host "AUREXIS PostgreSQL Backup"
 Write-Host "========================================"
 Write-Host ""
 
@@ -32,7 +32,7 @@ $Container = docker compose `
     ps -q postgres
 
 if (-not $Container) {
-    throw "AXION PostgreSQL container is not running."
+    throw "AUREXIS PostgreSQL container is not running."
 }
 
 $DatabaseName = docker compose `

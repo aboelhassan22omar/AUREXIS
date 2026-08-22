@@ -198,7 +198,7 @@ export default function AdminUsersPage() {
   ) {
     return (
       <main className="admin-access-loading">
-        Loading AXION users...
+        Loading Aurexis users...
       </main>
     );
   }

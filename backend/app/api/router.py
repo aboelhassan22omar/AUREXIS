@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.routes import (
     auth,
+    chat,
     contact,
     health,
     projects,
@@ -40,6 +41,10 @@ api_router.include_router(
 
 api_router.include_router(
     auth.router
+)
+
+api_router.include_router(
+    chat.router
 )
 
 api_router.include_router(

@@ -3,13 +3,13 @@ import Link from "next/link";
 
 export default function CTA() {
   return (
-    <section className="axion-section">
-      <div className="axion-container">
+    <section className="aurexis-section">
+      <div className="aurexis-container">
         <div className="cta-card glass-card">
           <div className="about-orb" />
 
           <div className="cta-content">
-            <span className="section-label">Build with AXION</span>
+            <span className="section-label">Build with AUREXIS</span>
 
             <h2>
               Have an idea?

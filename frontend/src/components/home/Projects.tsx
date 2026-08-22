@@ -64,10 +64,10 @@ export default function Projects() {
 
   return (
     <section
-      className="axion-section"
+      className="aurexis-section"
       id="projects"
     >
-      <div className="axion-container">
+      <div className="aurexis-container">
 
         <div className="projects-heading-row">
 

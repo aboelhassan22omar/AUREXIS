@@ -12,6 +12,7 @@ from app.models.project import Project  # noqa: F401
 from app.models.service import Service  # noqa: F401
 from app.models.user import User  # noqa: F401
 from app.models.refresh_token import RefreshToken  # noqa: F401
+from app.models.chat import ChatConversation, ChatMessage  # noqa: F401
 
 config = context.config
 
