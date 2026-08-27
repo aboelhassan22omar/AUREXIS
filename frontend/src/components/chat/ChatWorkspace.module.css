@@ -1060,6 +1060,10 @@
 }
 
 @media (max-width: 699px) {
+  .chatPage :global(.theme-toggle) {
+    min-height: 44px;
+  }
+
   .chatHeader {
     min-height: 64px;
     padding-left: max(10px, env(safe-area-inset-left));
@@ -1174,6 +1178,7 @@
   }
 
   .composer textarea {
+    min-height: 44px;
     font-size: 16px;
     line-height: 1.45;
   }
@@ -1287,7 +1292,7 @@
   }
 
   .guestBanner button {
-    min-height: 26px;
+    min-height: 44px;
   }
 
   .guestBanner + .connectionBanner {
@@ -1403,10 +1408,10 @@
 
   .headerActionButton,
   .iconButton {
-    width: 42px;
-    min-width: 42px;
-    height: 42px;
-    min-height: 42px;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
   }
 
   .messagesInner {

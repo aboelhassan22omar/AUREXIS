@@ -1396,6 +1396,35 @@ body.mobile-nav-open {
 }
 
 @media (max-width: 699px) {
+  /* Decorative and entrance transforms must not enlarge the mobile viewport. */
+  main,
+  .hero,
+  .aurexis-section,
+  .solutions-principles-grid {
+    overflow-x: clip;
+  }
+
+  .site-header .logo,
+  .footer-logo-link,
+  .footer-project-link,
+  .footer-links a,
+  .footer-connect a,
+  .auth-footer a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .footer-links a,
+  .footer-connect a {
+    width: fit-content;
+  }
+
+  .auth-form .form-group button[type="button"] {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
   .services-page-grid,
   .projects-page-grid {
     grid-template-columns: minmax(0, 1fr) !important;
