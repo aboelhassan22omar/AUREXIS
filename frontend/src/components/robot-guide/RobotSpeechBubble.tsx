@@ -36,21 +36,24 @@ const ROBOT_HIT_SELECTOR =
 const COLLISION_SELECTOR = [
   ".site-header",
   ".mobile-menu",
+  ".auth-card",
+  ".form-card",
+  ".info-card",
+  ".dashboard-card",
+  ".primary-button",
+  ".secondary-button",
+  '[role="dialog"][aria-modal="true"]',
+].join(",");
+
+const COMPACT_COLLISION_SELECTOR = [
   ".hero-copy",
   ".floating-card",
   ".page-hero h1",
   ".page-hero p",
   ".page-hero .section-label",
-  ".auth-card",
-  ".form-card",
-  ".info-card",
-  ".dashboard-card",
   ".solution-item",
   ".home-service-card",
   ".home-project-card",
-  ".primary-button",
-  ".secondary-button",
-  '[role="dialog"][aria-modal="true"]',
 ].join(",");
 
 function sideClass(
@@ -426,7 +429,9 @@ export default function RobotSpeechBubble({
       const collisionRects =
         Array.from(
           document.querySelectorAll<HTMLElement>(
-            COLLISION_SELECTOR
+            breakpoint === "desktop"
+              ? COLLISION_SELECTOR
+              : `${COLLISION_SELECTOR},${COMPACT_COLLISION_SELECTOR}`
           )
         )
           .filter(
