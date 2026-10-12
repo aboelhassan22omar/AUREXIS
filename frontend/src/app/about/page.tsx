@@ -1,260 +1,115 @@
-import type {
-  Metadata,
-} from "next";
+import { Orbit } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
 
-import About from "@/components/home/About";
-import CTA from "@/components/home/CTA";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
-
+import Reveal from "@/components/motion/Reveal";
+import SplitText from "@/components/motion/SplitText";
+import {
+  CapabilityMarquee,
+  ClosingCTA,
+  Manifesto,
+} from "@/components/sections/HomeSections";
+import PageHero from "@/components/sections/PageHero";
+import { capabilities } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Learn about AUREXIS, a technology company engineering AI, cybersecurity, automation and custom software solutions.",
+    "AUREXIS is a technology company engineering AI, software, automation and intelligent security systems around real-world problems.",
 };
 
+const focus = [
+  {
+    title: "Artificial intelligence",
+    body: "Agents, chatbots and decision-support systems that understand information and act on it.",
+  },
+  {
+    title: "Software engineering",
+    body: "Secure, scalable web platforms and management systems built around real workflows.",
+  },
+  {
+    title: "Automation & integration",
+    body: "Connected applications, APIs and data that let organizations operate as one system.",
+  },
+  {
+    title: "Security systems",
+    body: "Smart surveillance, AI video analytics and access control that protect people, sites and assets.",
+  },
+];
 
 export default function AboutPage() {
   return (
     <>
       <Navbar />
 
-      <main>
-        <section
-          className="page-hero"
-          style={{
-            background:
-              "radial-gradient(circle at 55% 20%, var(--color-accent-soft), transparent 32%)",
-          }}
-        >
-          <div className="aurexis-container">
+      <main id="main">
+        <PageHero
+          eyebrow="About Aurexis"
+          icon={<Orbit size={84} strokeWidth={1.1} />}
+          title={["Engineering the", "next advantage."]}
+          lead="AUREXIS is a technology company focused on artificial intelligence, software engineering, automation and intelligent security systems — building around real-world problems."
+        />
 
-            <span className="section-label">
-              About AUREXIS
-            </span>
+        <CapabilityMarquee />
 
+        <Manifesto />
 
-            <h1>
-              Engineering the
-              <br />
-
-              <span className="gradient-text">
-                next advantage.
-              </span>
-            </h1>
-
-
-            <p>
-              AUREXIS is a technology company
-              focused on artificial intelligence,
-              cybersecurity, automation and
-              software engineering — building
-              systems around real-world problems.
-            </p>
-
-          </div>
-        </section>
-
-
-        <About />
-
-
-        <section
-          className="aurexis-container"
-          style={{
-            paddingTop: 20,
-            paddingBottom: 40,
-          }}
-        >
-          <div
-            className="glass-card"
-            style={{
-              padding:
-                "clamp(28px,5vw,55px)",
-              borderRadius: 30,
-              background:
-                "radial-gradient(circle at 85% 30%, var(--color-accent-soft), transparent 34%)",
-            }}
-          >
-
-            <span className="section-label">
-              What defines us
-            </span>
-
-
-            <h2
-              style={{
-                marginTop: 14,
-                maxWidth: 850,
-                fontSize:
-                  "clamp(2.2rem,5vw,4.8rem)",
-                lineHeight: .98,
-                letterSpacing: "-.055em",
-              }}
-            >
-              Technology should create
-              <br />
-
-              <span className="gradient-text">
-                measurable impact.
-              </span>
-            </h2>
-
-
-            <p
-              style={{
-                marginTop: 24,
-                maxWidth: 760,
-                color: "var(--color-text-muted)",
-                fontSize: 14,
-                lineHeight: 1.85,
-              }}
-            >
-              We do not build technology
-              simply because it is new.
-              Aurexis combines the right tools,
-              architecture and intelligence
-              to make organizations faster,
-              smarter, safer and more capable.
-            </p>
-
-
-            <div
-              style={{
-                marginTop: 38,
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(3, minmax(0,1fr))",
-                gap: 12,
-              }}
-              className="about-values-grid"
-            >
-
-              <div
-                style={{
-                  padding: 20,
-                  borderRadius: 17,
-                  background:
-                    "var(--color-border)",
-                  border:
-                    "1px solid var(--color-border)",
-                }}
-              >
-                <span
-                  style={{
-                    color: "var(--color-accent)",
-                    fontSize: 10,
-                    textTransform: "uppercase",
-                    letterSpacing: ".1em",
-                  }}
-                >
-                  Intelligent
-                </span>
-
-                <p
-                  style={{
-                    marginTop: 9,
-                    color: "var(--color-text-muted)",
-                    fontSize: 12,
-                    lineHeight: 1.7,
-                  }}
-                >
-                  AI is applied where it
-                  genuinely improves a system.
-                </p>
+        <section className="ax-section ax-section--tight">
+          <div className="container">
+            <div className="ax-section-head ax-section-head--split">
+              <div>
+                <span className="ax-eyebrow">What defines us</span>
+                <SplitText
+                  as="h2"
+                  className="ax-h2 mt-5"
+                  lines={[
+                    { text: "Technology should create", className: "ax-lit" },
+                    { text: "measurable impact.", className: "ax-muted-words" },
+                  ]}
+                />
               </div>
-
-
-              <div
-                style={{
-                  padding: 20,
-                  borderRadius: 17,
-                  background:
-                    "var(--color-border)",
-                  border:
-                    "1px solid var(--color-border)",
-                }}
-              >
-                <span
-                  style={{
-                    color: "var(--color-accent)",
-                    fontSize: 10,
-                    textTransform: "uppercase",
-                    letterSpacing: ".1em",
-                  }}
-                >
-                  Secure
-                </span>
-
-                <p
-                  style={{
-                    marginTop: 9,
-                    color: "var(--color-text-muted)",
-                    fontSize: 12,
-                    lineHeight: 1.7,
-                  }}
-                >
-                  Security is part of the
-                  architecture, not an
-                  afterthought.
+              <Reveal delay={0.1}>
+                <p className="ax-lead">
+                  We do not build technology simply because it is new. Aurexis
+                  combines the right tools, architecture and intelligence to make
+                  organizations faster, smarter, safer and more capable.
                 </p>
-              </div>
-
-
-              <div
-                style={{
-                  padding: 20,
-                  borderRadius: 17,
-                  background:
-                    "var(--color-border)",
-                  border:
-                    "1px solid var(--color-border)",
-                }}
-              >
-                <span
-                  style={{
-                    color: "var(--color-accent)",
-                    fontSize: 10,
-                    textTransform: "uppercase",
-                    letterSpacing: ".1em",
-                  }}
-                >
-                  Practical
-                </span>
-
-                <p
-                  style={{
-                    marginTop: 9,
-                    color: "var(--color-text-muted)",
-                    fontSize: 12,
-                    lineHeight: 1.7,
-                  }}
-                >
-                  Every solution should solve a
-                  real problem and deliver value.
-                </p>
-              </div>
-
+              </Reveal>
             </div>
 
+            <div className="row g-4">
+              {focus.map((item, index) => (
+                <Reveal className="col-12 col-sm-6 col-lg-3" key={item.title} delay={index * 0.07}>
+                  <article className="ax-usecase ax-usecase--tall ax-glass ax-spot">
+                    <span className="ax-mono ax-dim">{String(index + 1).padStart(2, "0")}</span>
+                    <div>
+                      <h3 className="ax-h3 mb-3">{item.title}</h3>
+                      <p className="ax-body">{item.body}</p>
+                    </div>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+
+            <Reveal className="mt-8">
+              <p className="ax-footer__heading">Areas of work</p>
+              <div className="d-flex flex-wrap gap-2">
+                {capabilities.map((item) => (
+                  <Link href={item.href} className="ax-tag ax-tag--link" key={item.name}>
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </Reveal>
           </div>
         </section>
 
-
-        <CTA />
+        <ClosingCTA />
       </main>
 
       <Footer />
-
-
-      <style>{`
-        @media (max-width: 750px) {
-          .about-values-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </>
   );
 }

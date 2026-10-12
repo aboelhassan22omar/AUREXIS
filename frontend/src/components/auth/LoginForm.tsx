@@ -12,9 +12,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   FormEvent,
+  useEffect,
   useState,
 } from "react";
 
+import { useFormGaze } from "@/components/stage/gaze";
 import {
   loginUser,
 } from "@/lib/auth";
@@ -137,238 +139,79 @@ export default function LoginForm() {
   }
 
 
+  const gaze = useFormGaze();
+
+  useEffect(() => {
+    gaze.setRevealed(showPassword);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showPassword]);
+
   return (
-    <form
-      className="auth-form"
-      onSubmit={
-        handleSubmit
-      }
-    >
-      <div className="form-group">
-        <label>
-          Email
-        </label>
-
-
-        <div
-          style={{
-            position:
-              "relative",
-          }}
-        >
-          <Mail
-            size={17}
-            style={{
-              position:
-                "absolute",
-
-              left: 15,
-              top: 17,
-
-              color:
-                "var(--color-text-muted)",
-
-              pointerEvents:
-                "none",
-            }}
-          />
-
-
+    <form className="ax-form-grid" onSubmit={handleSubmit}>
+      <label className="ax-field">
+        <span className="ax-label">Email or username</span>
+        <span className="ax-input-wrap">
+          <Mail size={17} className="ax-input-icon" aria-hidden="true" />
           <input
-            type="email"
-            className="form-input"
-            placeholder="you@example.com"
-            style={{
-              paddingLeft: 44,
-            }}
+            type="text"
+            className="ax-input ax-input--icon"
+            placeholder="you@example.com or username"
             value={email}
-            onChange={(
-              event
-            ) =>
-              setEmail(
-                event.target.value
-              )
-            }
-            autoComplete="email"
+            onChange={(event) => setEmail(event.target.value)}
+            autoComplete="username"
+            {...gaze.textField}
             required
           />
-        </div>
-      </div>
-
-
-      <div className="form-group">
-        <label>
+        </span>
+      </label>
+      <label className="ax-field">
+        <span className="ax-label ax-label--row">
           Password
-        </label>
-
-
-        <div
-          style={{
-            position:
-              "relative",
-          }}
-        >
-          <LockKeyhole
-            size={17}
-            style={{
-              position:
-                "absolute",
-
-              left: 15,
-              top: 17,
-
-              color:
-                "var(--color-text-muted)",
-
-              pointerEvents:
-                "none",
-            }}
-          />
-
-
+          <Link href="/forgot-password" className="ax-label__link">
+            Forgot password?
+          </Link>
+        </span>
+        <span className="ax-input-wrap">
+          <LockKeyhole size={17} className="ax-input-icon" aria-hidden="true" />
           <input
-            type={
-              showPassword
-                ? "text"
-                : "password"
-            }
-            className="form-input"
+            type={showPassword ? "text" : "password"}
+            className="ax-input ax-input--icon ax-input--action"
             placeholder="Password"
-            style={{
-              paddingLeft: 44,
-              paddingRight: 48,
-            }}
             value={password}
-            onChange={(
-              event
-            ) =>
-              setPassword(
-                event.target.value
-              )
-            }
+            onChange={(event) => setPassword(event.target.value)}
             autoComplete="current-password"
+            {...gaze.passwordField}
             required
           />
-
-
           <button
             type="button"
-            aria-label={
-              showPassword
-                ? "Hide password"
-                : "Show password"
-            }
-            title={
-              showPassword
-                ? "Hide password"
-                : "Show password"
-            }
-            onClick={() =>
-              setShowPassword(
-                (current) =>
-                  !current
-              )
-            }
-            style={{
-              position:
-                "absolute",
-
-              right: 12,
-              top: "50%",
-
-              transform:
-                "translateY(-50%)",
-
-              width: 32,
-              height: 32,
-
-              display:
-                "grid",
-
-              placeItems:
-                "center",
-
-              padding: 0,
-
-              border: "none",
-
-              borderRadius: 9,
-
-              background:
-                "transparent",
-
-              color:
-                "var(--color-text-muted)",
-
-              cursor:
-                "pointer",
-            }}
+            className="ax-input-action"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            title={showPassword ? "Hide password" : "Show password"}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => setShowPassword((current) => !current)}
           >
-            {showPassword ? (
-              <EyeOff
-                size={17}
-              />
-            ) : (
-              <Eye
-                size={17}
-              />
-            )}
+            {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
           </button>
-        </div>
-      </div>
+        </span>
+      </label>
 
-
-      {error && (
-        <p
-          style={{
-            marginBottom: 16,
-
-            color:
-              "var(--color-danger)",
-
-            fontSize: 13,
-          }}
-        >
-          {error}
-        </p>
-      )}
-
-
-      <button
-        type="submit"
-        className="primary-button"
-        style={{
-          width: "100%",
-          marginTop: 8,
-
-          opacity:
-            loading
-              ? 0.7
-              : 1,
-        }}
-        disabled={
-          loading
-        }
-      >
-        {loading
-          ? "Signing in..."
-          : "Sign In"}
-
-
-        {!loading && (
-          <ArrowRight
-            size={17}
-          />
+      <div className="ax-auth__actions">
+        {error && (
+          <p className="ax-form-status ax-form-status--error" role="alert">
+            {error}
+          </p>
         )}
-      </button>
 
+        <button type="submit" className="ax-btn ax-btn--primary ax-btn--lg ax-btn--block" disabled={loading}>
+          {loading ? "Signing in…" : "Sign in"}
+          {!loading && <ArrowRight size={18} className="ax-arrow" />}
+        </button>
 
-      <div className="auth-footer">
-        Don&apos;t have an account?{" "}
-
-        <Link href="/register">
-          Create one
-        </Link>
+        <p className="ax-auth__switch">
+          Don&apos;t have an account?{" "}
+          <Link href="/register">Create one</Link>
+        </p>
       </div>
     </form>
   );

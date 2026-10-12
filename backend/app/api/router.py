@@ -7,6 +7,7 @@ from app.api.routes import (
     health,
     projects,
     services,
+    whatsapp,
 )
 
 from app.api.routes.admin import (
@@ -41,6 +42,10 @@ api_router.include_router(
 
 api_router.include_router(
     auth.router
+)
+
+api_router.include_router(
+    whatsapp.router
 )
 
 api_router.include_router(

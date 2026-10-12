@@ -19,11 +19,12 @@ def test_register_validation_rejects_short_password():
     assert response.status_code == 422
 
 
-def test_login_validation_rejects_invalid_email():
+def test_login_validation_rejects_too_short_identifier():
+    # Login accepts an email or a username; anything under 3 chars is invalid.
     response = client.post(
         "/api/v1/auth/login",
         json={
-            "email": "invalid-email",
+            "email": "ab",
             "password": "TestPassword123!",
         },
     )

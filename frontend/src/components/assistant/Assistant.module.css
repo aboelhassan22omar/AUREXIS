@@ -1,0 +1,525 @@
+/* Aurexis AI — fixed assistant */
+
+.root {
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: var(--ax-z-assistant);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  pointer-events: none;
+}
+
+.root > * {
+  pointer-events: auto;
+}
+
+/* ---------------- Launcher: a glass sphere of light points ---------------- */
+.launcher {
+  position: relative;
+  height: 64px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  gap: 0;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Living glass orb: liquid light flowing inside a polished sphere */
+.orb {
+  position: relative;
+  isolation: isolate;
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 60%, #0d1a52 0%, #050a24 75%);
+  box-shadow:
+    inset 0 0 0 1px rgba(214, 228, 255, 0.28),
+    inset 0 -6px 14px rgba(2, 4, 16, 0.55),
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    0 0 34px rgba(47, 99, 245, 0.45);
+  transition:
+    transform var(--ax-dur-3) var(--ax-ease-out),
+    box-shadow var(--ax-dur-3) var(--ax-ease-out);
+}
+
+/* the liquid light: three soft colour fields drifting and turning */
+.aurora {
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  filter: blur(7px) saturate(140%);
+  animation: auroraSpin 9s linear infinite;
+}
+
+.aurora i {
+  position: absolute;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+}
+
+.aurora i:nth-child(1) {
+  inset: 8% 30% 34% 6%;
+  background: radial-gradient(circle, #2db2fd 0%, rgba(45, 178, 253, 0) 68%);
+  animation: blobA 5.5s var(--ax-ease-in-out) infinite alternate;
+}
+
+.aurora i:nth-child(2) {
+  inset: 34% 4% 6% 30%;
+  background: radial-gradient(circle, #7a6ff9 0%, rgba(122, 111, 249, 0) 68%);
+  animation: blobB 6.5s var(--ax-ease-in-out) infinite alternate;
+}
+
+.aurora i:nth-child(3) {
+  inset: 26% 26% 26% 26%;
+  background: radial-gradient(circle, #327afa 0%, rgba(50, 122, 250, 0) 66%);
+  animation: blobC 7.5s var(--ax-ease-in-out) infinite alternate;
+}
+
+@keyframes auroraSpin {
+  to { rotate: 360deg; }
+}
+
+@keyframes blobA {
+  to { translate: 22% 18%; scale: 1.15; }
+}
+
+@keyframes blobB {
+  to { translate: -24% -14%; scale: 0.9; }
+}
+
+@keyframes blobC {
+  to { translate: 10% -20%; scale: 1.25; }
+}
+
+/* glass: specular highlight on top, soft rim light underneath */
+.gloss {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 34% at 50% 10%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 70%),
+    radial-gradient(70% 30% at 50% 100%, rgba(175, 200, 255, 0.35), rgba(175, 200, 255, 0) 70%);
+}
+
+.orbCenter {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  color: #fff;
+  filter: drop-shadow(0 1px 3px rgba(4, 8, 30, 0.6));
+}
+
+/* hover / thinking: the light flows faster and brighter */
+.orbActive {
+  transform: scale(1.07);
+  box-shadow:
+    inset 0 0 0 1px rgba(214, 228, 255, 0.45),
+    inset 0 -6px 14px rgba(2, 4, 16, 0.45),
+    0 12px 34px rgba(0, 0, 0, 0.5),
+    0 0 50px rgba(79, 130, 255, 0.7);
+}
+
+.orbActive .aurora {
+  animation-duration: 3.2s;
+  filter: blur(6px) saturate(170%) brightness(1.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora,
+  .aurora i {
+    animation: none;
+  }
+}
+
+/* Motion owns the launcher's inline opacity, so hide it with visibility. */
+.launcherHidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Full screen: centre the welcome instead of pinning it to the composer */
+.panelExpanded .welcome {
+  justify-content: center;
+}
+
+.launcherLabel {
+  max-width: 0;
+  overflow: hidden;
+  font-size: 0.9rem;
+  font-weight: 520;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    max-width var(--ax-dur-3) var(--ax-ease-out),
+    opacity var(--ax-dur-2) var(--ax-ease-out),
+    padding var(--ax-dur-3) var(--ax-ease-out);
+}
+
+@media (hover: hover) {
+
+  .launcher:not(.launcherOpen):hover .launcherLabel {
+    max-width: 140px;
+    padding: 10px 16px;
+    margin-right: 10px;
+    border-radius: 999px;
+    opacity: 1;
+    background: rgba(12, 16, 32, 0.72);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+}
+
+/* ---------------- Panel ---------------- */
+.panel {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 28px;
+  background:
+    radial-gradient(90% 40% at 50% 0%, rgba(47, 99, 245, 0.2), transparent 70%),
+    linear-gradient(180deg, #12182e, #070912);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+    0 40px 120px rgba(0, 0, 0, 0.7),
+    0 0 80px rgba(22, 49, 163, 0.25);
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  transform-origin: bottom right;
+}
+
+.header {
+  padding: 16px 14px 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--ax-line);
+}
+
+.headerMark {
+  width: 26px;
+  height: auto;
+  flex: 0 0 auto;
+  margin: 0 2px 0 4px;
+  filter: drop-shadow(0 0 12px rgba(79, 130, 255, 0.45));
+}
+
+/* Expanded: wider reading column, centered */
+.panelExpanded .messages,
+.panelExpanded .welcome {
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.panelExpanded .composer {
+  width: min(760px, calc(100% - 24px));
+  margin-inline: auto;
+}
+
+.identity {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.identity strong {
+  font-size: 0.95rem;
+  font-weight: 560;
+  letter-spacing: -0.01em;
+}
+
+.identity span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ax-text-3);
+  font-size: 0.75rem;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ax-success);
+  box-shadow: 0 0 8px var(--ax-success);
+}
+
+.headerActions {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.iconButton {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  color: var(--ax-text-2);
+  background: transparent;
+  cursor: pointer;
+  transition: color var(--ax-dur-2) var(--ax-ease-out), background-color var(--ax-dur-2) var(--ax-ease-out);
+}
+
+.iconButton:hover {
+  color: var(--ax-text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  padding: 18px 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.welcome {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-bottom: 4px;
+}
+
+.welcome h2 {
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+.welcome p {
+  color: var(--ax-text-2);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.suggestions {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.suggestion {
+  padding: 12px 14px;
+  border: 1px solid var(--ax-line);
+  border-radius: 14px;
+  color: var(--ax-text);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--ax-dur-2) var(--ax-ease-out),
+    background-color var(--ax-dur-2) var(--ax-ease-out),
+    transform var(--ax-dur-2) var(--ax-ease-out);
+}
+
+.suggestion:hover {
+  border-color: var(--ax-line-accent);
+  background: var(--ax-accent-faint);
+  transform: translateX(3px);
+}
+
+.messages {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+  list-style: none;
+}
+
+.message {
+  max-width: 88%;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.fromUser {
+  justify-self: end;
+  padding: 10px 14px;
+  border-radius: 18px 18px 6px 18px;
+  color: #fff;
+  background: linear-gradient(160deg, #2f63f5, #1631a3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.fromUser p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.fromAssistant {
+  justify-self: start;
+  max-width: 100%;
+  color: var(--ax-text);
+}
+
+.errorText {
+  color: #ffc2ca;
+}
+
+.typing {
+  display: inline-flex;
+  gap: 5px;
+  padding: 10px 0;
+}
+
+.typing i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ax-blue-200);
+  animation: dot 1.2s var(--ax-ease-in-out) infinite;
+}
+
+.typing i:nth-child(2) { animation-delay: 0.15s; }
+.typing i:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes dot {
+  0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-3px); }
+}
+
+.retry {
+  margin-top: 12px;
+  height: 34px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--ax-line-2);
+  border-radius: 999px;
+  color: var(--ax-text);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.composer {
+  margin: 0 12px;
+  padding: 6px 6px 6px 14px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px var(--ax-line-2);
+  transition: box-shadow var(--ax-dur-2) var(--ax-ease-out);
+}
+
+.composer:focus-within {
+  box-shadow: inset 0 0 0 1px rgba(127, 166, 255, 0.6), 0 0 0 4px rgba(47, 99, 245, 0.14);
+}
+
+.composer textarea {
+  flex: 1;
+  min-height: 40px;
+  max-height: 140px;
+  padding: 9px 0;
+  border: 0;
+  outline: 0;
+  resize: none;
+  color: var(--ax-text);
+  background: transparent;
+  font-size: 0.925rem;
+  line-height: 1.45;
+}
+
+.composer textarea::placeholder {
+  color: var(--ax-text-3);
+}
+
+.send {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 14px;
+  color: var(--ax-text-inverse);
+  background: var(--ax-frost-50);
+  cursor: pointer;
+  transition: transform var(--ax-dur-2) var(--ax-ease-out), opacity var(--ax-dur-2), background-color var(--ax-dur-2);
+}
+
+.send:hover {
+  background: #fff;
+}
+
+.send:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.disclaimer {
+  padding: 8px 16px 14px;
+  color: var(--ax-text-3);
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+/* ---------------- Phones: full-height sheet ---------------- */
+@media (max-width: 599px) {
+  .root {
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(14px, env(safe-area-inset-bottom));
+  }
+
+  .panel {
+    position: fixed;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: calc(100svh - 56px) !important;
+    border-radius: 26px 26px 0 0 !important;
+    transform-origin: bottom center;
+  }
+
+  .expandButton {
+    display: none;
+  }
+
+  .orb {
+    width: 56px;
+    height: 56px;
+  }
+
+  .launcherOpen {
+    display: none;
+  }
+
+  .composer {
+    margin-bottom: 0;
+  }
+
+  .disclaimer {
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+  }
+}

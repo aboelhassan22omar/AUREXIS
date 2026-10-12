@@ -1,384 +1,366 @@
 "use client";
 
 import {
+  ArrowLeft,
   ArrowRight,
+  AtSign,
   Eye,
   EyeOff,
   LockKeyhole,
   Mail,
+  Phone,
   UserRound,
 } from "lucide-react";
-
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  FormEvent,
+  useEffect,
   useState,
+  type FormEvent,
 } from "react";
 
+import WhatsAppVerify, { stepMotion } from "@/components/auth/WhatsAppVerify";
+import { setUnitGaze, useFormGaze } from "@/components/stage/gaze";
+import { registerUser } from "@/lib/auth";
 import {
-  registerUser,
-} from "@/lib/auth";
+  COUNTRIES,
+  checkAvailability,
+  startPhoneVerification,
+  toE164,
+  verifyPhoneCode,
+  type VerificationStart,
+} from "@/lib/phoneVerification";
 
+type Step = "identity" | "account" | "verify";
+
+function StepDots({ current, onBack }: { current: 1 | 2; onBack?: () => void }) {
+  return (
+    <div className="ax-stepdots" data-step={current} aria-label={`Step ${current} of 2`}>
+      <span className={current >= 1 ? "is-on" : undefined} />
+      <span className={current >= 2 ? "is-on" : undefined} />
+      <em>Step {current} of 2 · {current === 1 ? "About you" : "Your login"}</em>
+      {onBack && (
+        <button type="button" className="ax-stepdots__back" onClick={onBack}>
+          <ArrowLeft size={14} />
+          Back
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function RegisterForm() {
-  const router =
-    useRouter();
+  const router = useRouter();
+  const gaze = useFormGaze();
 
-  const [
-    fullName,
-    setFullName,
-  ] = useState("");
+  const [step, setStep] = useState<Step>("identity");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [dial, setDial] = useState("+20");
+  const [national, setNational] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [
-    email,
-    setEmail,
-  ] = useState("");
+  const [challenge, setChallenge] = useState<VerificationStart | null>(null);
 
-  const [
-    password,
-    setPassword,
-  ] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const [
-    showPassword,
-    setShowPassword,
-  ] = useState(false);
+  const phone = toE164(dial, national);
 
-  const [
-    error,
-    setError,
-  ] = useState("");
+  useEffect(() => {
+    gaze.setRevealed(showPassword);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showPassword]);
 
-  const [
-    loading,
-    setLoading,
-  ] = useState(false);
-
-
-  async function handleSubmit(
-    event: FormEvent<HTMLFormElement>
-  ) {
+  async function handleIdentity(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     setError("");
+
+    if (!phone) {
+      setError("Enter your WhatsApp number.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await registerUser({
-        full_name:
-          fullName,
+      const found = await checkAvailability({ email });
 
-        email,
-        password,
-      });
+      if (found.email_available === false) {
+        setError("This email is already registered. Sign in instead?");
+        return;
+      }
 
-      router.push(
-        "/dashboard"
-      );
-
-      router.refresh();
-    } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : "Unable to create account"
-      );
+      setStep("account");
+    } catch (checkError) {
+      setError(checkError instanceof Error ? checkError.message : "Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
+  async function handleAccount(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (password !== confirm) {
+      setError("The passwords don't match.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const found = await checkAvailability({ username });
+
+      if (found.username_valid === false) {
+        setError("Use 3–30 letters, numbers, dots or underscores.");
+        return;
+      }
+
+      if (found.username_available === false) {
+        setError("This username is taken. Try another one.");
+        return;
+      }
+
+      const started = await startPhoneVerification(phone, "signup");
+      setChallenge(started);
+      setStep("verify");
+    } catch (startError) {
+      setError(startError instanceof Error ? startError.message : "Unable to start verification");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function finish(entered: string) {
+    if (!challenge) {
+      return;
+    }
+
+    await verifyPhoneCode(challenge.poll_secret, entered);
+    await registerUser({
+      full_name: fullName,
+      email,
+      username,
+      password,
+      phone,
+      phone_verification: challenge.poll_secret,
+    });
+    setUnitGaze("auto");
+    router.push("/dashboard");
+    router.refresh();
+  }
 
   return (
-    <form
-      className="auth-form"
-      onSubmit={
-        handleSubmit
-      }
-    >
-      <div className="form-group">
-        <label>
-          Full name
-        </label>
+    <AnimatePresence mode="wait" initial={false}>
+      {step === "identity" && (
+        <motion.form key="identity" className="ax-form-grid" onSubmit={handleIdentity} {...stepMotion}>
+          <StepDots current={1} />
 
+          <div className="ax-form-pair">
+            <label className="ax-field">
+              <span className="ax-label">Full name</span>
+              <span className="ax-input-wrap">
+                <UserRound size={17} className="ax-input-icon" aria-hidden="true" />
+                <input
+                  className="ax-input ax-input--icon"
+                  placeholder="Your name"
+                  value={fullName}
+                  onChange={(event) => setFullName(event.target.value)}
+                  autoComplete="name"
+                  minLength={2}
+                  {...gaze.textField}
+                  required
+                />
+              </span>
+            </label>
 
-        <div
-          style={{
-            position:
-              "relative",
-          }}
-        >
-          <UserRound
-            size={17}
-            style={{
-              position:
-                "absolute",
+            <label className="ax-field">
+              <span className="ax-label">Email</span>
+              <span className="ax-input-wrap">
+                <Mail size={17} className="ax-input-icon" aria-hidden="true" />
+                <input
+                  type="email"
+                  className="ax-input ax-input--icon"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  autoComplete="email"
+                  {...gaze.textField}
+                  required
+                />
+              </span>
+            </label>
+          </div>
 
-              left: 15,
-              top: 17,
+          <div className="ax-field">
+            <label className="ax-label" htmlFor="ax-phone">
+              WhatsApp number <span className="ax-dim">· verified by message</span>
+            </label>
+            <div className="ax-phone">
+              <select
+                className="ax-input ax-phone__dial"
+                value={dial}
+                onChange={(event) => setDial(event.target.value)}
+                aria-label="Country code"
+                {...gaze.textField}
+              >
+                {COUNTRIES.map((country) => (
+                  <option key={country.code} value={country.dial}>
+                    {country.code} {country.dial}
+                  </option>
+                ))}
+              </select>
+              <span className="ax-input-wrap">
+                <Phone size={17} className="ax-input-icon" aria-hidden="true" />
+                <input
+                  id="ax-phone"
+                  type="tel"
+                  inputMode="tel"
+                  className="ax-input ax-input--icon"
+                  placeholder="128 833 9613"
+                  value={national}
+                  onChange={(event) => setNational(event.target.value)}
+                  autoComplete="tel-national"
+                  {...gaze.textField}
+                  required
+                />
+              </span>
+            </div>
+          </div>
 
-              color:
-                "var(--color-text-muted)",
-
-              pointerEvents:
-                "none",
-            }}
-          />
-
-
-          <input
-            className="form-input"
-            placeholder="Your name"
-            style={{
-              paddingLeft: 44,
-            }}
-            value={
-              fullName
-            }
-            onChange={(
-              event
-            ) =>
-              setFullName(
-                event.target.value
-              )
-            }
-            autoComplete="name"
-            required
-          />
-        </div>
-      </div>
-
-
-      <div className="form-group">
-        <label>
-          Email
-        </label>
-
-
-        <div
-          style={{
-            position:
-              "relative",
-          }}
-        >
-          <Mail
-            size={17}
-            style={{
-              position:
-                "absolute",
-
-              left: 15,
-              top: 17,
-
-              color:
-                "var(--color-text-muted)",
-
-              pointerEvents:
-                "none",
-            }}
-          />
-
-
-          <input
-            type="email"
-            className="form-input"
-            placeholder="you@example.com"
-            style={{
-              paddingLeft: 44,
-            }}
-            value={email}
-            onChange={(
-              event
-            ) =>
-              setEmail(
-                event.target.value
-              )
-            }
-            autoComplete="email"
-            required
-          />
-        </div>
-      </div>
-
-
-      <div className="form-group">
-        <label>
-          Password
-        </label>
-
-
-        <div
-          style={{
-            position:
-              "relative",
-          }}
-        >
-          <LockKeyhole
-            size={17}
-            style={{
-              position:
-                "absolute",
-
-              left: 15,
-              top: 17,
-
-              color:
-                "var(--color-text-muted)",
-
-              pointerEvents:
-                "none",
-            }}
-          />
-
-
-          <input
-            type={
-              showPassword
-                ? "text"
-                : "password"
-            }
-            className="form-input"
-            placeholder="Minimum 8 characters"
-            style={{
-              paddingLeft: 44,
-              paddingRight: 48,
-            }}
-            value={
-              password
-            }
-            onChange={(
-              event
-            ) =>
-              setPassword(
-                event.target.value
-              )
-            }
-            autoComplete="new-password"
-            minLength={8}
-            required
-          />
-
-
-          <button
-            type="button"
-            aria-label={
-              showPassword
-                ? "Hide password"
-                : "Show password"
-            }
-            title={
-              showPassword
-                ? "Hide password"
-                : "Show password"
-            }
-            onClick={() =>
-              setShowPassword(
-                (current) =>
-                  !current
-              )
-            }
-            style={{
-              position:
-                "absolute",
-
-              right: 12,
-              top: "50%",
-
-              transform:
-                "translateY(-50%)",
-
-              width: 32,
-              height: 32,
-
-              display:
-                "grid",
-
-              placeItems:
-                "center",
-
-              padding: 0,
-
-              border: "none",
-
-              borderRadius: 9,
-
-              background:
-                "transparent",
-
-              color:
-                "var(--color-text-muted)",
-
-              cursor:
-                "pointer",
-            }}
-          >
-            {showPassword ? (
-              <EyeOff
-                size={17}
-              />
-            ) : (
-              <Eye
-                size={17}
-              />
+          <div className="ax-auth__actions">
+            {error && (
+              <p className="ax-form-status ax-form-status--error" role="alert">
+                {error}
+              </p>
             )}
-          </button>
-        </div>
-      </div>
 
+            <button type="submit" className="ax-btn ax-btn--primary ax-btn--lg ax-btn--block" disabled={loading}>
+              {loading ? "Checking…" : "Next"}
+              {!loading && <ArrowRight size={18} className="ax-arrow" />}
+            </button>
 
-      {error && (
-        <p
-          style={{
-            marginBottom: 16,
-
-            color:
-              "var(--color-danger)",
-
-            fontSize: 13,
-          }}
-        >
-          {error}
-        </p>
+            <p className="ax-auth__switch">
+              Already have an account?{" "}
+              <Link href="/login">Sign in</Link>
+            </p>
+          </div>
+        </motion.form>
       )}
 
-
-      <button
-        type="submit"
-        className="primary-button"
-        style={{
-          width: "100%",
-          marginTop: 8,
-
-          opacity:
-            loading
-              ? 0.7
-              : 1,
-        }}
-        disabled={
-          loading
-        }
-      >
-        {loading
-          ? "Creating account..."
-          : "Create Account"}
-
-
-        {!loading && (
-          <ArrowRight
-            size={17}
+      {step === "account" && (
+        <motion.form key="account" className="ax-form-grid" onSubmit={handleAccount} {...stepMotion}>
+          <StepDots
+            current={2}
+            onBack={() => {
+              setError("");
+              setStep("identity");
+            }}
           />
-        )}
-      </button>
 
+          <label className="ax-field">
+            <span className="ax-label">Username</span>
+            <span className="ax-input-wrap">
+              <AtSign size={17} className="ax-input-icon" aria-hidden="true" />
+              <input
+                className="ax-input ax-input--icon"
+                placeholder="e.g. omar.ahmed"
+                value={username}
+                onChange={(event) => setUsername(event.target.value.toLowerCase().replace(/\s/g, ""))}
+                autoComplete="username"
+                minLength={3}
+                maxLength={30}
+                pattern="[a-z0-9._]{3,30}"
+                title="3–30 letters, numbers, dots or underscores"
+                {...gaze.textField}
+                required
+              />
+            </span>
+          </label>
 
-      <div className="auth-footer">
-        Already have an account?{" "}
+          <label className="ax-field">
+            <span className="ax-label">Password</span>
+            <span className="ax-input-wrap">
+              <LockKeyhole size={17} className="ax-input-icon" aria-hidden="true" />
+              <input
+                type={showPassword ? "text" : "password"}
+                className="ax-input ax-input--icon ax-input--action"
+                placeholder="Minimum 8 characters"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="new-password"
+                minLength={8}
+                {...gaze.passwordField}
+                required
+              />
+              <button
+                type="button"
+                className="ax-input-action"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                title={showPassword ? "Hide password" : "Show password"}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => setShowPassword((current) => !current)}
+              >
+                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+              </button>
+            </span>
+          </label>
 
-        <Link href="/login">
-          Sign in
-        </Link>
-      </div>
-    </form>
+          <label className="ax-field">
+            <span className="ax-label">Confirm password</span>
+            <span className="ax-input-wrap">
+              <LockKeyhole size={17} className="ax-input-icon" aria-hidden="true" />
+              <input
+                type={showPassword ? "text" : "password"}
+                className="ax-input ax-input--icon"
+                placeholder="Repeat your password"
+                value={confirm}
+                onChange={(event) => setConfirm(event.target.value)}
+                autoComplete="new-password"
+                minLength={8}
+                {...gaze.passwordField}
+                required
+              />
+            </span>
+          </label>
+
+          <div className="ax-auth__actions">
+            {error && (
+              <p className="ax-form-status ax-form-status--error" role="alert">
+                {error}
+              </p>
+            )}
+
+            <button type="submit" className="ax-btn ax-btn--primary ax-btn--lg ax-btn--block" disabled={loading}>
+              {loading ? "Preparing…" : "Continue to verification"}
+              {!loading && <ArrowRight size={18} className="ax-arrow" />}
+            </button>
+
+          </div>
+        </motion.form>
+      )}
+
+      {step === "verify" && challenge && (
+        <motion.div key="verify" className="ax-auth__flow" {...stepMotion}>
+          <WhatsAppVerify
+            challenge={challenge}
+            phone={phone}
+            onCode={finish}
+            onBack={() => {
+              setChallenge(null);
+              setStep("identity");
+            }}
+            submitLabel="Verify & create account"
+            busyLabel="Creating your account…"
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

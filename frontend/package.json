@@ -10,10 +10,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-three/drei": "^10.7.8",
-    "@react-three/fiber": "^9.7.0",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.1",
     "@types/three": "^0.185.4",
     "bootstrap": "^5.3.8",
+    "geist": "^1.7.2",
     "lucide-react": "^1.31.0",
     "motion": "^13.1.0",
     "next": "^16.3.0",
@@ -22,12 +23,11 @@
     "three": "^0.185.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.2.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "postcss": "^8.5.26",
-    "tailwindcss": "^4.3.3",
+    "sass": "^1.105.1",
     "typescript": "^7.0.2"
   }
 }

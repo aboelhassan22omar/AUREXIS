@@ -32,7 +32,7 @@ import {
 
 import ChatMarkdown from "@/components/chat/ChatMarkdown";
 import styles from "@/components/chat/ChatWorkspace.module.css";
-import ThemeToggle from "@/components/theme/ThemeToggle";
+import Unit from "@/components/stage/Unit";
 import Logo from "@/components/ui/Logo";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -473,12 +473,7 @@ function EmptyChatState({
 }) {
   return (
     <div className={styles.emptyState}>
-      <div
-        className={styles.emptyIcon}
-        aria-hidden="true"
-      >
-        <Bot size={30} />
-      </div>
+      <Unit className={styles.emptyUnit} />
 
       <p className={styles.emptyEyebrow}>
         AUREXIS AI
@@ -1773,7 +1768,6 @@ export default function ChatWorkspace() {
             </button>
           )}
 
-          <ThemeToggle />
         </div>
       </header>
 

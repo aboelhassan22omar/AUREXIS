@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "src/styles/base.css"
+        ],
+        "createdAt": "2026-10-03T17:39:21.549Z",
+        "reason": "Claude: .ax-lit is a near-white top-light falloff (white->#b9cbf2) emulating glass lighting from the brand references, not a decorative color gradient"
+      },
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "src/styles/components.css"
+        ],
+        "createdAt": "2026-10-11T10:28:18.155Z",
+        "reason": "Claude: only the 6px carousel page-dot pill animates width (3 dots, negligible cost); a scaleX version distorts the pill's rounded ends"
+      }
+    ]
+  }
+}

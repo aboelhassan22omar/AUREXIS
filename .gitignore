@@ -80,3 +80,9 @@ coverage/
 # Local working notes
 AUREXIS-CLEANUP.txt
 README.txt
+
+# Local backups that may contain secrets
+.design-baselines/*.bak
+
+# Private notes (never commit)
+مهم.txt
