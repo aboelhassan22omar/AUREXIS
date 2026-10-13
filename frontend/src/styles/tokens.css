@@ -169,7 +169,8 @@
 
   /* ---------- Layout ---------- */
   --ax-gutter: clamp(1.25rem, 0.8rem + 2vw, 2.5rem);
-  --ax-section: clamp(5rem, 3rem + 6vw, 9.5rem);
+  /* Phones start lower (3.75rem) so sections don't float apart on small screens */
+  --ax-section: clamp(3.75rem, 2rem + 7vw, 9.5rem);
   --ax-container-max: 100vw;
   --ax-nav-h: 76px;
 

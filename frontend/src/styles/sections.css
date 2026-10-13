@@ -410,6 +410,62 @@
   margin: 1.1rem 0 0.75rem;
 }
 
+/* Below desktop the steps read as a vertical timeline: one line, one node per step. */
+@media (max-width: 819px) {
+  .ax-rail .ax-cap {
+    gap: 1.1rem;
+  }
+
+  .ax-rail .ax-cap__body {
+    margin-top: 0;
+  }
+
+  .ax-rail .ax-cap__body .ax-body {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .ax-rail .ax-cap__more {
+    margin-top: auto;
+  }
+}
+
+@media (max-width: 1079px) {
+  .ax-process__list {
+    --bs-gutter-y: 0;
+  }
+
+  .ax-step {
+    padding: 0 0 2.25rem 1.9rem;
+    border-top: 0;
+    border-left: 1px solid var(--ax-line);
+  }
+
+  .ax-process__list > li:last-child .ax-step {
+    padding-bottom: 0;
+    border-left-color: transparent;
+  }
+
+  .ax-step__node {
+    top: 0.3rem;
+    left: -5px;
+  }
+
+  .ax-step__title {
+    margin: 0.55rem 0 0.5rem;
+  }
+}
+
+/* Tablet: two steps per row, so the bottom row ends both lines. */
+@media (min-width: 820px) and (max-width: 1079px) {
+  .ax-process__list > li:nth-last-child(-n + 2) .ax-step {
+    padding-bottom: 0;
+    border-left-color: transparent;
+  }
+}
+
 @media (min-width: 1080px) {
   .ax-process__rail {
     display: block;
@@ -1804,6 +1860,15 @@
   min-height: 270px;
 }
 
+/* Stacked full-width on phones: no tall empty band between number and title. */
+@media (max-width: 767px) {
+  .ax-usecase,
+  .ax-usecase--tall {
+    min-height: 0;
+    gap: 1.1rem;
+  }
+}
+
 .ax-accent-text {
   color: var(--ax-blue-200);
 }
@@ -1944,9 +2009,6 @@ a.ax-marquee__item:hover {
     width: 100%;
   }
 
-  .ax-process__list > li + li {
-    margin-top: 0.5rem;
-  }
 
   .ax-center-action {
     margin-top: 2rem;
