@@ -19,6 +19,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type MouseEvent,
 } from "react";
 
 import Logo from "@/components/ui/Logo";
@@ -43,6 +44,18 @@ export default function Navbar() {
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  // On the home page the logo takes you back to the very top instead of reloading.
+  function handleBrandClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (pathname !== "/" || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
+    setOpen(false);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  }
 
   // The bar stays put; it only condenses into glass once the page moves.
   useEffect(() => {
@@ -127,7 +140,7 @@ export default function Navbar() {
         ].join(" ")}
       >
         <div className="ax-nav__bar">
-          <Link href="/" className="ax-nav__brand" aria-label="AUREXIS home">
+          <Link href="/" className="ax-nav__brand" aria-label="AUREXIS home" onClick={handleBrandClick}>
             <Logo size={26} />
           </Link>
 
