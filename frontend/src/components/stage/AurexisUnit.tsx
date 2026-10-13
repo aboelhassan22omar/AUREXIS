@@ -66,9 +66,9 @@ const RETURN_TO_REST_MAX_DURATION = 0.8;
 const ARM_REST_EPSILON = 0.002;
 const ARM_REST_POSE = Object.freeze({
   shoulderAnchor: Object.freeze({
-    x: 1.14,
+    x: 1.2,
     y: -1.32,
-    z: -0.12,
+    z: 0,
   }),
   leftShoulder: -0.08,
   leftForearm: 0,
@@ -350,29 +350,56 @@ function FacePanel({
   );
 }
 
+// The head shell is a unit sphere scaled by HEAD_SCALE; detail sits exactly on it.
+const HEAD_SCALE = new THREE.Vector3(1.36, 1.23, 1);
+
+function onHeadSurface(point: THREE.Vector3, lift = 1) {
+  const radius = Math.sqrt(
+    (point.x / HEAD_SCALE.x) ** 2 +
+      (point.y / HEAD_SCALE.y) ** 2 +
+      (point.z / HEAD_SCALE.z) ** 2
+  );
+  return point.clone().multiplyScalar(lift / radius);
+}
+
 function PanelSeams({
   materials,
 }: {
   materials: RobotMaterials;
 }) {
   const curves = useMemo(
-    () => [
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0, 1.12, 0.5),
-        new THREE.Vector3(0, 0.83, 0.82),
-        new THREE.Vector3(0, 0.55, 0.94),
-      ]),
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.78, 0.96, 0.73),
-        new THREE.Vector3(-0.66, 0.48, 0.95),
-        new THREE.Vector3(-0.77, -0.68, 0.81),
-      ]),
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.78, 0.96, 0.73),
-        new THREE.Vector3(0.66, 0.48, 0.95),
-        new THREE.Vector3(0.77, -0.68, 0.81),
-      ]),
-    ],
+    () =>
+      [
+        [
+          new THREE.Vector3(0, 1.12, 0.5),
+          new THREE.Vector3(0, 0.83, 0.82),
+          new THREE.Vector3(0, 0.55, 0.94),
+        ],
+        [
+          new THREE.Vector3(-0.78, 0.96, 0.73),
+          new THREE.Vector3(-0.66, 0.48, 0.95),
+          new THREE.Vector3(-0.77, -0.68, 0.81),
+        ],
+        [
+          new THREE.Vector3(0.78, 0.96, 0.73),
+          new THREE.Vector3(0.66, 0.48, 0.95),
+          new THREE.Vector3(0.77, -0.68, 0.81),
+        ],
+      ].map((points) => {
+        const guide = new THREE.CatmullRomCurve3(points);
+        return new THREE.CatmullRomCurve3(
+          guide.getPoints(24).map((point) => onHeadSurface(point))
+        );
+      }),
+    []
+  );
+
+  const bolts = useMemo(
+    () =>
+      ([-1, 1] as const).map((side) => ({
+        side,
+        position: onHeadSurface(new THREE.Vector3(side * 0.96, 0.2, 0.91), 0.995),
+      })),
     []
   );
 
@@ -386,8 +413,8 @@ function PanelSeams({
           <tubeGeometry
             args={[
               curve,
-              32,
-              0.014,
+              48,
+              0.011,
               8,
               false,
             ]}
@@ -395,14 +422,10 @@ function PanelSeams({
         </mesh>
       ))}
 
-      {([-1, 1] as const).map((side) => (
+      {bolts.map(({ side, position }) => (
         <mesh
           key={side}
-          position={[
-            side * 0.96,
-            0.2,
-            0.91,
-          ]}
+          position={position}
           scale={[0.045, 0.045, 0.026]}
           material={materials.darkMetal}
         >
@@ -548,6 +571,8 @@ function Head({
   );
 }
 
+const BODY_Y = -1.72;
+
 function Body({
   materials,
   bodyRef,
@@ -573,16 +598,19 @@ function Body({
   const lowerSeam = useMemo(
     () =>
       new THREE.CatmullRomCurve3(
+        // Front arc only: the shell is slightly translucent, so a full loop
+        // would show its back half and read as a hoop rather than a line.
         Array.from({ length: 41 }, (_, index) => {
           const angle =
-            (index / 40) * Math.PI * 2;
+            -0.12 + (index / 40) * (Math.PI + 0.24);
+          // Shell radius at y = -0.62 is 0.70 (z squashed by 0.78): sit on it.
           return new THREE.Vector3(
-            Math.cos(angle) * 0.66,
+            Math.cos(angle) * 0.702,
             -0.62,
-            Math.sin(angle) * 0.5
+            Math.sin(angle) * 0.702 * 0.78
           );
         }),
-        true
+        false
       ),
     []
   );
@@ -590,7 +618,7 @@ function Body({
   return (
     <group
       ref={bodyRef}
-      position={[0, -1.72, 0]}
+      position={[0, BODY_Y, 0]}
     >
       <mesh
         scale={[1, 1, 0.78]}
@@ -605,10 +633,10 @@ function Body({
         <tubeGeometry
           args={[
             lowerSeam,
-            64,
-            0.015,
+            96,
+            0.007,
             8,
-            true,
+            false,
           ]}
         />
       </mesh>
@@ -660,7 +688,7 @@ function Arm({
       {/* Navy shoulder pivot sits slightly inside the torso so the arm never looks detached. */}
       <mesh
         position={[side * -0.015, 0, 0]}
-        scale={[0.27, 0.27, 0.25]}
+        scale={[0.235, 0.235, 0.225]}
         material={materials.darkMetal}
       >
         <sphereGeometry args={[1, 36, 28]} />
@@ -718,13 +746,6 @@ function Arm({
           <sphereGeometry args={[1, 36, 28]} />
         </mesh>
 
-        <mesh
-          position={[0, -0.425, 0.195]}
-          scale={[0.12, 0.035, 0.018]}
-          material={materials.darkMetal}
-        >
-          <sphereGeometry args={[1, 18, 14]} />
-        </mesh>
       </group>
     </group>
   );
