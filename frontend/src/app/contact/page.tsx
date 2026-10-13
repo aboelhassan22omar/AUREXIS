@@ -3,365 +3,275 @@
 import {
   ArrowRight,
   BrainCircuit,
-  Mail,
+  Cctv,
+  CheckCircle2,
+  Code2,
+  LockKeyhole,
   ShieldCheck,
-  Sparkles,
+  Workflow,
 } from "lucide-react";
-
 import {
-  FormEvent,
+  AnimatePresence,
+  motion,
+} from "motion/react";
+import {
   useState,
+  type FormEvent,
 } from "react";
 
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
-
+import Reveal from "@/components/motion/Reveal";
+import PageHero from "@/components/sections/PageHero";
+import Unit from "@/components/stage/Unit";
 import { apiRequest } from "@/lib/api";
+import { EASE_OUT } from "@/lib/motion";
+import type { ContactResponse } from "@/types/api";
 
-import type {
-  ContactResponse,
-} from "@/types/api";
+const TOPICS = [
+  "AI agents & chatbots",
+  "Web application",
+  "Automation & integration",
+  "Security systems",
+  "Something else",
+];
 
+const POINTS = [
+  { Icon: BrainCircuit, label: "AI & intelligent systems" },
+  { Icon: Code2, label: "Custom software & platforms" },
+  { Icon: Workflow, label: "Automation & integration" },
+  { Icon: Cctv, label: "Security & surveillance systems" },
+];
 
 export default function ContactPage() {
-  const [name, setName] =
-    useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [company, setCompany] = useState("");
+  const [message, setMessage] = useState("");
+  const [topics, setTopics] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
-  const [email, setEmail] =
-    useState("");
+  function toggleTopic(topic: string) {
+    setTopics((current) =>
+      current.includes(topic) ? current.filter((item) => item !== topic) : [...current, topic]
+    );
+  }
 
-  const [company, setCompany] =
-    useState("");
-
-  const [message, setMessage] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [error, setError] =
-    useState("");
-
-  const [success, setSuccess] =
-    useState("");
-
-
-  async function handleSubmit(
-    event: FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     setError("");
-    setSuccess("");
     setLoading(true);
 
+    const body = topics.length > 0
+      ? `Interested in: ${topics.join(", ")}\n\n${message}`
+      : message;
+
     try {
-      await apiRequest<ContactResponse>(
-        "/contact",
-        {
-          method: "POST",
+      await apiRequest<ContactResponse>("/contact", {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          email,
+          company: company.trim() || undefined,
+          message: body,
+        }),
+      });
 
-          body: JSON.stringify({
-            name,
-            email,
-            company:
-              company.trim() ||
-              undefined,
-            message,
-          }),
-        }
-      );
-
-      setSuccess(
-        "Your inquiry was sent successfully. AUREXIS will contact you soon."
-      );
-
+      setSuccess(true);
       setName("");
       setEmail("");
       setCompany("");
       setMessage("");
-    } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : "Unable to send your inquiry"
-      );
+      setTopics([]);
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "Unable to send your inquiry");
     } finally {
       setLoading(false);
     }
   }
 
-
   return (
     <>
       <Navbar />
 
-      <main>
-        <section className="page-hero">
-          <div className="aurexis-container">
-            <span className="section-label">
-              Contact Aurexis
-            </span>
+      <main id="main">
+        <PageHero
+          eyebrow="Contact"
+          title={["What are we", "building together?"]}
+          lead="Tell us the problem, idea or opportunity. We'll help define the technology behind it — and respond with a clear direction."
 
-            <h1>
-              What are we
-              <br />
+        />
 
-              <span className="gradient-text">
-                building?
-              </span>
-            </h1>
+        <section className="ax-section ax-section--tight pt-0">
+          <div className="container">
+            <div className="row g-7">
+              <div className="col-12 col-lg-5">
+                <Reveal className="ax-contact-aside">
+                  <Unit className="ax-contact-unit" />
+                  <div>
+                    <span className="ax-eyebrow">Start a conversation</span>
+                    <h2 className="ax-h3 mt-5" style={{ fontSize: "clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem)", letterSpacing: "-0.035em" }}>
+                      <span className="ax-lit">Build something </span>
+                      <span className="ax-muted-words">worth using.</span>
+                    </h2>
+                    <p className="ax-body mt-4">
+                      Whether it&apos;s an AI assistant, a security platform, an
+                      automation system or a completely new software product,
+                      Aurexis can engineer the solution.
+                    </p>
+                  </div>
 
-            <p>
-              Tell us the problem, idea or opportunity.
-              We&apos;ll help define the technology
-              behind it.
-            </p>
-          </div>
-        </section>
+                  <ul className="ax-contact-points">
+                    {POINTS.map(({ Icon, label }) => (
+                      <li key={label}>
+                        <span className="ax-icon-tile ax-icon-tile--sm">
+                          <Icon size={17} strokeWidth={1.6} />
+                        </span>
+                        {label}
+                      </li>
+                    ))}
+                  </ul>
 
+                  <p className="ax-small d-flex align-items-center gap-2">
+                    <LockKeyhole size={14} />
+                    Your request is sent securely to the Aurexis team.
+                  </p>
+                </Reveal>
+              </div>
 
-        <section className="aurexis-container inner-grid">
+              <div className="col-12 col-lg-7">
+                <Reveal delay={0.1}>
+                  <div className="ax-form-card ax-glass">
+                    <AnimatePresence mode="wait" initial={false}>
+                      {success ? (
+                        <motion.div
+                          key="done"
+                          className="ax-state"
+                          style={{ border: 0, padding: "4rem 1rem" }}
+                          initial={{ opacity: 0, scale: 0.96, filter: "blur(8px)" }}
+                          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.6, ease: EASE_OUT }}
+                          role="status"
+                        >
+                          <span className="ax-icon-tile">
+                            <CheckCircle2 size={24} />
+                          </span>
+                          <h3 className="ax-h3">Inquiry received.</h3>
+                          <p className="ax-body" style={{ maxWidth: "26rem" }}>
+                            Thank you — the Aurexis team will review your request and contact you soon.
+                          </p>
+                          <button type="button" className="ax-btn ax-btn--glass ax-btn--sm mt-3" onClick={() => setSuccess(false)}>
+                            Send another
+                          </button>
+                        </motion.div>
+                      ) : (
+                        <motion.form
+                          key="form"
+                          className="ax-form-grid"
+                          onSubmit={handleSubmit}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          <div className="ax-field">
+                            <span className="ax-label" id="topics-label">What are you interested in?</span>
+                            <div className="ax-chips-select" role="group" aria-labelledby="topics-label">
+                              {TOPICS.map((topic) => (
+                                <button
+                                  key={topic}
+                                  type="button"
+                                  aria-pressed={topics.includes(topic)}
+                                  onClick={() => toggleTopic(topic)}
+                                >
+                                  {topic}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
 
-          <div className="contact-grid">
+                          <div className="ax-form-grid ax-form-grid--2">
+                            <label className="ax-field">
+                              <span className="ax-label">Name</span>
+                              <input
+                                className="ax-input"
+                                placeholder="Your name"
+                                value={name}
+                                onChange={(event) => setName(event.target.value)}
+                                autoComplete="name"
+                                minLength={2}
+                                required
+                              />
+                            </label>
 
-            <div className="info-card glass-card">
+                            <label className="ax-field">
+                              <span className="ax-label">Email</span>
+                              <input
+                                className="ax-input"
+                                type="email"
+                                placeholder="you@company.com"
+                                value={email}
+                                onChange={(event) => setEmail(event.target.value)}
+                                autoComplete="email"
+                                required
+                              />
+                            </label>
+                          </div>
 
-              <span className="section-label">
-                Start a conversation
-              </span>
+                          <label className="ax-field">
+                            <span className="ax-label">Company <span className="ax-dim">(optional)</span></span>
+                            <input
+                              className="ax-input"
+                              placeholder="Company name"
+                              value={company}
+                              onChange={(event) => setCompany(event.target.value)}
+                              autoComplete="organization"
+                            />
+                          </label>
 
-              <h2
-                style={{
-                  marginTop: 18,
-                  fontSize: 38,
-                  letterSpacing:
-                    "-0.045em",
-                }}
-              >
-                Build something
-                <br />
+                          <label className="ax-field">
+                            <span className="ax-label">Tell us about the project</span>
+                            <textarea
+                              className="ax-input"
+                              placeholder="What would you like Aurexis to build, automate or protect?"
+                              value={message}
+                              onChange={(event) => setMessage(event.target.value)}
+                              minLength={10}
+                              required
+                            />
+                          </label>
 
-                <span className="gradient-text">
-                  worth using.
-                </span>
-              </h2>
+                          {error && (
+                            <p className="ax-form-status ax-form-status--error" role="alert">
+                              {error}
+                            </p>
+                          )}
 
-              <p className="section-subtitle">
-                Whether it&apos;s an AI assistant,
-                security platform, automation system
-                or completely new software product,
-                Aurexis can engineer the solution.
-              </p>
-
-
-              <div
-                style={{
-                  marginTop: 40,
-                  display: "grid",
-                  gap: 14,
-                }}
-              >
-                {[
-                  BrainCircuit,
-                  ShieldCheck,
-                  Sparkles,
-                ].map(
-                  (Icon, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display:
-                          "flex",
-
-                        alignItems:
-                          "center",
-
-                        gap: 13,
-
-                        color:
-                          "var(--color-text-secondary)",
-
-                        fontSize:
-                          14,
-                      }}
-                    >
-                      <div className="service-icon">
-                        <Icon
-                          size={20}
-                        />
-                      </div>
-
-                      {index === 0 &&
-                        "AI & intelligent systems"}
-
-                      {index === 1 &&
-                        "Cybersecurity solutions"}
-
-                      {index === 2 &&
-                        "Custom software & automation"}
-                    </div>
-                  )
-                )}
+                          <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                            <p className="ax-small">Share as much or as little detail as you like.</p>
+                            <button className="ax-btn ax-btn--primary ax-btn--lg" type="submit" disabled={loading}>
+                              {loading ? (
+                                <>
+                                  <span className="ax-spinner" style={{ width: 16, height: 16, borderTopColor: "#05070e" }} />
+                                  Sending…
+                                </>
+                              ) : (
+                                <>
+                                  Send inquiry
+                                  <ArrowRight size={18} className="ax-arrow" />
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </motion.form>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </Reveal>
               </div>
             </div>
-
-
-            <form
-              className="form-card glass-card"
-              onSubmit={
-                handleSubmit
-              }
-            >
-              <div className="form-group">
-                <label>Name</label>
-
-                <input
-                  className="form-input"
-                  placeholder="Your name"
-                  value={name}
-                  onChange={(event) =>
-                    setName(
-                      event.target.value
-                    )
-                  }
-                  minLength={2}
-                  required
-                />
-              </div>
-
-
-              <div className="form-group">
-                <label>Email</label>
-
-                <input
-                  className="form-input"
-                  type="email"
-                  placeholder="you@company.com"
-                  value={email}
-                  onChange={(event) =>
-                    setEmail(
-                      event.target.value
-                    )
-                  }
-                  required
-                />
-              </div>
-
-
-              <div className="form-group">
-                <label>Company</label>
-
-                <input
-                  className="form-input"
-                  placeholder="Company name"
-                  value={company}
-                  onChange={(event) =>
-                    setCompany(
-                      event.target.value
-                    )
-                  }
-                />
-              </div>
-
-
-              <div className="form-group">
-                <label>
-                  Tell us about the project
-                </label>
-
-                <textarea
-                  className="form-input"
-                  placeholder="What would you like AUREXIS to build?"
-                  value={message}
-                  onChange={(event) =>
-                    setMessage(
-                      event.target.value
-                    )
-                  }
-                  minLength={10}
-                  required
-                />
-              </div>
-
-
-              {error && (
-                <p
-                  style={{
-                    marginBottom:
-                      16,
-
-                    color:
-                      "var(--color-danger)",
-
-                    fontSize:
-                      13,
-                  }}
-                >
-                  {error}
-                </p>
-              )}
-
-
-              {success && (
-                <p
-                  style={{
-                    marginBottom:
-                      16,
-
-                    color:
-                      "var(--color-success)",
-
-                    fontSize:
-                      13,
-
-                    lineHeight:
-                      1.6,
-                  }}
-                >
-                  {success}
-                </p>
-              )}
-
-
-              <button
-                className="primary-button"
-                type="submit"
-                disabled={loading}
-                style={{
-                  opacity:
-                    loading
-                      ? 0.7
-                      : 1,
-                }}
-              >
-                {loading
-                  ? "Sending..."
-                  : "Send inquiry"}
-
-                {!loading && (
-                  <ArrowRight
-                    size={17}
-                  />
-                )}
-              </button>
-
-
-              <p className="form-note">
-                <Mail
-                  size={13}
-                  style={{
-                    display:
-                      "inline",
-
-                    marginRight:
-                      6,
-                  }}
-                />
-
-                Your request is sent securely to AUREXIS.
-              </p>
-            </form>
           </div>
         </section>
       </main>

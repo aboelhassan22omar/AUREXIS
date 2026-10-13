@@ -1,476 +1,97 @@
 "use client";
 
-import {
-  ArrowUpRight,
-  Bot,
-  BrainCircuit,
-  Code2,
-  ShieldCheck,
-  Workflow,
-} from "lucide-react";
+import { FolderKanban } from "lucide-react";
+import { useMemo, useState } from "react";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-
-import CTA from "@/components/home/CTA";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
-
+import Reveal from "@/components/motion/Reveal";
+import {
+  ClosingCTA,
+  WorkCard,
+} from "@/components/sections/HomeSections";
+import PageHero from "@/components/sections/PageHero";
+import { useApiData } from "@/hooks/useApiData";
 import { getProjects } from "@/lib/projects";
 
-import type { Project } from "@/types/api";
-
-
-const iconMap = {
-  "Artificial Intelligence": Bot,
-  "Web Development": Code2,
-  Automation: Workflow,
-  Cybersecurity: ShieldCheck,
-  "Custom AI": BrainCircuit,
-};
-
-
 export default function ProjectsPage() {
-  const [projects, setProjects] =
-    useState<Project[]>([]);
+  const { data, loading, error } = useApiData(() => getProjects(), "projects");
+  const [filter, setFilter] = useState("All");
 
-  const [loading, setLoading] =
-    useState(true);
+  const categories = useMemo(() => {
+    const counts = new Map<string, number>();
+    (data ?? []).forEach((project) => counts.set(project.category, (counts.get(project.category) ?? 0) + 1));
+    return [["All", data?.length ?? 0] as const, ...Array.from(counts.entries())];
+  }, [data]);
 
-  const [error, setError] =
-    useState("");
-
-
-  useEffect(() => {
-    async function loadProjects() {
-      try {
-        const data =
-          await getProjects();
-
-        setProjects(data);
-      } catch (error) {
-        setError(
-          error instanceof Error
-            ? error.message
-            : "Unable to load projects"
-        );
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    void loadProjects();
-  }, []);
-
+  const visible = (data ?? []).filter((project) => filter === "All" || project.category === filter);
 
   return (
     <>
       <Navbar />
 
+      <main id="main">
+        <PageHero
+          eyebrow="Projects"
+          icon={<FolderKanban size={84} strokeWidth={1.1} />}
+          title={["Built for", "real requirements."]}
+          lead="Intelligent systems, platforms and security products — each engineered around how an organization actually operates."
+        />
 
-      <main>
-
-        <section className="page-hero">
-
-          <div className="aurexis-container">
-
-            <span className="section-label">
-              AUREXIS Projects
-            </span>
-
-
-            <h1>
-              Ideas become
-              <br />
-
-              <span className="gradient-text">
-                working systems.
-              </span>
-            </h1>
-
-
-            <p>
-              Explore practical artificial
-              intelligence, software,
-              automation and cybersecurity
-              solutions designed around real
-              operational requirements.
-            </p>
-
-          </div>
-
-        </section>
-
-
-        <section className="aurexis-container projects-page-section">
-
-          {loading && (
-            <p className="detail-status">
-              Loading projects...
-            </p>
-          )}
-
-
-          {error && (
-            <p className="detail-status detail-error">
-              {error}
-            </p>
-          )}
-
-
-          {!loading &&
-            !error && (
-              <div className="projects-page-grid">
-
-                {projects.map(
-                  (project) => {
-                    const Icon =
-                      iconMap[
-                        project.category as keyof typeof iconMap
-                      ] ??
-                      BrainCircuit;
-
-                    return (
-                      <article
-                        key={project.id}
-                        className="projects-page-card glass-card"
-                      >
-
-                        <div className="projects-page-art">
-
-                          <Icon
-                            size={62}
-                            strokeWidth={1}
-                          />
-
-                        </div>
-
-
-                        <div className="projects-page-info">
-
-                          <span className="projects-page-category">
-                            {project.category}
-                          </span>
-
-
-                          <h3>
-                            {project.title}
-                          </h3>
-
-
-                          <p>
-                            {
-                              project.description
-                            }
-                          </p>
-
-
-                          <Link
-                            href={`/projects/${project.slug}`}
-                            className="project-card-button"
-                          >
-                            Explore Project
-
-                            <ArrowUpRight
-                              size={16}
-                            />
-                          </Link>
-
-                        </div>
-
-                      </article>
-                    );
-                  }
-                )}
-
+        <section className="ax-section ax-section--tight pt-0" aria-label="Project list">
+          <div className="container">
+            {data && data.length > 0 && (
+              <div className="ax-filter" role="group" aria-label="Filter projects by category">
+                {categories.map(([name, count]) => (
+                  <button
+                    key={name}
+                    type="button"
+                    aria-pressed={filter === name}
+                    onClick={() => setFilter(name)}
+                  >
+                    {name}
+                    <span>{count}</span>
+                  </button>
+                ))}
               </div>
             )}
 
+            {loading && (
+              <div className="row g-4">
+                {[0, 1, 2, 3].map((index) => (
+                  <div className="col-12 col-md-6" key={index}>
+                    <div className="ax-skeleton" style={{ height: 460 }} />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {error && <p className="ax-state">{error}</p>}
+
+            {data && visible.length === 0 && (
+              <p className="ax-state">No projects in this category yet.</p>
+            )}
+
+            <div className="row g-4">
+              {visible.map((project, index) => (
+                <Reveal className="col-12 col-md-6" key={`${filter}-${project.id}`} delay={(index % 2) * 0.08}>
+                  <WorkCard
+                    href={`/projects/${project.slug}`}
+                    category={project.category}
+                    title={project.title}
+                    summary={project.short_description}
+                    index={index}
+                  />
+                </Reveal>
+              ))}
+            </div>
+          </div>
         </section>
 
-
-        <CTA />
-
+        <ClosingCTA />
       </main>
 
-
       <Footer />
-
-
-      <style jsx global>{`
-
-        .projects-page-section {
-          padding-bottom: 120px;
-        }
-
-
-        .detail-status {
-          color: var(--color-text-muted);
-
-          font-size: 14px;
-        }
-
-
-        .detail-error {
-          color: var(--color-danger);
-        }
-
-
-        .projects-page-grid {
-          display: grid;
-
-          grid-template-columns:
-            repeat(
-              2,
-              minmax(0, 1fr)
-            );
-
-          gap: 18px;
-        }
-
-
-        .projects-page-card {
-          position: relative;
-
-          min-width: 0;
-
-          min-height: 500px;
-
-          padding: 30px;
-
-          display: flex;
-
-          flex-direction: column;
-
-          overflow: hidden;
-
-          border-radius: 30px;
-
-          background:
-            radial-gradient(
-              circle at 78% 15%,
-              var(--color-accent-soft),
-              transparent 36%
-            ),
-            linear-gradient(
-              145deg,
-              var(--color-border),
-              var(--color-border)
-            );
-
-          transition:
-            transform 0.3s ease,
-            border-color 0.3s ease,
-            box-shadow 0.3s ease;
-        }
-
-
-        .projects-page-card:hover {
-          transform:
-            translateY(-6px);
-
-          border-color:
-            var(--color-accent-medium);
-
-          box-shadow:
-            0 22px 65px
-            var(--color-overlay);
-        }
-
-
-        .projects-page-art {
-          width: 100%;
-
-          height: 225px;
-
-          display: grid;
-
-          place-items: center;
-
-          flex-shrink: 0;
-
-          border-radius: 24px;
-
-          color: var(--color-accent);
-
-          background:
-            linear-gradient(
-              145deg,
-              var(--color-accent-soft),
-              var(--color-overlay)
-            );
-
-          border:
-            1px solid
-            var(--color-accent-soft);
-
-          box-shadow:
-            inset 0 0 70px
-            var(--color-accent-soft);
-        }
-
-
-        .projects-page-info {
-          margin-top: 26px;
-
-          display: flex;
-
-          flex-direction: column;
-
-          flex: 1;
-
-          min-width: 0;
-        }
-
-
-        .projects-page-category {
-          color: var(--color-accent);
-
-          font-size: 10px;
-
-          font-weight: 700;
-
-          text-transform:
-            uppercase;
-
-          letter-spacing: 0.15em;
-        }
-
-
-        .projects-page-info h3 {
-          margin-top: 9px;
-
-          font-size: 25px;
-
-          line-height: 1.2;
-
-          letter-spacing:
-            -0.035em;
-        }
-
-
-        .projects-page-info p {
-          margin-top: 12px;
-
-          color:
-            var(
-              --color-text-secondary
-            );
-
-          font-size: 13px;
-
-          line-height: 1.7;
-        }
-
-
-        .project-card-button {
-          width: fit-content;
-
-          margin-top: auto;
-
-          padding: 11px 15px;
-
-          display: inline-flex;
-
-          align-items: center;
-
-          justify-content: center;
-
-          gap: 8px;
-
-          border-radius: 12px;
-
-          color: var(--color-accent);
-
-          background:
-            var(--color-accent-soft);
-
-          border:
-            1px solid
-            var(--color-accent-soft);
-
-          font-size: 11px;
-
-          font-weight: 650;
-
-          line-height: 1;
-
-          letter-spacing:
-            0.01em;
-
-          transition:
-            gap 0.2s ease,
-            background 0.2s ease,
-            border-color 0.2s ease,
-            color 0.2s ease,
-            transform 0.2s ease;
-        }
-
-
-        .project-card-button svg {
-          flex-shrink: 0;
-        }
-
-
-        .project-card-button:hover {
-          gap: 11px;
-
-          transform:
-            translateY(-2px);
-
-          color: var(--color-accent);
-
-          background:
-            var(--color-accent-soft);
-
-          border-color:
-            var(--color-accent-medium);
-        }
-
-
-        @media (max-width: 850px) {
-
-          .projects-page-grid {
-            grid-template-columns:
-              1fr;
-          }
-
-        }
-
-
-        @media (max-width: 650px) {
-
-          .projects-page-section {
-            padding-bottom: 85px;
-          }
-
-
-          .projects-page-card {
-            min-height: auto;
-
-            padding: 23px;
-
-            border-radius: 24px;
-          }
-
-
-          .projects-page-art {
-            height: 185px;
-          }
-
-
-          .projects-page-info h3 {
-            font-size: 22px;
-          }
-
-
-          .project-card-button {
-            margin-top: 24px;
-          }
-
-        }
-
-      `}</style>
     </>
   );
 }

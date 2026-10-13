@@ -1,110 +1,257 @@
-name: AUREXIS CD
+name: Production pipeline
 
+# After a merge into main:
+#   Stage 1  CI (the same checks a branch push runs)
+#   Stage 2  Detect which services changed since the last production deploy
+#   CD       Publish only the changed images to GHCR
+#   Stage 3  Deploy production - waits for the owner's approval
+#   Stage 4  Record this commit as the last successful deploy (git tag "production")
 on:
-  workflow_run:
-    workflows:
-      - AUREXIS CI
-    types:
-      - completed
-
+  push:
+    branches:
+      - main
   workflow_dispatch:
-
+    inputs:
+      deploy_all:
+        description: Rebuild and redeploy every service, even unchanged ones
+        type: boolean
+        default: false
 
 permissions:
   contents: read
-  packages: write
 
+concurrency:
+  group: production-pipeline
+  cancel-in-progress: false
 
 env:
   REGISTRY: ghcr.io
-  BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/aurexis-backend
-  FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/aurexis-frontend
-
+  IMAGE_PREFIX: ghcr.io/aboelhassan22omar
 
 jobs:
 
-  publish:
-    name: Publish Production Images
+  ci:
+    name: Stage 1 - CI
+    uses: ./.github/workflows/ci.yml
+
+  changes:
+    name: Stage 2 - Detect changed services
     runs-on: ubuntu-latest
-
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (
-        github.event.workflow_run.conclusion == 'success' &&
-        github.event.workflow_run.head_branch == 'main'
-      )
-
+    needs: ci
+    outputs:
+      backend: ${{ steps.detect.outputs.backend }}
+      frontend: ${{ steps.detect.outputs.frontend }}
+      infra: ${{ steps.detect.outputs.infra }}
+      any: ${{ steps.detect.outputs.any }}
     steps:
-
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
         with:
-          ref: main
+          fetch-depth: 0
+      - name: Compare with the last production deploy
+        id: detect
+        shell: bash
+        run: |
+          git fetch --force --tags origin 'refs/tags/production:refs/tags/production' 2>/dev/null || true
 
+          backend=false; frontend=false; infra=false
+          if [ "${{ inputs.deploy_all }}" = "true" ] || ! git rev-parse -q --verify refs/tags/production >/dev/null; then
+            echo "Full deploy (manual request or no previous production deploy)."
+            backend=true; frontend=true; infra=true
+          else
+            base="$(git rev-parse refs/tags/production)"
+            echo "Last production deploy: ${base}"
+            changed="$(git diff --name-only "$base" "$GITHUB_SHA")"
+            printf '%s\n' "$changed"
+            grep -q '^backend/' <<< "$changed" && backend=true
+            grep -q '^frontend/' <<< "$changed" && frontend=true
+            grep -qE '^(docker-compose\.prod\.yml|nginx/nginx\.prod\.conf|scripts/deploy\.sh)$' <<< "$changed" && infra=true
+          fi
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+          any=false
+          if [ "$backend" = true ] || [ "$frontend" = true ] || [ "$infra" = true ]; then any=true; fi
+          {
+            echo "backend=$backend"
+            echo "frontend=$frontend"
+            echo "infra=$infra"
+            echo "any=$any"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "### Changed since last production deploy"
+            echo "| Service | Will update |"
+            echo "|---|---|"
+            echo "| backend | $backend |"
+            echo "| frontend | $frontend |"
+            echo "| compose / nginx | $infra |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+  publish-backend:
+    name: CD - Publish backend image
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-
-      - name: Prepare lowercase image names
-        shell: bash
-        run: |
-          echo "BACKEND_IMAGE=$(echo '${{ env.BACKEND_IMAGE }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
-          echo "FRONTEND_IMAGE=$(echo '${{ env.FRONTEND_IMAGE }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
-
-
-      - name: Build and push backend image
-        uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-
           tags: |
-            ${{ env.BACKEND_IMAGE }}:latest
-            ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
-
+            ${{ env.IMAGE_PREFIX }}/aurexis-backend:${{ github.sha }}
+            ${{ env.IMAGE_PREFIX }}/aurexis-backend:latest
           labels: |
-            org.opencontainers.image.title=AUREXIS Backend
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,scope=backend,mode=max
 
-
-      - name: Build and push frontend image
-        uses: docker/build-push-action@v6
+  publish-frontend:
+    name: CD - Publish frontend image
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-
           build-args: |
             NEXT_PUBLIC_API_BASE_URL=/api/v1
-
           tags: |
-            ${{ env.FRONTEND_IMAGE }}:latest
-            ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
-
+            ${{ env.IMAGE_PREFIX }}/aurexis-frontend:${{ github.sha }}
+            ${{ env.IMAGE_PREFIX }}/aurexis-frontend:latest
           labels: |
-            org.opencontainers.image.title=AUREXIS Frontend
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,scope=frontend,mode=max
 
-
-      - name: Delivery summary
-        shell: bash
+  published:
+    name: CD - All release images published
+    runs-on: ubuntu-latest
+    needs:
+      - changes
+      - publish-backend
+      - publish-frontend
+    if: >-
+      always() &&
+      needs.changes.result == 'success' &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
+    steps:
+      - name: Summary
         run: |
-          echo "AUREXIS delivery completed."
-          echo ""
-          echo "Backend:"
-          echo "${BACKEND_IMAGE}:latest"
-          echo ""
-          echo "Frontend:"
-          echo "${FRONTEND_IMAGE}:latest"
+          {
+            echo "### Release images"
+            echo "- backend: ${{ needs.changes.outputs.backend == 'true' && format('{0}/aurexis-backend:{1}', env.IMAGE_PREFIX, github.sha) || 'unchanged' }}"
+            echo "- frontend: ${{ needs.changes.outputs.frontend == 'true' && format('{0}/aurexis-frontend:{1}', env.IMAGE_PREFIX, github.sha) || 'unchanged' }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    name: Stage 3 - Deploy production (approval required)
+    runs-on: ubuntu-latest
+    needs:
+      - changes
+      - published
+    if: >-
+      always() &&
+      needs.published.result == 'success' &&
+      needs.changes.outputs.any == 'true'
+    environment:
+      name: production
+      url: https://aurexis.cc
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Prepare SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          {
+            echo "Host production"
+            echo "  HostName ${{ vars.SSH_HOST }}"
+            echo "  User ${{ vars.SSH_USER }}"
+            echo "  IdentityFile ~/.ssh/deploy_key"
+            echo "  IdentitiesOnly yes"
+            echo "  StrictHostKeyChecking yes"
+            echo "  ServerAliveInterval 30"
+          } > ~/.ssh/config
+
+      - name: Upload deploy files (compose, nginx, deploy script)
+        run: |
+          scp docker-compose.prod.yml production:/opt/aurexis/docker-compose.prod.yml
+          scp nginx/nginx.prod.conf production:/opt/aurexis/nginx/nginx.prod.conf
+          ssh production 'mkdir -p /opt/aurexis/scripts'
+          scp scripts/deploy.sh production:/opt/aurexis/scripts/deploy.sh
+
+      - name: Update changed services on the server
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BACKEND_TAG: ${{ needs.changes.outputs.backend == 'true' && github.sha || '' }}
+          FRONTEND_TAG: ${{ needs.changes.outputs.frontend == 'true' && github.sha || '' }}
+          INFRA_CHANGED: ${{ needs.changes.outputs.infra }}
+        run: |
+          printf '%s' "$GHCR_TOKEN" | ssh production "docker login ghcr.io -u '${{ github.actor }}' --password-stdin"
+          status=0
+          ssh production "BACKEND_TAG='${BACKEND_TAG}' FRONTEND_TAG='${FRONTEND_TAG}' INFRA_CHANGED='${INFRA_CHANGED}' bash /opt/aurexis/scripts/deploy.sh" || status=$?
+          ssh production 'docker logout ghcr.io' || true
+          exit "$status"
+
+      - name: Smoke test https://aurexis.cc
+        run: |
+          for path in / /api/v1/health /login; do
+            for attempt in $(seq 1 12); do
+              code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "https://aurexis.cc${path}" || true)"
+              [ "$code" = "200" ] && break
+              sleep 5
+            done
+            echo "${path} -> ${code}"
+            [ "$code" = "200" ] || { echo "::error::${path} returned ${code}"; exit 1; }
+          done
+
+      - name: Remove SSH key
+        if: always()
+        run: rm -rf ~/.ssh
+
+  record:
+    name: Stage 4 - Record this as the last successful deploy
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: needs.deploy.result == 'success'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Move the "production" tag to this commit
+        run: |
+          git tag -f production "$GITHUB_SHA"
+          git push -f origin refs/tags/production
+          echo "Production is now at \`${GITHUB_SHA}\`" >> "$GITHUB_STEP_SUMMARY"

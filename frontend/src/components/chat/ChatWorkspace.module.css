@@ -460,6 +460,19 @@
   padding: 44px 10px;
 }
 
+.emptyUnit {
+  width: min(190px, 46vw);
+  flex: 0 0 auto;
+  margin-bottom: -14px;
+}
+
+/* Short screens: keep the prompt area clear */
+@media (max-height: 860px) {
+  .emptyUnit {
+    display: none;
+  }
+}
+
 .emptyIcon {
   width: 58px;
   height: 58px;
@@ -1228,12 +1241,14 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+.chatMain:has(> .guestBanner) {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
 .guestBanner {
-  position: absolute;
+  position: relative;
   z-index: 13;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+  margin: 10px auto 0;
   width: min(680px, calc(100% - 32px));
   padding: 8px 10px 8px 12px;
   display: flex;
@@ -1283,16 +1298,16 @@
 
 @media (max-width: 699px) {
   .guestBanner {
-    top: 8px;
+    margin-top: 8px;
     width: calc(100% - 24px);
-    padding: 8px 9px;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 7px;
+    padding: 6px 6px 6px 10px;
+    align-items: center;
+    flex-direction: row;
+    gap: 8px;
   }
 
   .guestBanner button {
-    min-height: 44px;
+    min-height: 36px;
   }
 
   .guestBanner + .connectionBanner {

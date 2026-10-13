@@ -1,0 +1,101 @@
+// Aurexis layout foundation.
+// Bootstrap supplies only structure here: reboot, containers, grid and a
+// curated utility set. No Bootstrap components are compiled, so nothing
+// visual is inherited from it.
+
+// --- Breakpoints: tuned to real device classes -------------------------
+$grid-breakpoints: (
+  xs: 0,
+  sm: 600px,
+  md: 820px,
+  lg: 1080px,
+  xl: 1320px,
+  xxl: 1640px,
+);
+
+$container-max-widths: (
+  sm: 560px,
+  md: 780px,
+  lg: 1020px,
+  xl: 1240px,
+  xxl: 1480px,
+);
+
+$grid-columns: 12;
+$grid-gutter-width: 2rem;
+$container-padding-x: 1.25rem;
+
+// --- 4pt spacing scale ---------------------------------------------------
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,
+  2: $spacer * 0.5,
+  3: $spacer * 0.75,
+  4: $spacer,
+  5: $spacer * 1.5,
+  6: $spacer * 2,
+  7: $spacer * 3,
+  8: $spacer * 4,
+  9: $spacer * 6,
+  10: $spacer * 8,
+);
+
+$gutters: $spacers;
+
+// --- Reboot inputs (tokens are the source of truth at runtime) ------------
+$enable-dark-mode: false;
+$enable-smooth-scroll: false;
+$body-bg: #05070e;
+$body-color: #f1f4fa;
+$link-color: #f1f4fa;
+$link-decoration: none;
+$link-hover-decoration: none;
+$font-family-sans-serif: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+$font-family-monospace: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+$font-size-base: 1rem;
+$line-height-base: 1.6;
+$headings-font-weight: 600;
+$headings-margin-bottom: 0;
+$paragraph-margin-bottom: 0;
+$border-color: rgba(255, 255, 255, 0.08);
+
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+
+// Keep only layout utilities; everything visual lives in the Aurexis system.
+$utilities: map-get-multiple(
+  $utilities,
+  (
+    "display",
+    "flex",
+    "flex-direction",
+    "flex-grow",
+    "flex-shrink",
+    "flex-wrap",
+    "justify-content",
+    "align-items",
+    "align-self",
+    "order",
+    "gap",
+    "row-gap",
+    "column-gap",
+    "margin-top",
+    "margin-bottom",
+    "padding-top",
+    "padding-bottom",
+    "text-align",
+    "width",
+    "position",
+  )
+);
+
+@import "bootstrap/scss/root";
+@import "bootstrap/scss/reboot";
+@import "bootstrap/scss/containers";
+@import "bootstrap/scss/grid";
+@import "bootstrap/scss/helpers/visually-hidden";
+@import "bootstrap/scss/utilities/api";

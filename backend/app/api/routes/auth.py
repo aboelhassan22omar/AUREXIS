@@ -1,3 +1,4 @@
+import re
 from typing import Annotated
 
 from fastapi import (
@@ -8,13 +9,18 @@ from fastapi import (
 )
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.security import decode_access_token
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.auth import (
+    USERNAME_PATTERN,
     AuthResponse,
+    AvailabilityRequest,
+    AvailabilityResponse,
+    PasswordResetRequest,
     LoginRequest,
     LogoutRequest,
     MessageResponse,
@@ -27,10 +33,12 @@ from app.services.auth_service import (
     authenticate_user,
     create_token_pair,
     register_user,
+    reset_password_with_phone,
     revoke_refresh_token,
     rotate_refresh_token,
 )
 from app.services.user_service import get_user_by_id
+from app.services.whatsapp.service import VerificationError
 
 
 router = APIRouter(
@@ -119,6 +127,19 @@ def register(
             detail=str(exc),
         ) from exc
 
+    except PermissionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+
+    except VerificationError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=exc.status_code,
+            detail=exc.message,
+        ) from exc
+
     access_token, refresh_token = (
         create_token_pair(db, user)
     )
@@ -127,6 +148,73 @@ def register(
         user=UserResponse.model_validate(user),
         access_token=access_token,
         refresh_token=refresh_token,
+    )
+
+
+@router.post(
+    "/availability",
+    response_model=AvailabilityResponse,
+)
+def check_availability(
+    data: AvailabilityRequest,
+    db: Annotated[
+        Session,
+        Depends(get_db),
+    ],
+) -> AvailabilityResponse:
+    """Lets sign-up say early (before phone verification) that an email or
+    username is taken. Registration itself re-checks both."""
+    result = AvailabilityResponse()
+
+    if data.email is not None:
+        result.email_available = (
+            db.scalar(select(User.id).where(User.email == data.email.lower())) is None
+        )
+
+    if data.username is not None:
+        username = data.username.strip().lower()
+        result.username_valid = re.fullmatch(USERNAME_PATTERN, username) is not None
+        result.username_available = result.username_valid and (
+            db.scalar(select(User.id).where(User.username == username)) is None
+        )
+
+    return result
+
+
+@router.post(
+    "/password/reset",
+    response_model=MessageResponse,
+)
+def reset_password(
+    data: PasswordResetRequest,
+    db: Annotated[
+        Session,
+        Depends(get_db),
+    ],
+) -> MessageResponse:
+    try:
+        reset_password_with_phone(
+            db,
+            phone=data.phone,
+            phone_verification=data.phone_verification,
+            new_password=data.new_password,
+        )
+
+    except VerificationError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=exc.status_code,
+            detail=exc.message,
+        ) from exc
+
+    except PermissionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+
+    return MessageResponse(
+        message="Your password has been changed. You can sign in now."
     )
 
 
@@ -150,7 +238,7 @@ def login(
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password",
+            detail="Invalid email, username or password",
         )
 
     access_token, refresh_token = (

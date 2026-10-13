@@ -1,0 +1,311 @@
+/* AUREXIS — base layer: document, type, atmosphere, accessibility */
+
+html {
+  background: var(--ax-bg-deep);
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  scroll-padding-top: calc(var(--ax-nav-h) + 24px);
+}
+
+html,
+body {
+  overflow-x: clip;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ax-text);
+  background: var(--ax-bg);
+  font-family: var(--ax-font-sans);
+  font-size: var(--ax-fs-body);
+  font-feature-settings: "ss01", "cv11";
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fixed atmosphere: a single cold light source above the page + film grain. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 45% at 50% -8%, rgba(47, 99, 245, 0.16), transparent 70%),
+    radial-gradient(40% 30% at 100% 30%, rgba(22, 49, 163, 0.08), transparent 70%),
+    var(--ax-bg);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+::selection {
+  color: var(--ax-frost-0);
+  background: rgba(79, 130, 255, 0.42);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  color: var(--ax-text);
+  font-weight: 600;
+  letter-spacing: var(--ax-track-heading);
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img, svg, canvas, video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ax-blue-300);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Scrollbar: thin hairline in the ink */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14) padding-box;
+}
+
+/* ---------- Container rhythm on top of the Bootstrap grid ---------- */
+/* Mirrors $container-max-widths so fixed UI (nav, HUD) aligns with content. */
+@media (min-width: 600px) { :root { --ax-container-max: 560px; } }
+@media (min-width: 820px) { :root { --ax-container-max: 780px; } }
+@media (min-width: 1080px) { :root { --ax-container-max: 1020px; } }
+@media (min-width: 1320px) { :root { --ax-container-max: 1240px; } }
+@media (min-width: 1640px) { :root { --ax-container-max: 1480px; } }
+
+:root {
+  --ax-content-edge: calc((100vw - min(100vw, var(--ax-container-max))) / 2 + var(--ax-gutter));
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+.container,
+.container-fluid {
+  --bs-gutter-x: calc(var(--ax-gutter) * 2);
+}
+
+/* Wide gutters collapse on phones so rows never exceed the container. */
+@media (max-width: 599px) {
+  .row.g-5,
+  .row.g-6,
+  .row.g-7 {
+    --bs-gutter-x: 1.5rem;
+  }
+}
+
+.ax-section {
+  position: relative;
+  padding-block: var(--ax-section);
+}
+
+.ax-section--tight {
+  padding-block: calc(var(--ax-section) * 0.6);
+}
+
+/* ---------- Type system ---------- */
+.ax-display {
+  font-size: var(--ax-fs-display);
+  font-weight: 600;
+  line-height: 0.94;
+  letter-spacing: var(--ax-track-display);
+}
+
+.ax-h1 {
+  font-size: var(--ax-fs-h1);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: var(--ax-track-display);
+}
+
+.ax-h2 {
+  font-size: var(--ax-fs-h2);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: var(--ax-track-heading);
+}
+
+.ax-h3 {
+  font-size: var(--ax-fs-h3);
+  font-weight: 560;
+  line-height: 1.2;
+  letter-spacing: var(--ax-track-tight);
+}
+
+.ax-lead {
+  max-width: 40rem;
+  color: var(--ax-text-2);
+  font-size: var(--ax-fs-lead);
+  line-height: 1.6;
+  letter-spacing: -0.006em;
+}
+
+.ax-body {
+  color: var(--ax-text-2);
+  font-size: var(--ax-fs-body);
+  line-height: 1.7;
+}
+
+.ax-small {
+  color: var(--ax-text-3);
+  font-size: var(--ax-fs-small);
+  line-height: 1.6;
+}
+
+.ax-mono {
+  font-family: var(--ax-font-mono);
+  font-size: var(--ax-fs-micro);
+  font-weight: 450;
+  letter-spacing: var(--ax-track-label);
+  text-transform: uppercase;
+}
+
+.ax-dim {
+  color: var(--ax-text-3);
+}
+
+/* Lit typography: headline words that catch the light */
+.ax-lit {
+  color: transparent;
+  background: linear-gradient(180deg, #ffffff 10%, #b9cbf2 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.ax-lit-blue {
+  color: var(--ax-blue-200);
+}
+
+.ax-muted-words {
+  color: #7f8cab;
+}
+
+/* Ambient light fields drifting behind the glass so it has something to refract. */
+.ax-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ax-ambient i {
+  position: absolute;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.ax-ambient i:nth-child(1) {
+  top: -30vmax;
+  left: -20vmax;
+  background: radial-gradient(circle, rgba(47, 99, 245, 0.2), transparent 62%);
+  animation: ax-drift-a 38s var(--ax-ease-in-out) infinite alternate;
+}
+
+.ax-ambient i:nth-child(2) {
+  top: 20vh;
+  right: -32vmax;
+  background: radial-gradient(circle, rgba(30, 70, 214, 0.16), transparent 62%);
+  animation: ax-drift-b 46s var(--ax-ease-in-out) infinite alternate;
+}
+
+.ax-ambient i:nth-child(3) {
+  bottom: -40vmax;
+  left: 20vw;
+  background: radial-gradient(circle, rgba(127, 166, 255, 0.1), transparent 62%);
+  animation: ax-drift-c 52s var(--ax-ease-in-out) infinite alternate;
+}
+
+@keyframes ax-drift-a {
+  to { transform: translate(18vw, 22vh) scale(1.15); }
+}
+
+@keyframes ax-drift-b {
+  to { transform: translate(-22vw, 18vh) scale(0.9); }
+}
+
+@keyframes ax-drift-c {
+  to { transform: translate(-16vw, -24vh) scale(1.1); }
+}
+
+/* ---------- Accessibility ---------- */
+.ax-skip {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 300;
+  padding: 10px 16px;
+  border-radius: var(--ax-r-pill);
+  color: var(--ax-text-inverse);
+  background: var(--ax-frost-50);
+  transform: translateY(-160%);
+  transition: transform var(--ax-dur-2) var(--ax-ease-out);
+}
+
+.ax-skip:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Assistant open on phones: freeze the page behind the sheet */
+html.ax-assistant-lock,
+html.ax-assistant-lock body {
+  overflow: hidden;
+}

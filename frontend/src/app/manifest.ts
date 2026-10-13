@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Aurexis engineers intelligent software, AI automation, security and technology solutions.",
     start_url: "/",
     display: "standalone",
-    background_color: "#020617",
-    theme_color: "#020617",
+    background_color: "#05070e",
+    theme_color: "#05070e",
     icons: [
       {
         src: "/brand/aurexis-icon-192.png",
