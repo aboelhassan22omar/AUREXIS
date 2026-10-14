@@ -20,7 +20,6 @@ from app.schemas.auth import (
     AuthResponse,
     AvailabilityRequest,
     AvailabilityResponse,
-    PasswordResetRequest,
     LoginRequest,
     LogoutRequest,
     MessageResponse,
@@ -33,12 +32,10 @@ from app.services.auth_service import (
     authenticate_user,
     create_token_pair,
     register_user,
-    reset_password_with_phone,
     revoke_refresh_token,
     rotate_refresh_token,
 )
 from app.services.user_service import get_user_by_id
-from app.services.whatsapp.service import VerificationError
 
 
 router = APIRouter(
@@ -127,19 +124,6 @@ def register(
             detail=str(exc),
         ) from exc
 
-    except PermissionError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(exc),
-        ) from exc
-
-    except VerificationError as exc:
-        db.rollback()
-        raise HTTPException(
-            status_code=exc.status_code,
-            detail=exc.message,
-        ) from exc
-
     access_token, refresh_token = (
         create_token_pair(db, user)
     )
@@ -162,8 +146,8 @@ def check_availability(
         Depends(get_db),
     ],
 ) -> AvailabilityResponse:
-    """Lets sign-up say early (before phone verification) that an email or
-    username is taken. Registration itself re-checks both."""
+    """Lets sign-up say early that an email or username is taken.
+    Registration itself re-checks both."""
     result = AvailabilityResponse()
 
     if data.email is not None:
@@ -179,43 +163,6 @@ def check_availability(
         )
 
     return result
-
-
-@router.post(
-    "/password/reset",
-    response_model=MessageResponse,
-)
-def reset_password(
-    data: PasswordResetRequest,
-    db: Annotated[
-        Session,
-        Depends(get_db),
-    ],
-) -> MessageResponse:
-    try:
-        reset_password_with_phone(
-            db,
-            phone=data.phone,
-            phone_verification=data.phone_verification,
-            new_password=data.new_password,
-        )
-
-    except VerificationError as exc:
-        db.rollback()
-        raise HTTPException(
-            status_code=exc.status_code,
-            detail=exc.message,
-        ) from exc
-
-    except PermissionError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(exc),
-        ) from exc
-
-    return MessageResponse(
-        message="Your password has been changed. You can sign in now."
-    )
 
 
 @router.post(

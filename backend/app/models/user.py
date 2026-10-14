@@ -34,18 +34,6 @@ class User(Base):
         nullable=True,
     )
 
-    phone: Mapped[str | None] = mapped_column(
-        String(20),
-        unique=True,
-        index=True,
-        nullable=True,
-    )
-
-    phone_verified_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True),
-        nullable=True,
-    )
-
     hashed_password: Mapped[str] = mapped_column(
         String(255),
         nullable=False,

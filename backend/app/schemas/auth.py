@@ -26,11 +26,6 @@ class RegisterRequest(BaseModel):
     def _lower_username(cls, value: str | None) -> str | None:
         return value.strip().lower() if isinstance(value, str) else value
 
-    # E.164 phone, proven over WhatsApp. `phone_verification` is the
-    # poll secret of a verified challenge for that same number.
-    phone: str | None = Field(default=None, max_length=24)
-    phone_verification: str | None = Field(default=None, max_length=128)
-
 
 class LoginRequest(BaseModel):
     # Email address or username.
@@ -79,9 +74,3 @@ class AvailabilityResponse(BaseModel):
     username_available: bool | None = None
     username_valid: bool | None = None
 
-
-class PasswordResetRequest(BaseModel):
-    phone: str = Field(min_length=8, max_length=24)
-    # poll secret of a verified "reset" WhatsApp challenge for this phone
-    phone_verification: str = Field(min_length=16, max_length=128)
-    new_password: str = Field(min_length=8, max_length=128)

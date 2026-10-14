@@ -8,7 +8,6 @@ import {
   EyeOff,
   LockKeyhole,
   Mail,
-  Phone,
   UserRound,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -20,19 +19,18 @@ import {
   type FormEvent,
 } from "react";
 
-import WhatsAppVerify, { stepMotion } from "@/components/auth/WhatsAppVerify";
 import { setUnitGaze, useFormGaze } from "@/components/stage/gaze";
-import { registerUser } from "@/lib/auth";
-import {
-  COUNTRIES,
-  checkAvailability,
-  startPhoneVerification,
-  toE164,
-  verifyPhoneCode,
-  type VerificationStart,
-} from "@/lib/phoneVerification";
+import { checkAvailability, registerUser } from "@/lib/auth";
+import { EASE_OUT } from "@/lib/motion";
 
-type Step = "identity" | "account" | "verify";
+type Step = "identity" | "account";
+
+const stepMotion = {
+  initial: { opacity: 0, x: 24, filter: "blur(6px)" },
+  animate: { opacity: 1, x: 0, filter: "blur(0px)" },
+  exit: { opacity: 0, x: -24, filter: "blur(6px)" },
+  transition: { duration: 0.45, ease: EASE_OUT },
+};
 
 function StepDots({ current, onBack }: { current: 1 | 2; onBack?: () => void }) {
   return (
@@ -57,19 +55,13 @@ export default function RegisterForm() {
   const [step, setStep] = useState<Step>("identity");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [dial, setDial] = useState("+20");
-  const [national, setNational] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const [challenge, setChallenge] = useState<VerificationStart | null>(null);
-
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const phone = toE164(dial, national);
 
   useEffect(() => {
     gaze.setRevealed(showPassword);
@@ -79,11 +71,6 @@ export default function RegisterForm() {
   async function handleIdentity(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-
-    if (!phone) {
-      setError("Enter your WhatsApp number.");
-      return;
-    }
 
     setLoading(true);
 
@@ -127,33 +114,20 @@ export default function RegisterForm() {
         return;
       }
 
-      const started = await startPhoneVerification(phone, "signup");
-      setChallenge(started);
-      setStep("verify");
-    } catch (startError) {
-      setError(startError instanceof Error ? startError.message : "Unable to start verification");
+      await registerUser({
+        full_name: fullName,
+        email,
+        username,
+        password,
+      });
+      setUnitGaze("auto");
+      router.push("/dashboard");
+      router.refresh();
+    } catch (registerError) {
+      setError(registerError instanceof Error ? registerError.message : "Unable to create your account");
     } finally {
       setLoading(false);
     }
-  }
-
-  async function finish(entered: string) {
-    if (!challenge) {
-      return;
-    }
-
-    await verifyPhoneCode(challenge.poll_secret, entered);
-    await registerUser({
-      full_name: fullName,
-      email,
-      username,
-      password,
-      phone,
-      phone_verification: challenge.poll_secret,
-    });
-    setUnitGaze("auto");
-    router.push("/dashboard");
-    router.refresh();
   }
 
   return (
@@ -196,42 +170,6 @@ export default function RegisterForm() {
                 />
               </span>
             </label>
-          </div>
-
-          <div className="ax-field">
-            <label className="ax-label" htmlFor="ax-phone">
-              WhatsApp number <span className="ax-dim">· verified by message</span>
-            </label>
-            <div className="ax-phone">
-              <select
-                className="ax-input ax-phone__dial"
-                value={dial}
-                onChange={(event) => setDial(event.target.value)}
-                aria-label="Country code"
-                {...gaze.textField}
-              >
-                {COUNTRIES.map((country) => (
-                  <option key={country.code} value={country.dial}>
-                    {country.code} {country.dial}
-                  </option>
-                ))}
-              </select>
-              <span className="ax-input-wrap">
-                <Phone size={17} className="ax-input-icon" aria-hidden="true" />
-                <input
-                  id="ax-phone"
-                  type="tel"
-                  inputMode="tel"
-                  className="ax-input ax-input--icon"
-                  placeholder="128 833 9613"
-                  value={national}
-                  onChange={(event) => setNational(event.target.value)}
-                  autoComplete="tel-national"
-                  {...gaze.textField}
-                  required
-                />
-              </span>
-            </div>
           </div>
 
           <div className="ax-auth__actions">
@@ -338,28 +276,12 @@ export default function RegisterForm() {
             )}
 
             <button type="submit" className="ax-btn ax-btn--primary ax-btn--lg ax-btn--block" disabled={loading}>
-              {loading ? "Preparing…" : "Continue to verification"}
+              {loading ? "Creating your account…" : "Create account"}
               {!loading && <ArrowRight size={18} className="ax-arrow" />}
             </button>
 
           </div>
         </motion.form>
-      )}
-
-      {step === "verify" && challenge && (
-        <motion.div key="verify" className="ax-auth__flow" {...stepMotion}>
-          <WhatsAppVerify
-            challenge={challenge}
-            phone={phone}
-            onCode={finish}
-            onBack={() => {
-              setChallenge(null);
-              setStep("identity");
-            }}
-            submitLabel="Verify & create account"
-            busyLabel="Creating your account…"
-          />
-        </motion.div>
       )}
     </AnimatePresence>
   );

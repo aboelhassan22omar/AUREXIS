@@ -3,7 +3,6 @@ export type User = {
   full_name: string;
   email: string;
   username?: string | null;
-  phone?: string | null;
   is_active: boolean;
   is_admin: boolean;
   created_at: string;
@@ -27,8 +26,4 @@ export type RegisterPayload = {
   email: string;
   username: string;
   password: string;
-  /** E.164, proven over WhatsApp */
-  phone?: string;
-  /** poll secret of the verified WhatsApp challenge */
-  phone_verification?: string;
 };
