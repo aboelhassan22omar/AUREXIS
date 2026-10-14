@@ -24,8 +24,8 @@ def test_register_validation_rejects_short_password():
     assert response.status_code == 422
 
 
-def test_login_validation_rejects_too_short_identifier():
-    # Login accepts an email or a username; anything under 3 chars is invalid.
+def test_login_validation_rejects_non_email():
+    # Login is by email only.
     response = client.post(
         "/api/v1/auth/login",
         json={
@@ -37,7 +37,7 @@ def test_login_validation_rejects_too_short_identifier():
     assert response.status_code == 422
 
 
-def test_register_needs_no_phone_verification():
+def test_register_needs_only_name_email_and_password():
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
 
@@ -47,11 +47,9 @@ def test_register_needs_no_phone_verification():
             RegisterRequest(
                 full_name="Test User",
                 email="Test@Example.com",
-                username="test.user",
                 password="TestPassword123!",
             ),
         )
 
         assert user.id is not None
         assert user.email == "test@example.com"
-        assert user.username == "test.user"

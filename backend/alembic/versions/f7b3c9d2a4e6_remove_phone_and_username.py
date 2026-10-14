@@ -1,4 +1,4 @@
-"""remove WhatsApp phone verification and user phone
+"""remove WhatsApp phone verification, user phone and username
 
 Revision ID: f7b3c9d2a4e6
 Revises: e2f4a6c8b1d3
@@ -27,10 +27,14 @@ def upgrade() -> None:
     op.drop_index(op.f("ix_users_phone"), table_name="users")
     op.drop_column("users", "phone_verified_at")
     op.drop_column("users", "phone")
+    op.drop_index(op.f("ix_users_username"), table_name="users")
+    op.drop_column("users", "username")
 
 
 def downgrade() -> None:
-    # Schema only: phone numbers dropped by upgrade() are not restored.
+    # Schema only: phone numbers and usernames dropped by upgrade() are not restored.
+    op.add_column("users", sa.Column("username", sa.String(length=30), nullable=True))
+    op.create_index(op.f("ix_users_username"), "users", ["username"], unique=True)
     op.add_column("users", sa.Column("phone", sa.String(length=20), nullable=True))
     op.add_column(
         "users",

@@ -293,13 +293,11 @@ export async function logoutUser(): Promise<void> {
 
 
 export type Availability = {
-  email_available: boolean | null;
-  username_available: boolean | null;
-  username_valid: boolean | null;
+  email_available: boolean;
 };
 
 
-export function checkAvailability(fields: { email?: string; username?: string }) {
+export function checkAvailability(fields: { email: string }) {
   return apiRequest<Availability>("/auth/availability", {
     method: "POST",
     body: JSON.stringify(fields),

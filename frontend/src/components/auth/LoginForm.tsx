@@ -149,16 +149,16 @@ export default function LoginForm() {
   return (
     <form className="ax-form-grid" onSubmit={handleSubmit}>
       <label className="ax-field">
-        <span className="ax-label">Email or username</span>
+        <span className="ax-label">Email</span>
         <span className="ax-input-wrap">
           <Mail size={17} className="ax-input-icon" aria-hidden="true" />
           <input
-            type="text"
+            type="email"
             className="ax-input ax-input--icon"
-            placeholder="you@example.com or username"
+            placeholder="you@example.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            autoComplete="username"
+            autoComplete="email"
             {...gaze.textField}
             required
           />

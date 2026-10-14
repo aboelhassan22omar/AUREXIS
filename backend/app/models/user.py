@@ -27,13 +27,6 @@ class User(Base):
         nullable=False,
     )
 
-    username: Mapped[str | None] = mapped_column(
-        String(30),
-        unique=True,
-        index=True,
-        nullable=True,
-    )
-
     hashed_password: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
