@@ -3,7 +3,6 @@
 import {
   ArrowLeft,
   ArrowRight,
-  AtSign,
   Eye,
   EyeOff,
   LockKeyhole,
@@ -55,7 +54,6 @@ export default function RegisterForm() {
   const [step, setStep] = useState<Step>("identity");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -102,22 +100,9 @@ export default function RegisterForm() {
     setLoading(true);
 
     try {
-      const found = await checkAvailability({ username });
-
-      if (found.username_valid === false) {
-        setError("Use 3–30 letters, numbers, dots or underscores.");
-        return;
-      }
-
-      if (found.username_available === false) {
-        setError("This username is taken. Try another one.");
-        return;
-      }
-
       await registerUser({
         full_name: fullName,
         email,
-        username,
         password,
       });
       setUnitGaze("auto");
@@ -201,26 +186,6 @@ export default function RegisterForm() {
               setStep("identity");
             }}
           />
-
-          <label className="ax-field">
-            <span className="ax-label">Username</span>
-            <span className="ax-input-wrap">
-              <AtSign size={17} className="ax-input-icon" aria-hidden="true" />
-              <input
-                className="ax-input ax-input--icon"
-                placeholder="e.g. omar.ahmed"
-                value={username}
-                onChange={(event) => setUsername(event.target.value.toLowerCase().replace(/\s/g, ""))}
-                autoComplete="username"
-                minLength={3}
-                maxLength={30}
-                pattern="[a-z0-9._]{3,30}"
-                title="3–30 letters, numbers, dots or underscores"
-                {...gaze.textField}
-                required
-              />
-            </span>
-          </label>
 
           <label className="ax-field">
             <span className="ax-label">Password</span>

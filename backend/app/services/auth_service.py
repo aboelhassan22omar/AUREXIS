@@ -32,15 +32,9 @@ def register_user(
             "Email already registered"
         )
 
-    if data.username and db.scalar(
-        select(User.id).where(User.username == data.username)
-    ) is not None:
-        raise ValueError("Username already taken")
-
     user = User(
         full_name=data.full_name.strip(),
         email=data.email.lower(),
-        username=data.username,
         hashed_password=hash_password(
             data.password
         ),
@@ -57,7 +51,7 @@ def register_user(
         db.rollback()
 
         raise ValueError(
-            "Email or username already registered"
+            "Email already registered"
         ) from exc
 
     db.refresh(user)
@@ -70,12 +64,7 @@ def authenticate_user(
     email: str,
     password: str,
 ) -> User | None:
-    identifier = email.strip().lower()
-
-    if "@" in identifier:
-        user = get_user_by_email(db, identifier)
-    else:
-        user = db.scalar(select(User).where(User.username == identifier))
+    user = get_user_by_email(db, email.strip().lower())
 
     if user is None:
         return None

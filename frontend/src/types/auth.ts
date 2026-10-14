@@ -2,7 +2,6 @@ export type User = {
   id: number;
   full_name: string;
   email: string;
-  username?: string | null;
   is_active: boolean;
   is_admin: boolean;
   created_at: string;
@@ -24,6 +23,5 @@ export type LoginPayload = {
 export type RegisterPayload = {
   full_name: string;
   email: string;
-  username: string;
   password: string;
 };
