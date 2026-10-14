@@ -1,4 +1,3 @@
-import re
 from typing import Annotated
 
 from fastapi import (
@@ -16,7 +15,6 @@ from app.core.security import decode_access_token
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.auth import (
-    USERNAME_PATTERN,
     AuthResponse,
     AvailabilityRequest,
     AvailabilityResponse,
@@ -146,23 +144,13 @@ def check_availability(
         Depends(get_db),
     ],
 ) -> AvailabilityResponse:
-    """Lets sign-up say early that an email or username is taken.
-    Registration itself re-checks both."""
-    result = AvailabilityResponse()
-
-    if data.email is not None:
-        result.email_available = (
+    """Lets sign-up say early that an email is taken.
+    Registration itself re-checks it."""
+    return AvailabilityResponse(
+        email_available=(
             db.scalar(select(User.id).where(User.email == data.email.lower())) is None
-        )
-
-    if data.username is not None:
-        username = data.username.strip().lower()
-        result.username_valid = re.fullmatch(USERNAME_PATTERN, username) is not None
-        result.username_available = result.username_valid and (
-            db.scalar(select(User.id).where(User.username == username)) is None
-        )
-
-    return result
+        ),
+    )
 
 
 @router.post(
@@ -185,7 +173,7 @@ def login(
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email, username or password",
+            detail="Invalid email or password",
         )
 
     access_token, refresh_token = (
