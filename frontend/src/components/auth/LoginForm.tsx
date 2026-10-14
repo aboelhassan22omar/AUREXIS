@@ -165,12 +165,7 @@ export default function LoginForm() {
         </span>
       </label>
       <label className="ax-field">
-        <span className="ax-label ax-label--row">
-          Password
-          <Link href="/forgot-password" className="ax-label__link">
-            Forgot password?
-          </Link>
-        </span>
+        <span className="ax-label">Password</span>
         <span className="ax-input-wrap">
           <LockKeyhole size={17} className="ax-input-icon" aria-hidden="true" />
           <input

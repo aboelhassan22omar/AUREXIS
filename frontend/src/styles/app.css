@@ -1817,230 +1817,6 @@
 }
 
 /* =====================================================================
-   SIGN-UP: phone field + WhatsApp verification
-   ===================================================================== */
-.ax-phone {
-  display: grid;
-  grid-template-columns: 112px 1fr;
-  gap: 8px;
-}
-
-.ax-phone__dial {
-  padding-inline: 0.8rem;
-  appearance: none;
-  background:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a7b0c2' stroke-width='2'><path d='m6 9 6 6 6-6'/></svg>") no-repeat right 0.75rem center,
-    rgba(255, 255, 255, 0.035);
-  cursor: pointer;
-}
-
-.ax-phone__dial option {
-  background: var(--ax-ink-3);
-}
-
-.ax-hint {
-  color: var(--ax-text-3);
-  font-size: 0.78rem;
-}
-
-.ax-hint--dev {
-  padding: 0.6rem 0.8rem;
-  border-radius: 10px;
-  color: var(--ax-warning);
-  background: rgba(242, 196, 109, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(242, 196, 109, 0.25);
-}
-
-.ax-ltr {
-  direction: ltr;
-  unicode-bidi: isolate;
-}
-
-.ax-verify {
-  display: grid;
-  gap: 1.1rem;
-}
-
-.ax-verify__head {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.9rem;
-}
-
-.ax-verify__badge {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  border-radius: 14px;
-  color: #fff;
-  background: linear-gradient(160deg, #25d366, #128c4a);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 8px 24px rgba(18, 140, 74, 0.35);
-}
-
-.ax-verify__badge.is-done {
-  background: linear-gradient(160deg, var(--ax-blue-400), var(--ax-blue-700));
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 8px 24px rgba(30, 70, 214, 0.35);
-}
-
-.ax-verify__title {
-  margin-bottom: 0.3rem;
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.ax-verify__steps {
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.55rem;
-  counter-reset: step;
-  list-style: none;
-}
-
-.ax-verify__steps li {
-  position: relative;
-  padding-left: 2rem;
-  color: var(--ax-text-2);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  counter-increment: step;
-}
-
-.ax-verify__steps li::before {
-  content: counter(step);
-  position: absolute;
-  left: 0;
-  top: 0.05rem;
-  width: 1.4rem;
-  height: 1.4rem;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  color: var(--ax-blue-100);
-  background: var(--ax-accent-soft);
-  font-family: var(--ax-font-mono);
-  font-size: 0.7rem;
-}
-
-.ax-btn--whatsapp {
-  color: #fff;
-  background: linear-gradient(180deg, #2bd56f, #1aa457);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    0 10px 28px rgba(26, 164, 87, 0.35);
-}
-
-.ax-btn--whatsapp:hover {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 14px 36px rgba(26, 164, 87, 0.5);
-}
-
-.ax-verify__manual {
-  padding: 0.7rem 0.6rem 0.7rem 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  border-radius: 12px;
-  color: var(--ax-text-3);
-  background: rgba(255, 255, 255, 0.03);
-  box-shadow: inset 0 0 0 1px var(--ax-line);
-  font-size: 0.8rem;
-  line-height: 1.5;
-}
-
-.ax-verify__manual code {
-  color: var(--ax-text);
-  font-family: var(--ax-font-mono);
-  font-size: 0.78rem;
-}
-
-.ax-verify__copy {
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  border: 0;
-  border-radius: 9px;
-  color: var(--ax-text-2);
-  background: rgba(255, 255, 255, 0.05);
-  cursor: pointer;
-}
-
-.ax-verify__copy:hover {
-  color: var(--ax-text);
-}
-
-.ax-verify__waiting {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.7rem;
-  color: var(--ax-text-2);
-  font-size: 0.85rem;
-}
-
-.ax-verify__waiting .ax-spinner {
-  width: 16px;
-  height: 16px;
-}
-
-/* 6-cell code entry backed by one real input (paste + SMS/WA autofill work) */
-.ax-otp {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-  cursor: text;
-}
-
-.ax-otp__input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  opacity: 0;
-  font-size: 16px;
-  caret-color: transparent;
-}
-
-.ax-otp__cell {
-  height: 58px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  color: var(--ax-text);
-  background: rgba(255, 255, 255, 0.035);
-  box-shadow: inset 0 0 0 1px var(--ax-line);
-  font-family: var(--ax-font-mono);
-  font-size: 1.4rem;
-  transition: box-shadow var(--ax-dur-2) var(--ax-ease-out), background-color var(--ax-dur-2);
-}
-
-.ax-otp__cell.is-filled {
-  background: rgba(47, 99, 245, 0.08);
-}
-
-.ax-otp:focus-within .ax-otp__cell.is-active {
-  box-shadow: inset 0 0 0 1.5px rgba(127, 166, 255, 0.8), 0 0 0 4px rgba(47, 99, 245, 0.14);
-}
-
-@media (max-width: 400px) {
-  .ax-otp__cell {
-    height: 50px;
-    font-size: 1.2rem;
-  }
-
-  .ax-phone {
-    grid-template-columns: 96px 1fr;
-  }
-}
-
-/* =====================================================================
    ACCESS — fixed-size card, no page scroll (login + register)
    ===================================================================== */
 .ax-auth {
@@ -2105,15 +1881,6 @@
 
 .ax-auth__card .ax-auth__switch a {
   min-height: 36px;
-}
-
-/* verification steps take the heading's place */
-.ax-auth__card:has(.ax-verify) .ax-auth__heading {
-  display: none;
-}
-
-.ax-auth__card .ax-verify {
-  gap: 0.85rem;
 }
 
 @media (max-height: 760px) {
@@ -2213,12 +1980,6 @@
   }
 }
 
-@media (max-width: 599px), (max-height: 820px) {
-  .ax-verify__steps {
-    display: none;
-  }
-}
-
 @media (max-height: 700px) and (max-width: 599px) {
   .ax-auth__heading {
     display: none;
@@ -2247,10 +2008,6 @@
 
   .ax-auth__card .ax-btn--lg {
     --btn-h: 46px;
-  }
-
-  .ax-otp__cell {
-    height: 46px;
   }
 }
 
@@ -2281,24 +2038,6 @@
   .ax-auth__panel {
     padding-top: 12px;
     padding-bottom: 12px;
-  }
-
-  .ax-auth__card .ax-verify {
-    gap: 0.55rem;
-  }
-
-  .ax-verify__badge {
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
-  }
-
-  .ax-verify__title {
-    font-size: 1.1rem;
-  }
-
-  .ax-verify__waiting {
-    font-size: 0.8rem;
   }
 }
 
@@ -2334,10 +2073,6 @@
   text-transform: uppercase;
 }
 
-.ax-btn--compact {
-  --btn-h: 38px;
-}
-
 .ax-stepdots__back {
   margin-left: auto;
   min-height: 32px;
@@ -2358,33 +2093,6 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
-.ax-label--row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.ax-label__link {
-  color: var(--ax-blue-200);
-  font-size: 0.78rem;
-  font-weight: 500;
-}
-
-.ax-label__link:hover {
-  color: var(--ax-text);
-}
-
-.ax-reset-done {
-  justify-items: center;
-  padding-block: 1rem;
-  text-align: center;
-}
-
-.ax-reset-done__icon {
-  color: var(--ax-success);
-  filter: drop-shadow(0 0 16px rgba(67, 214, 162, 0.45));
-}
-
 /* step 2 of sign-up: the step header replaces the page heading */
 .ax-auth__card:has(.ax-stepdots[data-step="2"]) .ax-auth__heading {
   display: none;
@@ -2395,21 +2103,6 @@
   font-size: 0.82rem;
 }
 
-.ax-verify__waiting {
-  flex-wrap: wrap;
-}
-
-.ax-verify__dev {
-  padding: 0;
-  border: 0;
-  color: var(--ax-warning);
-  background: none;
-  font-size: 0.78rem;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
-
 /* =====================================================================
    AUTH CARD RHYTHM — fields from the top, actions pinned to the bottom
    ===================================================================== */
@@ -2417,9 +2110,7 @@
   --auth-gap: 0.9rem;
 }
 
-.ax-auth__card > :last-child > form,
-.ax-auth__card .ax-auth__flow,
-.ax-auth__card .ax-verify {
+.ax-auth__card > :last-child > form {
   flex: 1;
   min-height: 0;
   display: flex;
@@ -2444,15 +2135,6 @@
   line-height: 1.4;
 }
 
-.ax-auth__card .ax-reset-done {
-  align-items: center;
-  justify-content: center;
-}
-
-.ax-auth__card .ax-reset-done .ax-auth__actions {
-  align-self: stretch;
-}
-
 @media (max-width: 599px), (max-height: 760px) {
   .ax-auth__card {
     --auth-gap: 0.7rem;
@@ -2474,8 +2156,7 @@
 
 /* Even rhythm: spare height is shared between every block of the form
    (fields and actions alike) instead of pooling above the button. */
-.ax-auth__card > :last-child > form,
-.ax-auth__card .ax-verify {
+.ax-auth__card > :last-child > form {
   justify-content: space-evenly;
 }
 
