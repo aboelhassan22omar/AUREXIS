@@ -8,7 +8,6 @@ from fastapi import (
 )
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.security import decode_access_token
@@ -16,8 +15,6 @@ from app.db.session import get_db
 from app.models.user import User
 from app.schemas.auth import (
     AuthResponse,
-    AvailabilityRequest,
-    AvailabilityResponse,
     LoginRequest,
     LogoutRequest,
     MessageResponse,
@@ -130,26 +127,6 @@ def register(
         user=UserResponse.model_validate(user),
         access_token=access_token,
         refresh_token=refresh_token,
-    )
-
-
-@router.post(
-    "/availability",
-    response_model=AvailabilityResponse,
-)
-def check_availability(
-    data: AvailabilityRequest,
-    db: Annotated[
-        Session,
-        Depends(get_db),
-    ],
-) -> AvailabilityResponse:
-    """Lets sign-up say early that an email is taken.
-    Registration itself re-checks it."""
-    return AvailabilityResponse(
-        email_available=(
-            db.scalar(select(User.id).where(User.email == data.email.lower())) is None
-        ),
     )
 
 

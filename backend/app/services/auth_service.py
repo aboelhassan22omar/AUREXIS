@@ -35,6 +35,7 @@ def register_user(
     user = User(
         full_name=data.full_name.strip(),
         email=data.email.lower(),
+        phone=data.phone,
         hashed_password=hash_password(
             data.password
         ),

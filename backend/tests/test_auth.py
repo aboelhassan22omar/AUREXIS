@@ -37,7 +37,21 @@ def test_login_validation_rejects_non_email():
     assert response.status_code == 422
 
 
-def test_register_needs_only_name_email_and_password():
+def test_register_validation_rejects_bad_phone():
+    response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "full_name": "Test User",
+            "email": "test@example.com",
+            "phone": "12ab",
+            "password": "TestPassword123!",
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_register_stores_name_email_phone_and_password():
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
 
@@ -47,9 +61,11 @@ def test_register_needs_only_name_email_and_password():
             RegisterRequest(
                 full_name="Test User",
                 email="Test@Example.com",
+                phone="+20 100-123-4567",
                 password="TestPassword123!",
             ),
         )
 
         assert user.id is not None
         assert user.email == "test@example.com"
+        assert user.phone == "+201001234567"
