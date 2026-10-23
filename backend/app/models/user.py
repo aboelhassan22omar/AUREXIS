@@ -27,6 +27,12 @@ class User(Base):
         nullable=False,
     )
 
+    # Nullable: accounts created before sign-up asked for a phone.
+    phone: Mapped[str | None] = mapped_column(
+        String(20),
+        nullable=True,
+    )
+
     hashed_password: Mapped[str] = mapped_column(
         String(255),
         nullable=False,

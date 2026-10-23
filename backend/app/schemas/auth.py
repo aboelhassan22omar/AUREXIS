@@ -1,4 +1,6 @@
-from pydantic import BaseModel, EmailStr, Field
+import re
+
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from app.schemas.user import UserResponse
 
@@ -11,10 +13,26 @@ class RegisterRequest(BaseModel):
 
     email: EmailStr
 
+    phone: str = Field(
+        min_length=8,
+        max_length=20,
+    )
+
     password: str = Field(
         min_length=8,
         max_length=128,
     )
+
+    @field_validator("phone")
+    @classmethod
+    def normalize_phone(cls, value: str) -> str:
+        # Accept spaces, dashes and brackets; store "+" and digits only.
+        phone = re.sub(r"[\s\-().]", "", value)
+
+        if not re.fullmatch(r"\+?\d{8,15}", phone):
+            raise ValueError("Enter a valid phone number")
+
+        return phone
 
 
 class LoginRequest(BaseModel):
@@ -52,11 +70,4 @@ class RefreshResponse(BaseModel):
 
 class MessageResponse(BaseModel):
     message: str
-
-class AvailabilityRequest(BaseModel):
-    email: EmailStr
-
-
-class AvailabilityResponse(BaseModel):
-    email_available: bool
 

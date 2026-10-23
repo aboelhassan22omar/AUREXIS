@@ -290,16 +290,3 @@ export async function logoutUser(): Promise<void> {
     clearAuthSession();
   }
 }
-
-
-export type Availability = {
-  email_available: boolean;
-};
-
-
-export function checkAvailability(fields: { email: string }) {
-  return apiRequest<Availability>("/auth/availability", {
-    method: "POST",
-    body: JSON.stringify(fields),
-  });
-}

@@ -2041,61 +2041,25 @@
   }
 }
 
-/* two-step sign-up indicator */
-.ax-stepdots {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 0.1rem;
-}
-
-.ax-stepdots span {
-  width: 22px;
-  height: 4px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.14);
-  transition: background-color var(--ax-dur-3), width var(--ax-dur-3) var(--ax-ease-out);
-}
-
-.ax-stepdots span.is-on {
-  width: 34px;
-  background: var(--ax-blue-300);
-  box-shadow: 0 0 8px rgba(79, 130, 255, 0.6);
-}
-
-.ax-stepdots em {
-  margin-left: 6px;
-  color: var(--ax-text-3);
-  font-family: var(--ax-font-mono);
-  font-size: 0.66rem;
-  font-style: normal;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.ax-stepdots__back {
-  margin-left: auto;
-  min-height: 32px;
-  padding: 0 0.5rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  border: 0;
-  border-radius: 8px;
-  color: var(--ax-text-2);
-  background: transparent;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.ax-stepdots__back:hover {
-  color: var(--ax-text);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* step 2 of sign-up: the step header replaces the page heading */
-.ax-auth__card:has(.ax-stepdots[data-step="2"]) .ax-auth__heading {
+/* single-step sign-up: five fields share the same fixed card as sign-in,
+   so the lead line goes and, on phones, the whole heading steps aside */
+.ax-auth__card:has(.ax-register) .ax-auth__heading .ax-body {
   display: none;
+}
+
+/* an error takes the switch line's room; the Sign in tab is right above */
+.ax-register .ax-form-status ~ .ax-auth__switch {
+  display: none;
+}
+
+@media (max-width: 599px) {
+  .ax-register .ax-form-pair--keep {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ax-auth__card:has(.ax-register) .ax-auth__heading {
+    display: none;
+  }
 }
 
 .ax-auth__card .ax-form-status {
